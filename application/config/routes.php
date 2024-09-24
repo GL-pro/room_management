@@ -80,6 +80,7 @@ $route['all_subcategory'] = 'Superadmin/all_subcategory';
 $route['subcategory_edit/(:any)'] = 'Superadmin/subcategory_edit/$1';
 $route['subcategoryupdate'] = 'Superadmin/subcategoryupdate';
 $route['get_subcategories'] = 'Superadmin/get_subcategories';
+$route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
 
 // Superadmin
 

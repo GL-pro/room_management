@@ -124,40 +124,91 @@ class Superadmin extends CI_Controller {
 	{
 		$data['roomid'] = $item_id; 
 		$data['items'] = $this->HomeModel->items($item_id);
+		$data['categories'] = $this->HomeModel->getCategories();
+		$data['subcategories'] = $this->HomeModel->getsubCategories();
         $data['menu']='item_edit';
         $data['pagetitle']='DashBoard';
 		$this->load->view('webapp/superadmin/include/header',$data);
 		$this->load->view('webapp/superadmin/item/item_edit',$data);
 		$this->load->view('webapp/superadmin/include/footer');
 	}  
+	// public function itemupdate() {
+	// 	$roomid = $this->input->post('item_id');
+	// 	$roomtype = $this->input->post('roomtypename');
+	// 	$status = $this->input->post('status');
+	// 	$existing_type_image = $this->input->post('existing_type_image');
+	// 	$roomtype_image = $existing_type_image; // Default to existing image
+	// 	if (!empty($_FILES['roomtype_image']['name'])) {
+	// 		$config['upload_path'] = './upload/item_images/';
+	// 		$config['allowed_types'] = 'jpg|jpeg|png';
+	// 		$config['max_size'] = 2048; // 2MB
+	// 		$config['encrypt_name'] = TRUE;
+	// 		$this->load->library('upload', $config);
+	// 		if ($this->upload->do_upload('roomtype_image')) {
+	// 			$upload_data = $this->upload->data();
+	// 			$roomtype_image = $upload_data['file_name'];
+	// 			// Delete old image file if a new image is uploaded
+	// 			if ($existing_type_image && file_exists('./upload/item_images/' . $existing_type_image)) {
+	// 				unlink('./upload/item_images/' . $existing_type_image);
+	// 			}
+	// 		} else {
+	// 			$error = $this->upload->display_errors();
+	// 			echo json_encode(['error' => $error]);
+	// 			return;
+	// 		}
+	// 	}
+	// 	$this->HomeModel->updateItem($roomid, $roomtype, $status, $roomtype_image);
+	// 	redirect('all_item', 'refresh');
+	// }
+
+
+
 	public function itemupdate() {
+		// Fetch form data
 		$roomid = $this->input->post('item_id');
 		$roomtype = $this->input->post('roomtypename');
+		$category_id = $this->input->post('category_id');
+		$subcategory_id = $this->input->post('subcategory_id');
+		$price1 = $this->input->post('price1');
+		$price2 = $this->input->post('price2');
+		$tax = $this->input->post('tax');
+		$description = $this->input->post('description');
+		$availability = $this->input->post('availability');
 		$status = $this->input->post('status');
 		$existing_type_image = $this->input->post('existing_type_image');
 		$roomtype_image = $existing_type_image; // Default to existing image
+	
+		// Check if a new image has been uploaded
 		if (!empty($_FILES['roomtype_image']['name'])) {
 			$config['upload_path'] = './upload/item_images/';
 			$config['allowed_types'] = 'jpg|jpeg|png';
 			$config['max_size'] = 2048; // 2MB
 			$config['encrypt_name'] = TRUE;
 			$this->load->library('upload', $config);
+	
 			if ($this->upload->do_upload('roomtype_image')) {
 				$upload_data = $this->upload->data();
 				$roomtype_image = $upload_data['file_name'];
-				// Delete old image file if a new image is uploaded
+	
+				// Delete the old image if a new image is uploaded
 				if ($existing_type_image && file_exists('./upload/item_images/' . $existing_type_image)) {
 					unlink('./upload/item_images/' . $existing_type_image);
 				}
 			} else {
+				// Handle upload errors
 				$error = $this->upload->display_errors();
 				echo json_encode(['error' => $error]);
 				return;
 			}
 		}
-		$this->HomeModel->updateItem($roomid, $roomtype, $status, $roomtype_image);
+	
+		// Update the item in the database
+		$this->HomeModel->updateItem($roomid, $roomtype, $category_id, $subcategory_id, $price1, $price2, $tax, $description, $availability, $status, $roomtype_image);
+	
+		// Redirect to the item list page
 		redirect('all_item', 'refresh');
 	}
+	
 	public function all_item()
 	{
         $data['menu']='all_item';

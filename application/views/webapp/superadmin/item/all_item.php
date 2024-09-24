@@ -104,7 +104,7 @@
             var roomId = $(this).data('region-id');
              var status = this.checked ? 1 : 0;
         $.ajax({
-            url: '<?php echo base_url("Staff/update_statusitem"); ?>',
+            url: '<?php echo base_url("Superadmin/update_statusitem"); ?>',
             method: 'POST',
             data: { item_id: roomId, status: status }, // Send room_id and status as data
             success: function(response) {

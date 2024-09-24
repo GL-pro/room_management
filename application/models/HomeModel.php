@@ -33,16 +33,34 @@ class HomeModel extends CI_Model {
         $query= $this->db->get();
             return $query->result();
     }
-    public function updateItem($roomid, $roomtype, $status, $roomtype_image) {
+    // public function updateItem($roomid, $roomtype, $status, $roomtype_image) {
+    //     $data = array(
+    //         'item_name' => $roomtype,
+    //         'status' => $status,
+    //         'item_image' => $roomtype_image
+    //     );
+    //     $this->db->where('item_id', $roomid);
+    //     $this->db->update('item', $data);
+    //     return $this->db->affected_rows() > 0;
+    // }
+    public function updateItem($roomid, $roomtype, $category_id, $subcategory_id, $price1, $price2, $tax, $description, $availability, $status, $roomtype_image) {
         $data = array(
             'item_name' => $roomtype,
+            'category_id' => $category_id,
+            'subcategory_id' => $subcategory_id,
+            'price1' => $price1,
+            'price2' => $price2,
+            'tax' => $tax,
+            'description' => $description,
+            'availability' => $availability,
             'status' => $status,
             'item_image' => $roomtype_image
         );
+    
         $this->db->where('item_id', $roomid);
         $this->db->update('item', $data);
-        return $this->db->affected_rows() > 0;
     }
+    
     public function get_items() {
         $this->db->select('*');
         $this->db->from('item');
@@ -286,10 +304,22 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->where('status', '1');
         return $this->db->get('admin_facility')->result_array();
     }
+    public function categorys($category_id){
+        $this->db->select('*');    
+        $this->db->from('category');
+        $this->db->where('category_id', $category_id);
+        $query= $this->db->get();
+            return $query->result();
+    }
 
 
-
-
+    public function subcategorys($category_id){
+        $this->db->select('*');    
+        $this->db->from('subcategory');
+        $this->db->where('subcategory_id', $category_id);
+        $query= $this->db->get();
+            return $query->result();
+    }
 
 
 
@@ -491,13 +521,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //     $query = $this->db->get();
     //     return $query->result_array(); // Returns an array of booking details
     // }
-    // public function categorys($category_id){
-    //     $this->db->select('*');    
-    //     $this->db->from('category');
-    //     $this->db->where('category_id', $category_id);
-    //     $query= $this->db->get();
-    //         return $query->result();
-    // }
+
     // public function updateCategory($roomid, $roomtype, $status, $roomtype_image) {
     //     $data = array(
     //         'category_name' => $roomtype,
@@ -508,13 +532,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //     $this->db->update('category', $data);
     //     return $this->db->affected_rows() > 0;
     // }
-    // public function subcategorys($category_id){
-    //     $this->db->select('*');    
-    //     $this->db->from('subcategory');
-    //     $this->db->where('subcategory_id', $category_id);
-    //     $query= $this->db->get();
-    //         return $query->result();
-    // }
+
    
     // public function get_subcategories($category_id) {
     //     $this->db->where('category_id', $category_id);

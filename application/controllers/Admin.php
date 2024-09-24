@@ -14,8 +14,6 @@ class Admin extends CI_Controller {
 			redirect('unauthorized');
 		}
     }
-
-
 	public function admin_dashboard()
 	{
         $data['menu']='admin_dashboard';
