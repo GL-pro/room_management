@@ -56,6 +56,7 @@ $route['translate_uri_dashes'] = FALSE;
 $route['index'] = 'main/index';    
 $route['login'] = 'main/login'; 
 
+$route['logincheck'] = 'main/logincheck';
 
 // Superadmin
 $route['dashboard'] = 'Superadmin/dashboard'; 
