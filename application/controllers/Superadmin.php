@@ -19,8 +19,10 @@ class Superadmin extends CI_Controller {
 	{
         $data['menu']='dashboard';
         $data['pagetitle']='DashBoard';
+		//$data['rooms'] = $this->HomeModel->getRoomTypesWithRooms();
+		$data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
 		$this->load->view('webapp/superadmin/include/header',$data);
-		$this->load->view('webapp/superadmin/dashboard/dashboard');
+		$this->load->view('webapp/superadmin/dashboard/dashboard', $data);
 		$this->load->view('webapp/superadmin/include/footer');
 	} 
 	public function room_enquiry()

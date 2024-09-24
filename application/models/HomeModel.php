@@ -298,7 +298,6 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return 0;
     }
 }
-
     public function get_subfacilities($facilityid) {
         $this->db->where('facilityid', $facilityid);
         $this->db->where('status', '1');
@@ -311,8 +310,6 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query= $this->db->get();
             return $query->result();
     }
-
-
     public function subcategorys($category_id){
         $this->db->select('*');    
         $this->db->from('subcategory');
@@ -320,9 +317,29 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query= $this->db->get();
             return $query->result();
     }
-
-
-
+    // public function getRoomTypesWithRooms() {
+    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno,
+    //     hotel_room.hotel_roomid');
+    //     $this->db->from('hotel_room');
+    //     $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
+    //     $this->db->order_by('hotel_room.roomtypeid', 'ASC');
+    //     $query = $this->db->get();
+    //     return $query->result_array();
+    // }
+    public function getRoomTypesWithRoomsGroupedByType() {
+        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
+        $this->db->from('hotel_room');
+        $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
+        $this->db->order_by('hotel_room.roomtypeid', 'ASC');
+        $query = $this->db->get();
+        $rooms = $query->result_array();
+        $groupedRooms = [];
+        foreach ($rooms as $room) {
+            $groupedRooms[$room['roomtype']][] = $room;
+        }
+        return $groupedRooms;
+    }
+    
 
 
 
@@ -371,16 +388,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //     return $this->db->count_all_results();
     // }
 
-    // public function getRoomTypesWithRooms() {
-    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno,
-    //         hotel_room.hotel_roomid, room_booking.order_id');
-    //     $this->db->from('hotel_room');
-    //     $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
-    //     $this->db->join('room_booking', 'room_booking.hotel_roomid = hotel_room.hotel_roomid', 'left');
-    //     $this->db->order_by('hotel_room.roomtypeid', 'ASC');
-    //     $query = $this->db->get();
-    //     return $query->result_array();
-    // }
+
 
 
     // public function get_roomdetails_by_ids1($roomIdsArray)

@@ -81,11 +81,7 @@ $route['subcategory_edit/(:any)'] = 'Superadmin/subcategory_edit/$1';
 $route['subcategoryupdate'] = 'Superadmin/subcategoryupdate';
 $route['get_subcategories'] = 'Superadmin/get_subcategories';
 $route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
-
 // Superadmin
-
-
-
 
 //ADMIN
 $route['admin_dashboard'] = 'admin/admin_dashboard';
@@ -104,11 +100,6 @@ $route['hotel_added_rooms'] = 'admin/hotel_added_rooms';
 $route['hotel_room_edit/(:any)'] = 'admin/hotel_room_edit/$1';
 $route['update_room_fields111'] = 'admin/update_room_fields111';
 $route['update_subfacility_status111'] = 'admin/update_subfacility_status111';
-
-
 //ADMIN
-
-
-
 //Auth
 $route['unauthorized'] = 'auth/unauthorized';

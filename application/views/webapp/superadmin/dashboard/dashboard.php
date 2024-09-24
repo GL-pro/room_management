@@ -281,7 +281,7 @@
                                     </div>
                                     <div class="d-flex">
                                         <button class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto"><i
-                                                class="ni ni-bold-right" aria-hidden="true"></i></button>
+                                         class="ni ni-bold-right" aria-hidden="true"></i></button>
                                     </div>
                                 </li>
                                 <li class="list-group-item border-0 d-flex justify-content-between ps-0 border-radius-lg">
@@ -336,137 +336,86 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class=" ">
                             <button id="searchButton" class="btn btn-primary w-100  mb-0">Search</button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row  mt-4">
-        <div class="col-xl-12">
-            <div class="card ">
-                <!-- <div class="card-header  p-3"> 
-                    <div class="row mb-4 mb-md-0">
-                        <div class="col-md-8 me-auto my-auto text-left">
-                            <h6>Rooms</h6>
-                        </div>
-                        <div class="col-lg-4 my-auto text-end">
-                            <button type="button" class="btn bg-gradient-primary mb-0 mt-0 mt-lg-0">
-                                Proseed
-                            </button>
-                        </div>
+   
+
+    <div class="row mt-4">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex">
+                    <div>
+                        <h5 class="mb-0">Rooms</h5>
                     </div>
-                </div> -->
-                <div class="card-header pb-0">
-                    <div class="d-flex">
-                        <div>
-                            <h5 class="mb-0">Rooms</h5>
-                        </div>
-
-                        <div class="ms-auto my-auto ">
-                            <div class="ms-auto my-auto">
-
-                                <button class="btn btn-primary mb-0" type="button" name="button">Proseed</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge badge-md badge-dot me-4">
-                            <i class="bg-success"></i>
-                            <span class="text-dark text-xs">Vacant</span>
-                        </span>
-                        <span class="badge badge-md badge-dot me-4">
-                            <i class="bg-warning"></i>
-                            <span class="text-dark text-xs">Booked</span>
-                        </span>
-                        <span class="badge badge-md badge-dot me-4">
-                            <i class="bg-danger"></i>
-                            <span class="text-dark text-xs">Occupied</span>
-                        </span>
-                    </div>
-                </div> 
-
-                <div class="card">
-                    <div class="card-header py-0">
-                        <div class="d-flex">
-                            <div class="col-md-8 me-auto my-auto text-left">
-                                <h5>Single Room</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body row py-0">
-                        <div class=" ">
-                            <div class="btn-group1" role="group" aria-label="Basic checkbox toggle   group">
-                                <input type="checkbox" class="btn-check1" id="btncheck1" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck1">201</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck2" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck2">202</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck3" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck3">203</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck4" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck4">204</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck5" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck5">205</label>
-                            </div>
-                        </div>
+                    <div class="ms-auto my-auto">
+                        <button class="btn btn-primary mb-0" type="button" name="button">Proceed</button>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header py-0">
-                        <div class="d-flex">
-                            <div class="col-md-8 me-auto my-auto text-left">
-                                <h5>Double Room</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body row py-0">
-                        <div class=" ">
-                            <div class="btn-group1" role="group" aria-label="Basic checkbox toggle   group">
-                                <input type="checkbox" class="btn-check1" id="btncheck11" autocomplete="off">
-                                <label class="btn btn-danger  " for="btncheck11">301</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck22" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck22">302</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck33" autocomplete="off">
-                                <label class="btn btn-warning  " for="btncheck33">303</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck44" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck44">304</label>
-
-                                <input type="checkbox" class="btn-check1" id="btncheck55" autocomplete="off">
-                                <label class="btn btn-success  " for="btncheck55">305</label>
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-success"></i>
+                        <span class="text-dark text-xs">Vacant</span>
+                    </span>
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-warning"></i>
+                        <span class="text-dark text-xs">Booked</span>
+                    </span>
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-danger"></i>
+                        <span class="text-dark text-xs">Occupied</span>
+                    </span>
                 </div>
-
             </div>
+
+            <!-- Loop through room types and rooms -->
+            <?php foreach ($room_data as $room_type => $rooms): ?>
+                <div class="card">
+                    <div class="card-header py-0">
+                        <div class="d-flex">
+                            <div class="col-md-8 me-auto my-auto text-left">
+                                <h5><?php echo $room_type; ?> Room</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body row py-0">
+                        <div class="">
+                            <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
+                                <?php foreach ($rooms as $room): ?>
+                                    <?php
+                                    $status_class = ($room['status'] === 'vacant') ? 'btn-success' : (($room['status'] === 'booked') ? 'btn-warning' : 'btn-danger');
+                                    ?>
+                                    <input type="checkbox" class="btn-check1" id="btncheck<?php echo $room['hotel_roomid']; ?>" autocomplete="off">
+                                    <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                                        <?php echo $room['roomno']; ?>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
+</div>
+
+
+
 
 
 
 
 </div>
-
-
 <script src="assets2/js/plugins/fullcalendar.js"></script>
-
 <script>
     var currentDate = new Date(); // Get the current date
-
     var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
         contentHeight: 'auto',
         initialView: "dayGridMonth",
@@ -479,7 +428,6 @@
         editable: false,
         initialDate: currentDate,
         events: [
-            
             {
                 title: 'Occupied 10',
                 start: '2024-09-17',
@@ -507,7 +455,6 @@
                 end: '2024-09-21',
                 className: 'bg-gradient-danger'
             },
-
             {
                 title: 'Booked 20',
                 start: '2024-09-20',
@@ -564,3 +511,4 @@
         }
     });
 </script>
+
