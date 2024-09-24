@@ -61,5 +61,17 @@ $route['logincheck'] = 'main/logincheck';
 // Superadmin
 $route['dashboard'] = 'Superadmin/dashboard'; 
 $route['room_enquiry'] = 'Superadmin/room_enquiry'; 
+$route['hotel_room_add_staff'] = 'Superadmin/hotel_room_add_staff';
+$route['hotel_added_rooms_staff'] = 'Superadmin/hotel_added_rooms_staff';
+$route['hotel_room_edit_staff/(:any)'] = 'Superadmin/hotel_room_edit_staff/$1';
+
+
 // Superadmin
  
+
+
+
+//ADMIN
+$route['admin_dashboard'] = 'admin/admin_dashboard';
+$route['logout'] = 'admin/logout';
+//ADMIN

@@ -41,28 +41,36 @@
     <hr class="horizontal light mt-0 mb-2">
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
-        <!-- <li class="nav-item mb-2 mt-0">
+
+
+
+       <li class="nav-item mb-2 mt-0">
           <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-dark <?php echo ($menu == 'profile ') ? 'active bg-dark' : ''; ?>" aria-controls="ProfileNav" role="button" aria-expanded="false">
             <img src="<?= base_url() ?>assets2/img/team-3.jpg" class="avatar">
             <span class="nav-link-text ms-2 ps-1">Brooklyn Alice</span>
           </a>
           <div class="collapse <?php echo ($menu == 'profile') ? 'show' : ''; ?>" id="ProfileNav" style>
             <ul class="nav ">
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a class="nav-link text-white <?php echo ($menu == 'profile') ? 'active' : ''; ?>" href="profile_view">
                   <span class="sidenav-mini-icon"> MP </span>
                   <span class="sidenav-normal  ms-3  ps-1"> My Profile </span>
                 </a>
-              </li>
+              </li> -->
               <li class="nav-item">
-                <a class="nav-link text-dark " href="logout">
+                <a class="nav-link text-dark " href="<?=base_url('superadmin/logout') ?>">
                   <span class="sidenav-mini-icon"> L </span>
                   <span class="sidenav-normal  ms-3  ps-1"> Logout </span>
                 </a>
               </li>
             </ul>
           </div>
-        </li> -->
+        </li> 
+
+
+
+
+
         <!-- <hr class="horizontal light mt-0"> -->
         <li class="nav-item">
           <a class="nav-link text-dark <?php echo ($menu == 'dashboard') ? 'active bg-dark' : ''; ?> " href="dashboard">
@@ -74,6 +82,42 @@
         </li>
  
 
+
+
+        
+        <!-- Hotel Room Details Section -->
+        <li class="nav-item">
+          <a data-bs-toggle="collapse" href="#room" class="nav-link text-dark <?php echo ($menu == 'hotel_room_add_staff' || $menu == 'hotel_added_rooms_staff') ? 'active bg-dark' : ''; ?>" aria-controls="room" role="button" aria-expanded="false">
+              <i class="material-symbols-outlined opacity-10">menu_book</i>
+              <span class="nav-link-text ms-2">Hotel Room Details</span>
+          </a>
+          <div class="collapse <?php echo ($menu == 'hotel_room_add_staff' || $menu == 'hotel_added_rooms_staff') ? 'show' : ''; ?>" id="room">
+              <ul class="nav">
+                  <li class="nav-item">
+                      <a class="nav-link text-dark <?php echo ($menu == 'hotel_room_add_staff') ? 'active bg-dark' : ''; ?>" href="<?= base_url('hotel_room_add_staff') ?>">
+                          <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                              <i class="material-icons ms-1 opacity-10">menu_book</i>
+                          </div>
+                          <span class="nav-link-text ms-2">Add Rooms</span>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link text-dark <?php echo ($menu == 'hotel_added_rooms_staff') ? 'active bg-dark' : ''; ?>" href="<?= base_url('hotel_added_rooms_staff') ?>">
+                          <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                              <i class="material-icons ms-1 opacity-10">menu_book</i>
+                          </div>
+                          <span class="nav-link-text ms-2">View Added Rooms</span>
+                      </a>
+                  </li>
+              </ul>
+          </div>
+      </li>
+
+
+
+
+
+      
       </ul>
     </div>
   </aside>

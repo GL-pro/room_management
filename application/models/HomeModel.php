@@ -18,6 +18,168 @@ class HomeModel extends CI_Model {
         return $query->row(); // Return membership admin data
     }
 
+    public function getCategories() {
+        $query = $this->db->get('category');
+        return $query->result();
+    }
+    public function getsubCategories() {
+        $query = $this->db->get('subcategory');
+        return $query->result();
+    }
+    public function items($item_id){
+        $this->db->select('*');    
+        $this->db->from('item');
+        $this->db->where('item_id', $item_id);
+        $query= $this->db->get();
+            return $query->result();
+    }
+    public function updateItem($roomid, $roomtype, $status, $roomtype_image) {
+        $data = array(
+            'item_name' => $roomtype,
+            'status' => $status,
+            'item_image' => $roomtype_image
+        );
+        $this->db->where('item_id', $roomid);
+        $this->db->update('item', $data);
+        return $this->db->affected_rows() > 0;
+    }
+    public function get_items() {
+        $this->db->select('*');
+        $this->db->from('item');
+        //$this->db->where('status', '1');
+        $this->db->where('approvestatus', 'Approved');
+        $query = $this->db->get();
+        return $query->result();
+    }
+    public function getroomtype(){
+        $this->db->select('*');    
+        $this->db->from('admin_room');
+        $this->db->where('status','1');
+         $this->db->where('approvestatus','Approved');
+        $query= $this->db->get();
+            return $query->result();
+    }
+    public function get_facilitiesadmin() {
+        $query = $this->db->get('admin_facility_type'); // Assuming 'facility' is the name of your database table
+        return $query->result_array(); // Return the result as an array of rows
+    }
+    public function get_facilities_and_subfacilities1() {
+        $this->db->select('*');
+        $this->db->from('admin_facility_type');
+        $this->db->join('admin_facility', 'admin_facility_type.facilityid = admin_facility.facilityid');
+        $this->db->where('admin_facility_type.approvestatus', 'Approved');
+        $this->db->where('admin_facility_type.status', '1');
+        $this->db->where('admin_facility.status', '1');
+        $query_hoteladmin1 = $this->db->get();
+        $results_hoteladmin1 = $query_hoteladmin1->result_array();
+        $results = array_merge($results_hoteladmin1);
+        // Group subfacilities by facility ID
+        $facilities = [];
+        foreach ($results as $row) {
+            $facility_id = $row['facilityid'];
+            if (!isset($facilities[$facility_id])) {
+                $facilities[$facility_id] = $row;
+                $facilities[$facility_id]['subfacilities'] = [];
+            }
+            $facilities[$facility_id]['subfacilities'][] = $row;
+        }
+        // Convert the associative array to a simple array
+        $facilities = array_values($facilities);
+        return $facilities;
+    }
+    public function get_rooms() {
+        $this->db->select('hotel_room.*, GROUP_CONCAT(hotel_room_facility.facilityid) AS facility_ids');
+        $this->db->from('hotel_room');
+        $this->db->join('hotel_room_facility', 'hotel_room_facility.hotel_roomid = hotel_room.hotel_roomid', 'left');
+        $this->db->where('hotel_room.status', '1');
+        $this->db->group_by('hotel_room.hotel_roomid'); // Group by room id to avoid duplication
+        $query = $this->db->get();
+        return $query->result(); // Return all rooms as result
+    }
+
+    public function insert_room($roomData) {
+        $this->db->insert('hotel_room', $roomData);
+    }
+    public function insert_hotel_room_facility($insertedRoomID, $facilityId) {
+        $data = array(
+        'hotel_roomid' => $insertedRoomID,
+        'facilityid' => $facilityId,
+        );
+        $this->db->insert('hotel_room_facility', $data);
+        }
+        public function insert_hotel_room_subfacility($insertedRoomID, $subfacilityId, $facilityId) {
+            date_default_timezone_set('Asia/Kolkata');
+            $adding_date=date('Y-m-d H:i:s');
+            $data = array(
+                'hotel_roomid' => $insertedRoomID,
+                'facilityid' => $facilityId,
+                'subfacilityid' => $subfacilityId,
+                'status' => '1',
+                'date' => $adding_date,
+            );
+            $this->db->insert('hotel_room_facility', $data);
+        }
+        public function get_roomsbyroomid($hotel_roomid) {
+            $this->db->select('hotel_room.*,hotel_room_facility.subfacilityid');
+            $this->db->from('hotel_room');
+            $this->db->join('hotel_room_facility', 'hotel_room_facility.hotel_roomid = hotel_room.hotel_roomid', 'left');
+            $this->db->where('hotel_room.status', '1');
+            $this->db->where('hotel_room.hotel_roomid', $hotel_roomid);
+            $query = $this->db->get();
+            return $query->result(); // Return subfacilities associated with the room
+        }
+        public function get_roomimages($hotel_roomid) {
+            $this->db->select('hotel_room.*');    
+            $this->db->from('hotel_room');
+            $this->db->where('hotel_room.hotel_roomid', $hotel_roomid);
+            $query = $this->db->get();
+            return $query->result();
+        }
+        public function update_room_fields111($roomId, $data) {
+            $this->db->where('hotel_roomid', $roomId);
+            $this->db->update('hotel_room', $data);
+            if ($this->db->affected_rows() > 0) {
+                return true; 
+            } else {
+                return false; 
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function get_all_room_type() {
         $this->db->select('*');
         $this->db->from('admin_room');
@@ -44,41 +206,9 @@ class HomeModel extends CI_Model {
         return $this->db->affected_rows() > 0;
     }
 
-    public function getroomtype(){
-        $this->db->select('*');    
-        $this->db->from('admin_room');
-        $this->db->where('status','1');
-         $this->db->where('approvestatus','Approved');
-        $query= $this->db->get();
-            return $query->result();
-    }
+ 
 
-    public function get_facilities_and_subfacilities1() {
-        $this->db->select('*');
-        $this->db->from('admin_facility_type');
-        $this->db->join('admin_facility', 'admin_facility_type.facilityid = admin_facility.facilityid');
-        $this->db->where('admin_facility_type.approvestatus', 'Approved');
-        $this->db->where('admin_facility_type.status', '1');
-        $this->db->where('admin_facility.status', '1');
-        $query_hoteladmin1 = $this->db->get();
-        $results_hoteladmin1 = $query_hoteladmin1->result_array();
     
-        $results = array_merge($results_hoteladmin1);
-        // Group subfacilities by facility ID
-        $facilities = [];
-        foreach ($results as $row) {
-            $facility_id = $row['facilityid'];
-            if (!isset($facilities[$facility_id])) {
-                $facilities[$facility_id] = $row;
-                $facilities[$facility_id]['subfacilities'] = [];
-            }
-            $facilities[$facility_id]['subfacilities'][] = $row;
-        }
-        // Convert the associative array to a simple array
-        $facilities = array_values($facilities);
-        return $facilities;
-    }
-
     public function get_facilities_and_subfacilities() {
     $this->db->select('*');
     $this->db->from('admin_facility_type');
@@ -103,11 +233,6 @@ class HomeModel extends CI_Model {
     return $facilities;
 }
 
-
-    public function get_facilitiesadmin() {
-        $query = $this->db->get('admin_facility_type'); // Assuming 'facility' is the name of your database table
-        return $query->result_array(); // Return the result as an array of rows
-    }
 
 
     public function insertSubfacilitymember($facilityid, $subfacilitynames) {
@@ -147,68 +272,16 @@ public function insertFacilitymember($facilityname) {
 }
 
 
-public function insert_hotel_room_facility($insertedRoomID, $facilityId) {
-    // Insert a record into the hotel_room_facility table
-    $data = array(
-    'hotel_roomid' => $insertedRoomID,
-    'facilityid' => $facilityId,
-    );
-    $this->db->insert('hotel_room_facility', $data);
-    }
 
 
-    public function insert_hotel_room_subfacility($insertedRoomID, $subfacilityId, $facilityId) {
-        // Insert a record into the hotel_room_facility table
-        date_default_timezone_set('Asia/Kolkata');
-        $adding_date=date('Y-m-d H:i:s');
-        $data = array(
-            'hotel_roomid' => $insertedRoomID,
-            'facilityid' => $facilityId,
-            'subfacilityid' => $subfacilityId,
-            'status' => '1',
-        //    'hotelid' => $hotelid,
-            'date' => $adding_date,
-        );
-        $this->db->insert('hotel_room_facility', $data);
-    }
+   
 
-    public function insert_room($roomData) {
-        $this->db->insert('hotel_room', $roomData);
-    }
-
-    public function get_rooms() {
-        $this->db->select('hotel_room.*, GROUP_CONCAT(hotel_room_facility.facilityid) AS facility_ids');
-        $this->db->from('hotel_room');
-        $this->db->join('hotel_room_facility', 'hotel_room_facility.hotel_roomid = hotel_room.hotel_roomid', 'left');
-        $this->db->where('hotel_room.status', '1');
-      //  $this->db->where('hotel_room.hotelid',$hotelid);
-        $this->db->group_by('hotel_room.hotel_roomid'); // Group by room id to avoid duplication
-        $query = $this->db->get();
-        return $query->result(); // Return all rooms as result
-    }
+  
 
 
-    public function get_roomsbyroomid($hotel_roomid) {
-        $this->db->select('hotel_room.*,hotel_room_facility.subfacilityid');
-        $this->db->from('hotel_room');
-        $this->db->join('hotel_room_facility', 'hotel_room_facility.hotel_roomid = hotel_room.hotel_roomid', 'left');
-        $this->db->where('hotel_room.status', '1');
-        $this->db->where('hotel_room.hotel_roomid', $hotel_roomid);
-        $query = $this->db->get();
-        return $query->result(); // Return subfacilities associated with the room
-    }
+   
 
-    public function get_roomimages($hotel_roomid) {
-        $this->db->select('hotel_room.*');    
-        $this->db->from('hotel_room');
-       // $this->db->join('membership', 'membership.membership_id = hotel.membership_id'); 
-     //   $this->db->join('hotel_room', 'hotel_room.hotelid = hotel.hotelid'); 
-      //  $this->db->where('hotel.membership_id', $id);
-      //  $this->db->where('hotel.hotelid', $hotelid);
-        $this->db->where('hotel_room.hotel_roomid', $hotel_roomid);
-        $query = $this->db->get();
-        return $query->result();
-    }
+ 
 
    
     // public function update_or_insert_hotel_room_subfacility111($hotelRoomId, $subfacilityId, $facilityId, $isChecked)
@@ -243,15 +316,7 @@ public function insert_hotel_room_facility($insertedRoomID, $facilityId) {
     //     }
     // }
 
-    public function update_room_fields111($roomId, $data) {
-        $this->db->where('hotel_roomid', $roomId);
-        $this->db->update('hotel_room', $data);
-        if ($this->db->affected_rows() > 0) {
-            return true; 
-        } else {
-            return false; 
-        }
-    }
+
 
     public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query = $this->db->get_where('hotel_room_facility', array(
@@ -498,31 +563,8 @@ public function insert_hotel_room_facility($insertedRoomID, $facilityId) {
     //     return $query->result();
     // }
 
-    public function get_items() {
-        $this->db->select('*');
-        $this->db->from('item');
-        //$this->db->where('status', '1');
-        $this->db->where('approvestatus', 'Approved');
-        $query = $this->db->get();
-        return $query->result();
-    }
-    public function items($item_id){
-        $this->db->select('*');    
-        $this->db->from('item');
-        $this->db->where('item_id', $item_id);
-        $query= $this->db->get();
-            return $query->result();
-    }
-    public function updateItem($roomid, $roomtype, $status, $roomtype_image) {
-        $data = array(
-            'item_name' => $roomtype,
-            'status' => $status,
-            'item_image' => $roomtype_image
-        );
-        $this->db->where('item_id', $roomid);
-        $this->db->update('item', $data);
-        return $this->db->affected_rows() > 0;
-    }
+ 
+   
 
 
 
@@ -604,15 +646,8 @@ public function insert_hotel_room_facility($insertedRoomID, $facilityId) {
         return $query->result(); // This should return an array of subcategory objects
     }
     
-    public function getCategories() {
-        $query = $this->db->get('category');
-        return $query->result();
-    }
+  
 
-    public function getsubCategories() {
-        $query = $this->db->get('subcategory');
-        return $query->result();
-    }
     public function get_subcategories_by_category($category_id) {
         $this->db->where('category_id', $category_id);
         $query = $this->db->get('subcategory');

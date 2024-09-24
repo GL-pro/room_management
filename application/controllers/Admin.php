@@ -2,22 +2,21 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin extends CI_Controller {
+	
+	public function __construct(){
+        parent::__construct();
+        $this->load->library('session');
+	    $this->load->helper('url'); 
+        $this->load->model('HomeModel');
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/userguide3/general/urls.html
-	 */
+		$user_id = $this->session->userdata('user_id');
+		$user_type = $this->session->userdata('user_type');
+		if (!$user_id || $user_type !== 'admin') {
+			// If not logged in or not an membadmin, redirect to login page
+			$this->session->set_flashdata('error', 'Unauthorized access. Please login.');
+			redirect('unauthorized');
+		}
+    }
 
 
 	public function admin_dashboard()
@@ -69,5 +68,19 @@ class Admin extends CI_Controller {
 		$this->load->view('webapp/admin/room/admin_room_list');
 		$this->load->view('webapp/admin/include/footer');
 	}   
+
+
+    public function logout() {
+        $this->session->unset_userdata('logged_in'); 
+        $this->session->sess_destroy(); 
+        redirect('login');
+    }
+
+
+
+
+
+
+
 
 }
