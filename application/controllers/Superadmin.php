@@ -337,6 +337,245 @@ class Superadmin extends CI_Controller {
 	}
 
 
+//category
+public function category_creation()
+{
+	$data['menu']='category_creation';
+	$data['pagetitle']='DashBoard';
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/category/category_creation');
+	$this->load->view('webapp/Superadmin/include/footer');
+} 
+public function category_reg() {
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$status=$this->input->post('status');
+		$roomtypename = $this->input->post('roomtypename');
+		$imageFileName = ''; // Initialize empty image file name
+		  if (!empty($_FILES['roomtype_image']['name'])) {
+			$config['upload_path'] = './upload/category_images/';
+			$config['allowed_types'] = 'jpg|jpeg|png';
+			$config['max_size'] = 2048; // 2MB max size (you can adjust as needed)
+			$config['file_name'] = uniqid(); // Unique file name
+			$this->load->library('upload', $config);
+			if ($this->upload->do_upload('roomtype_image')) {
+				$uploadData = $this->upload->data();
+				$imageFileName = $uploadData['file_name'];
+			} else {
+				$error = $this->upload->display_errors();
+				redirect('category_creation', 'refresh');
+			}
+		}
+		date_default_timezone_set('Asia/Kolkata');
+		$adding_date=date('Y-m-d H:i:s');
+		$data = array(
+			'category_name' => $roomtypename,
+			'date' => $adding_date,
+			'adminstatus' => 'staff',
+			'approvestatus' => 'Approved',
+			'status' => $status,
+			'category_image' => $imageFileName // Assign image file name
+		);
+		$this->db->insert('category', $data);
+		redirect('all_category', 'refresh');
+	} else {
+	redirect('all_category', 'refresh');
+	}
+}
+public function category_edit($category_id)
+{
+	$data['roomid'] = $category_id; 
+	$data['categorys'] = $this->HomeModel->categorys($category_id);
+	$data['menu']='category_edit';
+	$data['pagetitle']='DashBoard';
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/category/category_edit',$data);
+	$this->load->view('webapp/Superadmin/include/footer');
+}  
+public function categoryupdate() {
+	$roomid = $this->input->post('category_id');
+	$roomtype = $this->input->post('roomtypename');
+	$status = $this->input->post('status');
+	$existing_type_image = $this->input->post('existing_type_image');
+	$roomtype_image = $existing_type_image; // Default to existing image
+	if (!empty($_FILES['roomtype_image']['name'])) {
+		$config['upload_path'] = './upload/category_images/';
+		$config['allowed_types'] = 'jpg|jpeg|png';
+		$config['max_size'] = 2048; // 2MB
+		$config['encrypt_name'] = TRUE;
+		$this->load->library('upload', $config);
+		if ($this->upload->do_upload('roomtype_image')) {
+			$upload_data = $this->upload->data();
+			$roomtype_image = $upload_data['file_name'];
+			// Delete old image file if a new image is uploaded
+			if ($existing_type_image && file_exists('./upload/category_images/' . $existing_type_image)) {
+				unlink('./upload/category_images/' . $existing_type_image);
+			}
+		} else {
+			$error = $this->upload->display_errors();
+			echo json_encode(['error' => $error]);
+			return;
+		}
+	}
+	$this->HomeModel->updateCategory($roomid, $roomtype, $status, $roomtype_image);
+	redirect('all_category', 'refresh');
+}
+public function all_category()
+{
+	$data['menu']='all_category';
+	$data['pagetitle']='DashBoard';
+	$data['categorys'] = $this->HomeModel->get_categorys();
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/category/all_category');
+	$this->load->view('webapp/Superadmin/include/footer');
+} 
+
+//sub category
+public function subcategory_creation()
+{
+	$data['menu']='subcategory_creation';
+	$data['pagetitle']='DashBoard';
+	$data['categories'] = $this->HomeModel->get_all_categories(); // Fetch categories
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/subcategory/subcategory_creation');
+	$this->load->view('webapp/Superadmin/include/footer');
+} 
+public function subcategory_reg() {
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$status=$this->input->post('status');
+		$roomtypename = $this->input->post('roomtypename');
+		$category_id = $this->input->post('category_id'); // Get selected category ID
+		$imageFileName = ''; 
+		  if (!empty($_FILES['roomtype_image']['name'])) {
+			$config['upload_path'] = './upload/subcategory_images/';
+			$config['allowed_types'] = 'jpg|jpeg|png';
+			$config['max_size'] = 2048; // 2MB max size (you can adjust as needed)
+			$config['file_name'] = uniqid(); // Unique file name
+			$this->load->library('upload', $config);
+			if ($this->upload->do_upload('roomtype_image')) {
+				$uploadData = $this->upload->data();
+				$imageFileName = $uploadData['file_name'];
+			} else {
+				$error = $this->upload->display_errors();
+				redirect('subcategory_creation', 'refresh');
+			}
+		}
+		date_default_timezone_set('Asia/Kolkata');
+		$adding_date=date('Y-m-d H:i:s');
+		$data = array(
+			'subcategory_name' => $roomtypename,
+			'category_id' => $category_id,
+			'date' => $adding_date,
+			'adminstatus' => 'staff',
+			'approvestatus' => 'Approved',
+			'status' => $status,
+			'subcategory_image' => $imageFileName // Assign image file name
+		);
+		$this->db->insert('subcategory', $data);
+		redirect('all_subcategory', 'refresh');
+	} else {
+	redirect('all_subcategory', 'refresh');
+	}
+}
+public function subcategory_edit($category_id)
+{
+	$data['roomid'] = $category_id; 
+	$data['subcategorys'] = $this->HomeModel->subcategorys($category_id);
+	$data['categories'] = $this->HomeModel->get_all_categories(); // Fetch categories
+	$data['menu']='subcategory_edit';
+	$data['pagetitle']='DashBoard';
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/subcategory/subcategory_edit',$data);
+	$this->load->view('webapp/Superadmin/include/footer');
+}  
+public function subcategoryupdate() {
+	$roomid = $this->input->post('subcategory_id');
+	$roomtype = $this->input->post('roomtypename');
+	$category_id = $this->input->post('category_id'); // Capture the category ID
+	$status = $this->input->post('status');
+	$existing_type_image = $this->input->post('existing_type_image');
+	$roomtype_image = $existing_type_image; // Default to existing image
+	if (!empty($_FILES['roomtype_image']['name'])) {
+		$config['upload_path'] = './upload/subcategory_images/';
+		$config['allowed_types'] = 'jpg|jpeg|png';
+		$config['max_size'] = 2048; // 2MB
+		$config['encrypt_name'] = TRUE;
+		$this->load->library('upload', $config);
+		if ($this->upload->do_upload('roomtype_image')) {
+			$upload_data = $this->upload->data();
+			$roomtype_image = $upload_data['file_name'];
+			// Delete old image file if a new image is uploaded
+			if ($existing_type_image && file_exists('./upload/subcategory_images/' . $existing_type_image)) {
+				unlink('./upload/subcategory_images/' . $existing_type_image);
+			}
+		} else {
+			$error = $this->upload->display_errors();
+			echo json_encode(['error' => $error]);
+			return;
+		}
+	}
+	$this->HomeModel->updatesubCategory($roomid, $roomtype, $status, $roomtype_image, $category_id);
+	redirect('all_subcategory', 'refresh');
+}
+public function all_subcategory()
+{
+	$data['menu']='all_subcategory';
+	$data['pagetitle']='DashBoard';
+	$data['subcategorys'] = $this->HomeModel->get_subcategorys();
+	$this->load->view('webapp/Superadmin/include/header',$data);
+	$this->load->view('webapp/Superadmin/subcategory/all_subcategory');
+	$this->load->view('webapp/Superadmin/include/footer');
+} 
+
+public function update_status_subcategory() {
+	$room_id = $this->input->post('subcategory_id');
+	$status = $this->input->post('status');
+	if ($room_id !== null && $status !== null) {
+		$this->HomeModel->update_statussubcata($room_id, $status);
+		echo json_encode(["success" => true]);
+	} else {
+		echo json_encode(["success" => false]);
+	}
+}
+
+public function update_statuscategory() {
+	$room_id = $this->input->post('category_id');
+	$status = $this->input->post('status');
+	if ($room_id !== null && $status !== null) {
+		$this->HomeModel->update_statuscata($room_id, $status);
+		echo json_encode(["success" => true]);
+	} else {
+		echo json_encode(["success" => false]);
+	}
+}
+public function update_statusitem() {
+	$room_id = $this->input->post('item_id');
+	$status = $this->input->post('status');
+	if ($room_id !== null && $status !== null) {
+		$this->HomeModel->update_statusitem($room_id, $status);
+		echo json_encode(["success" => true]);
+	} else {
+		echo json_encode(["success" => false]);
+	}
+}
+public function get_subcategories() {
+	$category_id = $this->input->post('category_id');
+	if ($category_id) {
+		$this->db->where('category_id', $category_id);
+		$query = $this->db->get('subcategory');
+		$subcategories = $query->result();
+		echo json_encode($subcategories);
+	} else {
+		echo json_encode([]);
+	}
+}
+
+
+
+
+
+
+
+
 
 
 

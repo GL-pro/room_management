@@ -73,7 +73,7 @@
 
         <!-- <hr class="horizontal light mt-0"> -->
         <li class="nav-item">
-          <a class="nav-link text-dark <?php echo ($menu == 'dashboard') ? 'active bg-dark' : ''; ?> " href="dashboard">
+          <a class="nav-link text-dark <?php echo ($menu == 'dashboard') ? 'active bg-dark' : ''; ?> " href="<?=base_url('dashboard') ?>">
             <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons ms-1 opacity-10">dashboard</i>
             </div>
@@ -114,10 +114,84 @@
       </li>
 
 
+      <li class="nav-item">
+          <a data-bs-toggle="collapse" href="#category" class="nav-link text-dark <?php echo ($menu == 'category_creation' || $menu == 'all_category') ? 'active bg-dark' : ''; ?>" aria-controls="room_type" role="button" aria-expanded="false">
+            <i class="material-symbols-outlined  opacity-10">menu_book</i>
+            <span class="nav-link-text ms-2 ">Category</span>
+          </a>
+          <div class="collapse  <?php echo ($menu == 'category_creation' || $menu == 'all_category') ? 'show' : ''; ?> " id="category">
+            <ul class="nav ">
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'category_creation') ? 'active' : ''; ?>" href="<?=base_url('category_creation') ?>">
+                  <span class="sidenav-mini-icon"> CC </span>
+                  <span class="sidenav-normal  ms-2  ps-1">Category Creation </span>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'all_category') ? 'active' : ''; ?>" href="<?=base_url('all_category') ?>">
+                  <span class="sidenav-mini-icon"> AC </span>
+                  <span class="sidenav-normal  ms-2  ps-1"> All Categorys</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+
+        <li class="nav-item">
+          <a data-bs-toggle="collapse" href="#subcategory" class="nav-link text-dark <?php echo ($menu == 'subcategory_creation' || $menu == 'all_subcategory') ? 'active bg-dark' : ''; ?>" aria-controls="room_type" role="button" aria-expanded="false">
+            <i class="material-symbols-outlined  opacity-10">menu_book</i>
+            <span class="nav-link-text ms-2 ">Sub Category</span>
+          </a>
+          <div class="collapse  <?php echo ($menu == 'subcategory_creation' || $menu == 'all_subcategory') ? 'show' : ''; ?> " id="subcategory">
+            <ul class="nav ">
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'subcategory_creation') ? 'active' : ''; ?>" href="<?=base_url('subcategory_creation') ?>">
+                  <span class="sidenav-mini-icon"> CC </span>
+                  <span class="sidenav-normal  ms-2  ps-1">SubCategory Creation </span>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'all_subcategory') ? 'active' : ''; ?>" href="<?=base_url('all_subcategory') ?>">
+                  <span class="sidenav-mini-icon"> AC </span>
+                  <span class="sidenav-normal  ms-2  ps-1"> All Sub Categorys</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+
+      <li class="nav-item">
+          <a data-bs-toggle="collapse" href="#item" class="nav-link text-dark <?php echo ($menu == 'item_creation' || $menu == 'all_item') ? 'active bg-dark' : ''; ?>" aria-controls="room_type" role="button" aria-expanded="false">
+            <i class="material-symbols-outlined  opacity-10">menu_book</i>
+            <span class="nav-link-text ms-2 ">Item</span>
+          </a>
+          <div class="collapse  <?php echo ($menu == 'item_creation' || $menu == 'all_item') ? 'show' : ''; ?> " id="item">
+            <ul class="nav ">
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'item_creation') ? 'active' : ''; ?>" href="<?=base_url('item_creation') ?>">
+                  <span class="sidenav-mini-icon"> CC </span>
+                  <span class="sidenav-normal  ms-2  ps-1">Item Creation </span>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'all_item') ? 'active' : ''; ?>" href="<?=base_url('all_item') ?>">
+                  <span class="sidenav-mini-icon"> AC </span>
+                  <span class="sidenav-normal  ms-2  ps-1"> All Items</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
 
 
 
-      
+
+
+
+
+
       </ul>
     </div>
   </aside>

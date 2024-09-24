@@ -28,43 +28,14 @@
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">Room No</th> 
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">Rooms Name</th> 
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">Type of Rooms </th> 
-                                    <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">No:- of Rooms </th> 
+                                    <!-- <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">No:- of Rooms </th>  -->
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">No:- of Guests </th> 
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">Normal price </th> 
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder ">Discount price </th> 
                                     <th class="  text-uppercase text-secondary text-xs font-weight-bolder text-center w-10">Action</th>
                                 </tr>
                             </thead>
-                            <!-- <tbody>
-                                <tr>
-                                    <td class="w-10">
-                                        <p class="text-xs font-weight-bold mb-0">1</p>
-                                    </td>
-                                    <td class=""> 
-                                            <h6 class="ms-3 my-auto text-wrap text-break">Rooms Name</h6> 
-                                    </td> 
-                                    <td class=""> 
-                                            <h6 class="ms-3 my-auto text-wrap text-break">Type of Rooms</h6> 
-                                    </td> 
-                                    <td class=""> 
-                                            <h6 class="ms-3 my-auto text-wrap text-break">No:- of Rooms</h6> 
-                                    </td> 
-                                    <td class=""> 
-                                            <h6 class="ms-3 my-auto text-wrap text-break">Normal price </h6> 
-                                    </td> 
-                                    <td class=""> 
-                                            <h6 class="ms-3 my-auto text-wrap text-break">Discount price </h6> 
-                                    </td> 
-                                    <td class="text-sm text-center w-10">
-                                        <a href="hotel_room_add" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Rooms">
-                                            <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
-                                        </a> 
-                                    </td>
-
-                                </tr> 
-                                
-                            </tbody> -->
-
+                          
 
         <tbody>
             <?php 
@@ -78,7 +49,7 @@
                 <td><?php echo $room->roomno; ?></td>
                 <td><?php echo $room->room_name; ?></td>
                 <td><?php echo $room->roomtypeid; ?></td>
-                <td><?php echo $room->noofrooms; ?></td>
+                <!-- <td><?php echo $room->noofrooms; ?></td> -->
                 <td><?php echo $room->noofguests; ?></td>
                 <td><?php echo $room->normalprice; ?></td>
                 <td><?php echo $room->discountprice; ?></td>

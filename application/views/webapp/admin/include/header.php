@@ -62,6 +62,7 @@
           </div>
         </li>
         <hr class="horizontal light mt-0">
+        
         <li class="nav-item">
           <a class="nav-link text-dark <?php echo ($menu == 'admin_dashboard') ? 'active bg-dark' : ''; ?> " href="<?=base_url('admin_dashboard') ?>">
             <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
@@ -70,7 +71,6 @@
             <span class="nav-link-text ms-2">Dashboard</span>
           </a>
         </li>
-
 
         <li class="nav-item">
           <a data-bs-toggle="collapse" href="#room_type" class="nav-link text-dark <?php echo ($menu == 'room_type_creation' || $menu == 'all_room_type') ? 'active bg-dark' : ''; ?>" aria-controls="room_type" role="button" aria-expanded="false">
@@ -95,9 +95,6 @@
             </ul>
           </div>
         </li>
-
-
-
 
          <!-- Hotel Room Details Section -->
       <li class="nav-item">
@@ -127,9 +124,6 @@
           </div>
       </li>
 
-
-      
-
       <li class="nav-item">
           <a class="nav-link text-dark <?php echo ($menu == 'hotel_facilitys') ? 'active bg-dark' : ''; ?>" href="<?= base_url('hotel_facilitys') ?>">
               <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
@@ -139,12 +133,6 @@
           </a>
       </li>
        
-
-      
-
-
-
-  
       </ul>
     </div>
   </aside>

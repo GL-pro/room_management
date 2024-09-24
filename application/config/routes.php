@@ -55,7 +55,6 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['index'] = 'main/index';    
 $route['login'] = 'main/login'; 
-
 $route['logincheck'] = 'main/logincheck';
 
 // Superadmin
@@ -65,13 +64,50 @@ $route['hotel_room_add_staff'] = 'Superadmin/hotel_room_add_staff';
 $route['hotel_added_rooms_staff'] = 'Superadmin/hotel_added_rooms_staff';
 $route['hotel_room_edit_staff/(:any)'] = 'Superadmin/hotel_room_edit_staff/$1';
 
+$route['item_creation'] = 'Superadmin/item_creation';
+$route['item_reg'] = 'Superadmin/item_reg';
+$route['all_item'] = 'Superadmin/all_item';
+$route['item_edit/(:any)'] = 'Superadmin/item_edit/$1';
+$route['itemupdate'] = 'Superadmin/itemupdate';
+$route['category_creation'] = 'Superadmin/category_creation';
+$route['category_reg'] = 'Superadmin/category_reg';
+$route['all_category'] = 'Superadmin/all_category';
+$route['category_edit/(:any)'] = 'Superadmin/category_edit/$1';
+$route['categoryupdate'] = 'Superadmin/categoryupdate';
+$route['subcategory_creation'] = 'Superadmin/subcategory_creation';
+$route['subcategory_reg'] = 'Superadmin/subcategory_reg';
+$route['all_subcategory'] = 'Superadmin/all_subcategory';
+$route['subcategory_edit/(:any)'] = 'Superadmin/subcategory_edit/$1';
+$route['subcategoryupdate'] = 'Superadmin/subcategoryupdate';
+$route['get_subcategories'] = 'Superadmin/get_subcategories';
 
 // Superadmin
- 
+
 
 
 
 //ADMIN
 $route['admin_dashboard'] = 'admin/admin_dashboard';
 $route['logout'] = 'admin/logout';
+$route['room_type_creation'] = 'admin/room_type_creation';
+$route['all_room_type'] = 'admin/all_room_type';
+$route['room_type_reg'] = 'admin/room_type_reg';
+$route['roomtype_edit/(:any)'] = 'admin/roomtype_edit/$1';
+$route['roomtypeupdate'] = 'admin/roomtypeupdate';
+$route['hotel_room_add'] = 'admin/hotel_room_add';
+$route['hotel_facilitys'] = 'admin/hotel_facilitys';
+$route['hotel_add_facility'] = 'admin/hotel_add_facility';
+$route['saveFacility'] = 'admin/saveFacility';
+$route['insert_hotel_room'] = 'admin/insert_hotel_room';
+$route['hotel_added_rooms'] = 'admin/hotel_added_rooms';
+$route['hotel_room_edit/(:any)'] = 'admin/hotel_room_edit/$1';
+$route['update_room_fields111'] = 'admin/update_room_fields111';
+$route['update_subfacility_status111'] = 'admin/update_subfacility_status111';
+
+
 //ADMIN
+
+
+
+//Auth
+$route['unauthorized'] = 'auth/unauthorized';
