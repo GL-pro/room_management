@@ -155,22 +155,37 @@
 
                                     <div class="row mt-3">
                                         <div class="col-12 col-sm-6">
-                                            <div class="input-group input-group-static">
+                                           <div class="input-group input-group-static">
+                                                <label>Extra Guests count:</label> 
+                                                <input class="form-control" name="extguests" type="number" 
+                                                value="<?php echo !empty($rooms) ? $rooms[0]->extguests : ''; ?>"  required />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-6 mt-3 mt-sm-0">
+                                           <div class="input-group input-group-static">
                                                 <label>Normal Price: </label>
-                                                <input class="form-control" name="nprice" type="text"  
+                                                <input class="form-control" name="nprice" type="number"  
                                                 value="<?php echo !empty($rooms) ? $rooms[0]->normalprice : ''; ?>" 
                                                 required />
                                             </div>
                                         </div>
-                                        <div class="col-12 col-sm-6 mt-3 mt-sm-0">
-                                            <div class="input-group input-group-static">
+                                    </div>
+
+
+
+                                    <div class="row mt-3">
+                                        <div class="col-12 col-sm-6">
+                                        <div class="input-group input-group-static">
                                                 <label>Discount Price:</label>
-                                                <input class="form-control" name="dprice" type="text" 
+                                                <input class="form-control" name="dprice" type="number" 
                                                     value="<?php echo !empty($rooms) ? $rooms[0]->discountprice : ''; ?>" 
                                                     required />
                                             </div>
                                         </div>
                                     </div>
+
+                                         
+
 
                                 
                                     <div class="row mt-3">                             
@@ -536,6 +551,7 @@ $('form').submit(function(event) {
     formData.append('roomType', $('#choices_type_of_rooms').val());
     formData.append('noOfRooms', $('input[name="noofrooms"]').val());
     formData.append('noofguests', $('input[name="noofguests"]').val());
+    formData.append('extguests', $('input[name="extguests"]').val());
     formData.append('normalPrice', $('input[name="nprice"]').val());
     formData.append('discountPrice', $('input[name="dprice"]').val());
     formData.append('hotelRoomId', $('input[name="hotel_roomid"]').val());

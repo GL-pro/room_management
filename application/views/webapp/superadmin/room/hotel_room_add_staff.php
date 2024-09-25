@@ -148,48 +148,33 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <!-- <div class="col-12 col-sm-6">
+
+                                       <div class="col-12 col-sm-6">
                                             <div class="input-group input-group-static">
-                                                <label>Normal Price: <span id="normalPriceValue">100</span></label> 
-                                                <input class="form-control" id="normalPrice" name="nprice" type="range" min="500" max="10000" value="100" required />
-                                                </div>
-                                        </div> -->
+                                                <label>Extra Guests count:</label> 
+                                                <input class="form-control" name="extguests" type="number"  required />
+                                            </div>
+                                        </div>  
                                         <div class="col-12 col-sm-6">
                                             <div class="input-group input-group-static">
                                                 <label>Normal Price:</label> 
-                                                <input class="form-control" name="nprice" type="text"  required />
+                                                <input class="form-control" name="nprice" type="number"  required />
                                             </div>
                                         </div>
-                                        <div class="col-12 col-sm-6 mt-3 mt-sm-0">
+                                       
+                                    </div>
+
+                                    <div class="row mt-3">
+                                    <div class="col-12 col-sm-6 mt-3 mt-sm-0">
                                             <div class="input-group input-group-static">
                                                 <label>Discount Price:</label> <!-- Display the range value -->
-                                                <input class="form-control" name="dprice" type="text"  required />
+                                                <input class="form-control" name="dprice" type="number"  required />
                                             </div>
-                                        </div>
+                                        </div>                                
                                     </div>
-                                                                                          
-                                        <!-- <div class="row mt-3"> 
-                                            <div class="col-12 col-sm-6 mt-3 mt-sm-0"> 
-                                                <div class="input-group input-group-static">
-                                                    <label for="checkin">Check-in Time:</label>
-                                                    <input type="datetime-local" class="form-control" id="checkin" name="checkin" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-6 mt-3 mt-sm-0"> 
-                                                <div class="input-group input-group-static">
-                                                    <label for="checkout">Check-out Time:</label>
-                                                    <input type="datetime-local" class="form-control" id="checkout" name="checkout" required>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-12 col-sm-6 mt-3 mt-sm-0"> 
-                                                <div class="input-group input-group-static">
-                                                    <label for="addonPrice">Add-on Price:</label>
-                                                    <input type="number" class="form-control" id="addonPrice" name="addonprice" value="0" readonly>
-                                                </div>
-                                        </div> -->
 
+                                                                                    
                                                 <div class="row mt-3">
                                                     <div class="col-12  ">
                                                         <div class="input-group input-group-static">

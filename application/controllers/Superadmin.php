@@ -23,29 +23,59 @@ class Superadmin extends CI_Controller {
 		$this->load->view('webapp/superadmin/dashboard/dashboard', $data);
 		$this->load->view('webapp/superadmin/include/footer');
 	} 
-	public function room_enquiry()
-	{
-        $data['menu']='room_enquiry';
-        $data['pagetitle']='Room Enquiry';
-		$data['agencies'] = $this->HomeModel->getAgents();
-		//var_dump($data['agencies']);die;
-		   // Get the room IDs passed from the form
-		   $selected_rooms = $this->input->post('selected_rooms');
-		   // Check if $selected_rooms is empty or null
-		   if (!empty($selected_rooms)) {
-			   // Split the room IDs into an array
-			   $room_ids = explode(',', $selected_rooms);
-		   } else {
-			   // Initialize an empty array if no room is selected
-			   $room_ids = [];
-		   }
-		   // Pass the room IDs to the view
-		   $data['room_ids'] = $room_ids;
+	// public function room_enquiry()
+	// {
+    //     $data['menu']='room_enquiry';
+    //     $data['pagetitle']='Room Enquiry';
+	// 	$data['agencies'] = $this->HomeModel->getAgents();
+	
 
-		$this->load->view('webapp/superadmin/include/header',$data);
-		$this->load->view('webapp/superadmin/dashboard/room_enquiry',$data);
+	// 	$selected_rooms = $this->input->post('selected_rooms');
+	// 	if (!empty($selected_rooms)) {
+	// 		$room_ids = explode(',', $selected_rooms);
+	// 	} else {
+	// 		$room_ids = [];
+	// 	}
+	// 	$data['room_ids'] = $room_ids;
+
+	// 	$this->load->view('webapp/superadmin/include/header',$data);
+	// 	$this->load->view('webapp/superadmin/dashboard/room_enquiry',$data);
+	// 	$this->load->view('webapp/superadmin/include/footer');
+	// } 
+
+	public function room_enquiry() {
+		$data['menu'] = 'room_enquiry';
+		$data['pagetitle'] = 'Room Enquiry';
+		$data['agencies'] = $this->HomeModel->getAgents();
+		$data['customers'] = $this->HomeModel->getCustomers(); // Fetch customers
+	
+		$selected_rooms = $this->input->post('selected_rooms');
+		if (!empty($selected_rooms)) {
+			$room_ids = explode(',', $selected_rooms);
+		} else {
+			$room_ids = [];
+		}
+		$data['room_ids'] = $room_ids;
+
+
+		// Fetch room details based on hotel_roomids
+		$room_details = [];
+		foreach ($room_ids as $room_id) {
+			$room_info = $this->HomeModel->getRoomDetails($room_id);
+			if ($room_info) {
+				$room_details[] = $room_info;
+			}
+		}
+		$data['room_details'] = $room_details;
+
+
+		//var_dump($data['room_details']);die;
+		$this->load->view('webapp/superadmin/include/header', $data);
+		$this->load->view('webapp/superadmin/dashboard/room_enquiry', $data);
 		$this->load->view('webapp/superadmin/include/footer');
-	} 
+	}
+
+	
 
     public function logout() {
         $this->session->unset_userdata('logged_in'); 
@@ -270,6 +300,7 @@ class Superadmin extends CI_Controller {
 		$normalPrices = $this->input->post('nprice');
 		$discountPrices = $this->input->post('dprice');
 		$noOfGuests = $this->input->post('noofguests');
+		$extguests = $this->input->post('extguests');
 		$description = $this->input->post('description');
 		$imageFileNames = array();
 		for ($i = 1; $i <= 5; $i++) {
@@ -300,6 +331,7 @@ class Superadmin extends CI_Controller {
 				'normalprice' => $normalPrices,
 				'discountprice' => $discountPrices,
 				'noofguests' => $noOfGuests,
+				'extguests' => $extguests,
 				'description'=> $description,
 				'room_status'=> 'vaccant',
 				'image' => implode(', ', $imageFileNames),
@@ -368,12 +400,12 @@ class Superadmin extends CI_Controller {
 		echo json_encode(['success' => true]);
 	}
 
-
 	public function update_room_fields111_staff() {
 		$roomno = $this->input->post('roomno');
 		$roomName = $this->input->post('roomName');
 		$roomType = $this->input->post('roomType');
 		$noOfGuests = $this->input->post('noofguests');
+		$extguests = $this->input->post('extguests');
 		$normalPrice = $this->input->post('normalPrice');
 		$discountPrice = $this->input->post('discountPrice');
 		$hotelRoomId = $this->input->post('hotelRoomId');
@@ -390,6 +422,7 @@ class Superadmin extends CI_Controller {
 			'room_name' => $roomName,
 			'roomtypeid' => $roomType,
 			'noofguests' => $noOfGuests,
+			'extguests' => $extguests,
 			'normalprice' => $normalPrice,
 			'discountprice' => $discountPrice,
 			'description' => $description,
@@ -675,8 +708,81 @@ public function add_customer() {
 }
 
 
+public function add_agent() {
+	date_default_timezone_set('Asia/Kolkata');
+	$adding_date=date('Y-m-d H:i:s');
+    $customer_data = array(
+        'agent_name' => $this->input->post('agent_name'),
+        'email' => $this->input->post('email1'),
+        'phone' => $this->input->post('mobile1'),
+        'address' => $this->input->post('address1'),
+		'commission_per' => $this->input->post('comm'),
+		'commission_amt' => $this->input->post('commamt'),
+        'date' => $adding_date,
+		'status' => '1',
+		'admin_status' => 'staff',
+	);
+    $result = $this->HomeModel->addAgent($customer_data);
+    if ($result) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false]);
+    }
+}
 
+public function room_enquiry_submit()
+{
+    // Capture booking details
+    $agent_id = $this->input->post('agent_id');
+    $customer_id = $this->input->post('customer_id');
+    $dateranges = $this->input->post('daterange'); // This is an array
+    $extra_guest_counts = $this->input->post('extra_guest_count'); // This is an array
+    $advance_amount = $this->input->post('advance_amount');
+    $payment_method = $this->input->post('payment_method');
 
+    // Capture guest details
+    $guest_names = $this->input->post('guest_name');
+    $guest_phones = $this->input->post('guest_phone');
+    $guest_id_proofs = $_FILES['guest_id_proof'];
+
+    // Insert booking into room_booking table
+    $booking_data = [
+        'agent_id' => $agent_id,
+        'customer_id' => $customer_id,
+        'advance_amount' => $advance_amount,
+        'payment_method' => $payment_method,
+        'booking_date' => date('Y-m-d H:i:s'),
+    ];
+    $booking_id = $this->HomeModel->insert_room_booking($booking_data);
+
+    // Insert room details into room_booking_details table
+    foreach ($dateranges as $index => $daterange) {
+        $room_detail_data = [
+            'booking_id' => $booking_id,
+          //  'room_id' => $this->input->post('room_ids')[$index], // Assuming you have room_ids array
+            'daterange' => $daterange,
+            'extra_guest_count' => $extra_guest_counts[$index],
+        ];
+        $this->HomeModel->insert_room_booking_details($room_detail_data);
+    }
+
+    // Insert guest details into guest_details table
+    foreach ($guest_names as $index => $name) {
+        // Handle file upload for ID proof
+        $upload_path = './upload/id_proofs/';
+        $uploaded_file = $this->_upload_file($guest_id_proofs, $index, $upload_path);
+        $guest_data = [
+            'booking_id' => $booking_id,
+            'guest_name' => $name,
+            'phone' => $guest_phones[$index],
+            'id_proof' => $uploaded_file,
+        ];
+        $this->HomeModel->insert_guest_details($guest_data);
+    }
+
+    // Redirect or other logic
+    redirect('Superadmin/booking_success');
+}
 
 
 

@@ -83,7 +83,7 @@ $route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
 
 
 $route['add_customer'] = 'Superadmin/add_customer';
-
+$route['add_agent'] = 'Superadmin/add_agent';
 // Superadmin
 
 //ADMIN

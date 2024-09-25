@@ -357,16 +357,42 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query = $this->db->get();
         return $query->result_array(); // Change to result_array for easier debugging
     }
+    public function getCustomers() {
+        $this->db->select('customer_id, customer_name'); // Adjust fields as necessary
+        $query = $this->db->get('customer');
+        return $query->result_array(); // Return an associative array
+    }
 
-
-
-
-
-
-
-  
-
+    public function getRoomDetails($room_id) {
+        $this->db->select('hotel_room.*,hotel_room.noofguests,hotel_room.extguests,hotel_room.room_name, hotel_room.roomno, admin_room.roomtype');
+        $this->db->from('hotel_room');
+        $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
+        $this->db->where('hotel_room.hotel_roomid', $room_id); // Fetch details based on hotel_roomid
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->row_array(); // Return the first row as an associative array
+        }
+        return null; // Return null if no data is found
+    }
     
+    public function addAgent($data) {
+        return $this->db->insert('agent', $data); // Insert into customer table
+    }
+
+
+    public function insert_room_booking($data)
+    {
+        $this->db->insert('room_booking', $data);
+        return $this->db->insert_id(); // Returns the booking ID
+    }
+    public function insert_room_booking_details($data)
+    {
+        $this->db->insert('room_booking_details', $data);
+    }
+    public function insert_guest_details($data)
+    {
+        $this->db->insert('guest_details', $data);
+    }
     
   
 

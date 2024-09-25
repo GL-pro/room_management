@@ -1,31 +1,29 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <style>
-
 </style>
-
 
 <div class="container-fluid py-1 mb-6 vh-100">
     <div class="row">
         <div class="col-12">
-
             <div class="row  ">
                 <div class="col-12  m-auto ">
                     <div class="card">
                         <div class="card-body">
-                            <form action="">
+                        <form action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
                                     <div class="d-lg-flex">
                                         <div class="mb-2">
                                             <h5 class="font-weight-bolder mb-0"> Room Enquiry </h5>
                                         </div>
-                                        <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                            <div class="ms-auto my-auto">
-                                                <button class="btn bg-gradient-info btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#customermodel">+&nbsp;Add Customer</button>
-                                            </div>
-                                        </div>
                                     </div>
+
+
+                                    <!-- <input type="hidden" name="room_ids[]" value="101">
+                                    <input type="hidden" name="room_ids[]" value="102">
+                                    <input type="text" name="daterange[]" value="2024-09-26 to 2024-09-27">
+                                    <input type="text" name="extra_guest_count[]" value="1"> -->
+
 
                                        <!-- Display Selected Room IDs -->
                                     <!-- <div class="row mt-3">
@@ -35,176 +33,122 @@
                                         </div>
                                     </div> -->
 
-                                    <div class=" ">
-                                        <div class=" ">
-                                            <div class="row  ">
+                                 <div class=" ">
+                                        <div class="">
+                                            <div class="row">
                                                 <div class="col-12 col-sm-4 mt-2">
-                                                    <div class="input-group input-group-outline ">
-                                                        <select id=" " class="form-control  ">
+                                                    <div class="input-group input-group-static">
+                                                        <label class="form-label text-primary">Agent</label>
+                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#agentmodel"> + Add Agent</a>
+                                                        <select class="form-control" id="choices-Agency" name="agent_id">
+                                                            <option value="">Select Agent</option>
+                                                            <?php foreach ($agencies as $agent): ?>
+                                                                <option value="<?= $agent['agent_id'] ?>"><?= $agent['agent_name'] ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-4 mt-2">
+                                                    <div class="input-group input-group-static">
+                                                        <label class="form-label text-primary">Customer</label>
+                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
+                                                        <select class="form-control" id="choices-Customer" name="customer_id">
                                                             <option value="">Select Customer</option>
-                                                            <option value=" "> 1</option>
-                                                            <option value=" "> 2</option>
-                                                            <option value=" "> 3</option>
+                                                            <?php foreach ($customers as $customer): ?>
+                                                                <option value="<?= $customer['customer_id'] ?>"><?= $customer['customer_name'] ?></option>
+                                                            <?php endforeach; ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
-                                            <div class="card-body ">
-                                                <div class="d-lg-flex">
-                                                    <div>
-                                                        <h5 class="font-weight-bolder mb-0">Room Name - 201 <span class="text-sm">(Room Type)</span></h5>
-                                                    </div>
-
-                                                    <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                                        <div class="ms-auto my-auto">
-
-                                                            <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-2 p-0">
-                                                    <div class="col-12 p-0">
-                                                        <div class="row">
-                                                            <div class="col-12 col-sm-4 mt-2">
-                                                                <div class="input-group input-group-outline">
-                                                                    <label class="form-label" for="daterange">Select Date Range:</label>
-                                                                    <input type="text" class="form-control" id="daterange" name="daterange" required>
-                                                                </div>
+                                        <?php if (!empty($room_details)): ?>
+                                            <?php foreach ($room_details as $room): ?>
+                                                <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
+                                                    <div class="card-body ">
+                                                        <div class="d-lg-flex">
+                                                            <div>
+                                                                <h5 class="font-weight-bolder mb-0"><?= $room['room_name'] ?> - <?= $room['roomno'] ?> <span class="text-sm">(<?= $room['roomtype'] ?>)</span></h5>
                                                             </div>
-                                                            <div class="col-12 col-sm-4 mt-2">
-                                                                <div class="input-group input-group-outline">
-                                                                    <select id=" " class="form-control  ">
-                                                                        <option value="">Select Extra Guest Count</option>
-                                                                        <option value=" "> 1</option>
-                                                                        <option value=" "> 2</option>
-                                                                        <option value=" "> 3</option>
-                                                                    </select>
+                                                            <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                                                <div class="ms-auto my-auto">
+                                                                    <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row mt-3 border py-2">
-                                                            <div class="d-flex">
-                                                                <div class="mb-2">
-                                                                    <h6 class="font-weight-bolder mb-0">Guest details</h6>
-                                                                </div>
-                                                                <div class="ms-auto my-auto  ">
-                                                                    <div class="ms-auto my-auto">
-                                                                        <button class="btn bg-gradient-primary btn-sm mb-0" type="button">+&nbsp;Add</button>
+                                                        <div class="row mt-2 p-0">
+                                                            <div class="col-12 p-0">
+                                                                <div class="row">
+                                                                    <div class="col-12 col-sm-4 mt-2">
+                                                                        <div class="input-group input-group-outline">
+                                                                            <label class="form-label" for="daterange">Select Date Range:</label>
+                                                                            <input type="text" class="form-control" id="daterange" name="daterange[]" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-4 mt-2">
+                                                                        <div class="input-group input-group-outline">
+                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-room-id="<?= $room['roomno'] ?>">
+                                                                            <option value="">Select Extra Guest Count</option>
+                                                                            <?php for ($i = 1; $i <= $room['extguests']; $i++): ?>
+                                                                                <option value="<?= $i ?>"><?= $i ?></option>
+                                                                            <?php endfor; ?>
+                                                                        </select>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="row ">
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Name</label>
-                                                                        <input class="  form-control" type="text" placeholder=" " />
+                                                                <div class="row mt-3 border py-2">
+                                                                    <div class="d-flex">
+                                                                        <div class="mb-2">
+                                                                            <h6 class="font-weight-bolder mb-0">Guest details</h6>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Age</label>
-                                                                        <input class="  form-control" type="text" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Phone Number</label>
-                                                                        <input class="  form-control" type="text" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Id Proof</label>
-                                                                        <input class="  form-control" type="file" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
-                                            <div class="card-body ">
-                                                <div class="d-lg-flex">
-                                                    <div>
-                                                        <h5 class="font-weight-bolder mb-0">Room Name - 202 <span class="text-sm">(Room Type)</span></h5>
+                                                                    <div class="row ">
+                                                                        <?php for ($i = 0; $i < $room['noofguests']; $i++): ?>
+                                                                            <div class="col-12 col-sm-3 mt-2">
+                                                                                <div class="input-group input-group-outline is-focused">
+                                                                                    <label class="form-label">Name</label>
+                                                                                    <input class="form-control" type="text" name="guest_name[<?= $i ?>]" placeholder="Guest Name" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-12 col-sm-3 mt-2">
+                                                                                <div class="input-group input-group-outline is-focused">
+                                                                                    <label class="form-label">Age</label>
+                                                                                    <input class="form-control" type="number" name="guest_age[<?= $i ?>]" placeholder="Guest Age" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-12 col-sm-3 mt-2">
+                                                                                <div class="input-group input-group-outline is-focused">
+                                                                                    <label class="form-label">Phone Number</label>
+                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $i ?>]" placeholder="Phone Number" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-12 col-sm-3 mt-2">
+                                                                                <div class="input-group input-group-outline is-focused">
+                                                                                    <label class="form-label">Id Proof</label>
+                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $i ?>]" />
+                                                                                </div>
+                                                                            </div>
+                                                                        <?php endfor; ?>
+                                                                    </div>
 
-                                                    </div>
+                                                                </div>
 
-                                                    <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                                        <div class="ms-auto my-auto">
+                                                                 <!-- Extra Guests will be appended here -->
+                                                                  <div id="extra-guests-<?= $room['roomno'] ?>"></div>
 
-                                                            <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-2 p-0">
-                                                    <div class="col-12 p-0">
-                                                        <div class="row">
-                                                            <div class="col-12 col-sm-4 mt-2">
-                                                                <div class="input-group input-group-outline">
-                                                                    <label class="form-label" for="daterange">Select Date Range:</label>
-                                                                    <input type="text" class="form-control" id="daterange" name="daterange" required>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-12 col-sm-4 mt-2">
-                                                                <div class="input-group input-group-outline">
-                                                                    <select id=" " class="form-control  ">
-                                                                        <option value="">Select Extra Guest Count</option>
-                                                                        <option value=" "> 1</option>
-                                                                        <option value=" "> 2</option>
-                                                                        <option value=" "> 3</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mt-3 border py-2">
-                                                            <div class="d-flex">
-                                                                <div class="mb-2">
-                                                                    <h6 class="font-weight-bolder mb-0">Guest details</h6>
-                                                                </div>
-                                                                <div class="ms-auto my-auto  ">
-                                                                    <div class="ms-auto my-auto">
-                                                                        <button class="btn bg-gradient-primary btn-sm mb-0" type="button">+&nbsp;Add</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row ">
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Name</label>
-                                                                        <input class="  form-control" type="text" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Age</label>
-                                                                        <input class="  form-control" type="text" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Phone Number</label>
-                                                                        <input class="  form-control" type="number" placeholder=" " />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 mt-2">
-                                                                    <div class="input-group input-group-outline is-focused">
-                                                                        <label class="form-label"> Id Proof</label>
-                                                                        <input class="  form-control" type="file" placeholder=" " />
-                                                                    </div>
-                                                                </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <p>No rooms selected.</p>
+                                        <?php endif; ?>
+
+
 
                                         <div class=" mt-3">
                                             <div class="d-lg-flex">
@@ -217,12 +161,12 @@
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-outline ">
                                                         <label class="form-label">Advance Amount</label>
-                                                        <input class="  form-control" type="number" placeholder=" " />
+                                                        <input class="form-control" type="number" name="advance_amount" placeholder=" " />
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-outline">
-                                                        <select class="form-control">
+                                                        <select name="payment_method" class="form-control">
                                                             <option value="" disabled>Select Payment Method</option>
                                                             <option value="cash">Cash</option>
                                                             <option value="card">Card</option>
@@ -237,7 +181,7 @@
 
                                 <div class="button-row d-flex mt-4">
                                     <a href=" " class="ms-auto mb-0">
-                                        <button class="ms-auto mb-0 btn bg-gradient-dark " type="button" title="submit">Submit</button></a>
+                                    <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -327,6 +271,81 @@
 </div>
 <!-- Modal -->
 
+
+
+<!-- Modal -->
+<div class="modal fade" id="agentmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Agent </h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="agentForm" action="add_agent" method="POST">
+                <div class="modal-body">
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <label class="form-label">Agent Name</label>
+                        <input class="form-control" type="text" name="agent_name" required />
+                    </div>
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email1" required />
+                    </div>
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <label class="form-label">Mobile</label>
+                        <input class="form-control" type="tel" name="mobile1" required />
+                    </div>
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <textarea class="form-control" name="address1" rows="3" placeholder="Address" spellcheck="false" required></textarea>
+                    </div>
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <label class="form-label">Commission(%)</label>
+                        <input class="form-control" type="text" name="comm" required />
+                    </div>
+
+                    <div class="mt-4 input-group input-group-outline">
+                        <label class="form-label">Commission Amount</label>
+                        <input class="form-control" type="text" name="commamt" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn bg-gradient-primary">Add</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
+
+<script src="<?= base_url() ?>assets2/js/plugins/choices.min.js"></script>
+
+<script>
+    if (document.getElementById('choices-Customer')) {
+        var element = document.getElementById('choices-Customer');
+        const example = new Choices(element, {
+            searchEnabled: true,
+            shouldSort: false,
+        });
+    };
+    if (document.getElementById('choices-Agency')) {
+        var element = document.getElementById('choices-Agency');
+        const example = new Choices(element, {
+            searchEnabled: true,
+            shouldSort: false,
+        });
+    };
+</script>
+
 <script>
     flatpickr("#daterange", {
         mode: "range", // Enable date range selection
@@ -362,6 +381,31 @@
 </script>
 
 
+<!-- agent insertion -->
+<script>
+    document.getElementById('agentForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    const formData = new FormData(this);
+    fetch('add_agent', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Agent added successfully!');
+            // Optionally, you can reload the page or update the table dynamically
+            location.reload();
+        } else {
+            alert('Error adding agent');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
+
+
+
 <!-- JavaScript to Toggle Company Fields -->
 <script>
 document.getElementById('customerType').addEventListener('change', function() {
@@ -382,7 +426,51 @@ document.getElementById('customerType').addEventListener('change', function() {
         gstNumberField.required = false; // Not required
     }
 });
-
-
 </script>
 
+<script>
+    document.querySelectorAll('.extra-guest-count').forEach(function(select) {
+    select.addEventListener('change', function() {
+        const roomId = this.getAttribute('data-room-id');
+        const extraGuestCount = parseInt(this.value);
+        const container = document.getElementById('extra-guests-' + roomId);
+
+        // Clear previous extra guest fields
+        container.innerHTML = '';
+
+        if (extraGuestCount > 0) {
+            for (let i = 1; i <= extraGuestCount; i++) {
+                // Create the guest detail fields for each extra guest
+                container.innerHTML += `
+                    <div class="row mt-3 border py-2">
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Extra Guest ${i} Name</label>
+                                <input class="form-control" type="text" name="extra_guest_name_${roomId}[]" placeholder="Extra Guest Name" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Age</label>
+                                <input class="form-control" type="number" name="extra_guest_age_${roomId}[]" placeholder="Guest Age" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Phone Number</label>
+                                <input class="form-control" type="text" name="extra_guest_phone_${roomId}[]" placeholder="Phone Number" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Id Proof</label>
+                                <input class="form-control" type="file" name="extra_guest_id_proof_${roomId}[]" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    });
+});
+</script>
