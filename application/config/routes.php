@@ -63,7 +63,6 @@ $route['room_enquiry'] = 'Superadmin/room_enquiry';
 $route['hotel_room_add_staff'] = 'Superadmin/hotel_room_add_staff';
 $route['hotel_added_rooms_staff'] = 'Superadmin/hotel_added_rooms_staff';
 $route['hotel_room_edit_staff/(:any)'] = 'Superadmin/hotel_room_edit_staff/$1';
-
 $route['item_creation'] = 'Superadmin/item_creation';
 $route['item_reg'] = 'Superadmin/item_reg';
 $route['all_item'] = 'Superadmin/all_item';
@@ -81,6 +80,10 @@ $route['subcategory_edit/(:any)'] = 'Superadmin/subcategory_edit/$1';
 $route['subcategoryupdate'] = 'Superadmin/subcategoryupdate';
 $route['get_subcategories'] = 'Superadmin/get_subcategories';
 $route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
+
+
+$route['add_customer'] = 'Superadmin/add_customer';
+
 // Superadmin
 
 //ADMIN

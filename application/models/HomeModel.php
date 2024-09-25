@@ -347,10 +347,16 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
 
 
 
-
-
-
-
+    public function addCustomer($data) {
+        return $this->db->insert('customer', $data); // Insert into customer table
+    }
+    public function getAgents() {
+        $this->db->select('*');
+        $this->db->from('agent');
+        $this->db->where('status', '1');
+        $query = $this->db->get();
+        return $query->result_array(); // Change to result_array for easier debugging
+    }
 
 
 
@@ -363,6 +369,45 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     
     
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

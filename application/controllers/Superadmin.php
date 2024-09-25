@@ -1,8 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Superadmin extends CI_Controller {
-
 	public function __construct(){
         parent::__construct();
         $this->load->library('session');
@@ -29,10 +27,26 @@ class Superadmin extends CI_Controller {
 	{
         $data['menu']='room_enquiry';
         $data['pagetitle']='Room Enquiry';
+		$data['agencies'] = $this->HomeModel->getAgents();
+		//var_dump($data['agencies']);die;
+		   // Get the room IDs passed from the form
+		   $selected_rooms = $this->input->post('selected_rooms');
+		   // Check if $selected_rooms is empty or null
+		   if (!empty($selected_rooms)) {
+			   // Split the room IDs into an array
+			   $room_ids = explode(',', $selected_rooms);
+		   } else {
+			   // Initialize an empty array if no room is selected
+			   $room_ids = [];
+		   }
+		   // Pass the room IDs to the view
+		   $data['room_ids'] = $room_ids;
+
 		$this->load->view('webapp/superadmin/include/header',$data);
-		$this->load->view('webapp/superadmin/dashboard/room_enquiry');
+		$this->load->view('webapp/superadmin/dashboard/room_enquiry',$data);
 		$this->load->view('webapp/superadmin/include/footer');
 	} 
+
     public function logout() {
         $this->session->unset_userdata('logged_in'); 
         $this->session->sess_destroy(); 
@@ -621,6 +635,45 @@ public function get_subcategories() {
 		echo json_encode([]);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function add_customer() {
+	date_default_timezone_set('Asia/Kolkata');
+	$adding_date=date('Y-m-d H:i:s');
+    $customer_data = array(
+        'customer_name' => $this->input->post('customer_name'),
+        'age' => $this->input->post('age'),
+        'email' => $this->input->post('email'),
+        'phone' => $this->input->post('mobile'),
+        'address' => $this->input->post('address'),
+        'agency_id' => $this->input->post('agency_id'),
+        'customer_type' => $this->input->post('customer_type'),
+        'company_name' => $this->input->post('company_name'),
+        'company_address' => $this->input->post('company_address'),
+        'gst_number' => $this->input->post('gst_number'),
+        'date' => $adding_date,
+		'status' => '1',
+		'admin_status' => 'staff',
+	);
+    $result = $this->HomeModel->addCustomer($customer_data);
+    if ($result) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false]);
+    }
+}
+
 
 
 
