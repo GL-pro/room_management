@@ -364,7 +364,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     }
 
     public function getRoomDetails($room_id) {
-        $this->db->select('hotel_room.*,hotel_room.noofguests,hotel_room.extguests,hotel_room.room_name, hotel_room.roomno, admin_room.roomtype');
+        $this->db->select('hotel_room.*,admin_room.*,hotel_room.noofguests,hotel_room.extguests,hotel_room.room_name, hotel_room.roomno, admin_room.roomtype');
         $this->db->from('hotel_room');
         $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
         $this->db->where('hotel_room.hotel_roomid', $room_id); // Fetch details based on hotel_roomid
@@ -394,7 +394,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->insert('guest_details', $data);
     }
     
-  
+
 
 
 

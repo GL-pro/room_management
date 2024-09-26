@@ -65,6 +65,15 @@
 
                                         <?php if (!empty($room_details)): ?>
                                             <?php foreach ($room_details as $room): ?>
+
+                                                <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>"> 
+                                                <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
+                                                <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
+                                                <input type="hidden" name="noofguests[]" value="<?= $room['noofguests'] ?>">
+                                                <!-- <input type="hidden" name="checkin[]" value="<?= $room['checkin'] ?>">
+                                                <input type="hidden" name="checkout[]" value="<?= $room['checkout'] ?>">
+                                                -->
+                                               
                                                 <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
                                                     <div class="card-body ">
                                                         <div class="d-lg-flex">
@@ -88,7 +97,7 @@
                                                                     </div>
                                                                     <div class="col-12 col-sm-4 mt-2">
                                                                         <div class="input-group input-group-outline">
-                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-room-id="<?= $room['roomno'] ?>">
+                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-room-id="<?= $room['hotel_roomid'] ?>">
                                                                             <option value="">Select Extra Guest Count</option>
                                                                             <?php for ($i = 1; $i <= $room['extguests']; $i++): ?>
                                                                                 <option value="<?= $i ?>"><?= $i ?></option>
@@ -109,25 +118,28 @@
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Name</label>
-                                                                                    <input class="form-control" type="text" name="guest_name[<?= $i ?>]" placeholder="Guest Name" />
+                                                                                    <!-- <input class="form-control" type="text" name="guest_name[<?= $i ?>]" placeholder="Guest Name" /> -->
+                                                                                    <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Name" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Age</label>
-                                                                                    <input class="form-control" type="number" name="guest_age[<?= $i ?>]" placeholder="Guest Age" />
+                                                                                    <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Age" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Phone Number</label>
-                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $i ?>]" placeholder="Phone Number" />
+                                                                                    <!-- <input class="form-control" type="text" name="guest_phone[<?= $i ?>]" placeholder="Phone Number" /> -->
+                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" placeholder="Phone Number" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Id Proof</label>
-                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $i ?>]" />
+                                                                                    <!-- <input class="form-control" type="file" name="guest_id_proof[<?= $i ?>]" /> -->
+                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]" />
                                                                                 </div>
                                                                             </div>
                                                                         <?php endfor; ?>
@@ -136,7 +148,7 @@
                                                                 </div>
 
                                                                  <!-- Extra Guests will be appended here -->
-                                                                  <div id="extra-guests-<?= $room['roomno'] ?>"></div>
+                                                                  <div id="extra-guests-<?= $room['hotel_roomid'] ?>"></div>
 
 
                                                             </div>

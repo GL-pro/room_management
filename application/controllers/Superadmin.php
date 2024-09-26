@@ -732,6 +732,8 @@ public function add_agent() {
 
 public function room_enquiry_submit()
 {
+	// Generate a unique order ID
+	$order_id = uniqid('order_');
     // Capture booking details
     $agent_id = $this->input->post('agent_id');
     $customer_id = $this->input->post('customer_id');
@@ -740,53 +742,150 @@ public function room_enquiry_submit()
     $advance_amount = $this->input->post('advance_amount');
     $payment_method = $this->input->post('payment_method');
 
+    // Capture room details
+    $room_ids = $this->input->post('room_id');
+    $roomnos = $this->input->post('roomno');
+    $room_names = $this->input->post('room_name');
+    $no_of_guests = $this->input->post('noofguests');
+
     // Capture guest details
     $guest_names = $this->input->post('guest_name');
     $guest_phones = $this->input->post('guest_phone');
+	$guest_ages = $this->input->post('guest_age');
     $guest_id_proofs = $_FILES['guest_id_proof'];
 
     // Insert booking into room_booking table
-    $booking_data = [
-        'agent_id' => $agent_id,
-        'customer_id' => $customer_id,
-        'advance_amount' => $advance_amount,
-        'payment_method' => $payment_method,
-        'booking_date' => date('Y-m-d H:i:s'),
-    ];
-    $booking_id = $this->HomeModel->insert_room_booking($booking_data);
-
-    // Insert room details into room_booking_details table
-    foreach ($dateranges as $index => $daterange) {
+	foreach ($room_ids as $index => $hotel_roomid) {
+		 // Extract check-in and check-out from the current room's date range
+		 if (!empty($dateranges[$index])) {
+            $daterange = explode(' to ', $dateranges[$index]);
+            $checkin = !empty($daterange[0]) ? date('Y-m-d H:i:s', strtotime($daterange[0] . ' 15:00:00')) : null; // Set check-in time as 15:00
+            $checkout = !empty($daterange[1]) ? date('Y-m-d H:i:s', strtotime($daterange[1] . ' 11:00:00')) : null; // Set check-out time as 11:00
+        } else {
+            $checkin = null;
+            $checkout = null;
+        }
+        $booking_data = [
+			'order_id' => $order_id, // Store the unique order ID
+            'agent_id' => $agent_id,
+            'customer_id' => $customer_id,
+            'advance_amount' => $advance_amount,
+            'payment_method' => $payment_method,
+            'booking_date' => date('Y-m-d H:i:s'),
+            'hotel_roomid' => $hotel_roomid, 
+            'roomno' => $roomnos[$index],
+            'room_name' => $room_names[$index],
+            'noofguests' => $no_of_guests[$index],
+		     'checkin' => $checkin, // Use the check-in time for this room
+            'checkout' => $checkout, // Use the check-out time for this room
+            'payment_status' => 'payed',
+            'admin_status' => 'staff',
+            'booking_status' => 'booked',
+            'status' => '1',
+        ];
+        $booking_id = $this->HomeModel->insert_room_booking($booking_data);
+		$bookingid= $booking_id;
+        // Insert room details into room_booking_details table
         $room_detail_data = [
             'booking_id' => $booking_id,
-          //  'room_id' => $this->input->post('room_ids')[$index], // Assuming you have room_ids array
-            'daterange' => $daterange,
+            'date' => date('Y-m-d H:i:s'),
             'extra_guest_count' => $extra_guest_counts[$index],
+			'hotel_roomid' => $hotel_roomid,
         ];
         $this->HomeModel->insert_room_booking_details($room_detail_data);
-    }
+      // Insert guest details for the current room
+	  if (!empty($guest_names[$hotel_roomid])) {
+		foreach ($guest_names[$hotel_roomid] as $guest_index => $guest_name) {
+			    // Check if the guest name is empty
+                if (!empty($guest_name)) {
+			 $file = [
+                'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
+                'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
+                'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
+                'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
+                'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
+            ];
+            // Check if the file upload was successful
+            if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
+                // Proceed to upload the file
+                $uploaded_file = $this->_upload_file($file, $upload_path);
+            } else {
+                // Use default if no file is provided or there's an error
+                $uploaded_file = 'default.jpg';
+            }
 
-    // Insert guest details into guest_details table
-    foreach ($guest_names as $index => $name) {
-        // Handle file upload for ID proof
-        $upload_path = './upload/id_proofs/';
-        $uploaded_file = $this->_upload_file($guest_id_proofs, $index, $upload_path);
-        $guest_data = [
-            'booking_id' => $booking_id,
-            'guest_name' => $name,
-            'phone' => $guest_phones[$index],
-            'id_proof' => $uploaded_file,
-        ];
-        $this->HomeModel->insert_guest_details($guest_data);
-    }
+			// Insert guest details
+			$guest_data = [
+				'booking_id' => $booking_id,
+				'guest_name' => $guest_name,
+				'phone' => $guest_phones[$hotel_roomid][$guest_index],
+				'age' => !empty($guest_ages[$hotel_roomid][$guest_index]) ? $guest_ages[$hotel_roomid][$guest_index] : 'Unknown', // Check for age
+				'id_proof' => $uploaded_file,
+				'hotel_roomid' => $hotel_roomid,
+				'date' => date('Y-m-d H:i:s'),
+				'admin_status' => 'staff',
+				'status' => '1',
+			];
+			$this->HomeModel->insert_guest_details($guest_data);
+		}
+	}
+}
+	// Assuming you're handling form submission and have the booking ID
+	$booking_id = $this->input->post('booking_id'); // Adjust as necessary
+	// Insert extra guests
+	$extra_guest_name = $this->input->post('extra_guest_name_' . $hotel_roomid) ?? [];
+	$extra_guest_phone = $this->input->post('extra_guest_phone_' . $hotel_roomid) ?? [];
+	$extra_guest_age = $this->input->post('extra_guest_age_' . $hotel_roomid) ?? [];
+	foreach ($extra_guest_name as $extra_index => $name) {
+		 $file = [
+			'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
+			'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
+			'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
+			'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
+			'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
+		];
+		if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
+			$uploaded_file = $this->_upload_file($file, $upload_path);
+		} else {
+			$uploaded_file = 'default.jpg';
+		}
 
-    // Redirect or other logic
-    redirect('Superadmin/booking_success');
+
+		$extra_guest_data = [
+			'booking_id' => $bookingid, // Use the booking_id from the room booking
+			'guest_name' => $name,
+			'phone' => $extra_guest_phone[$extra_index] ?? null,
+			'age' => $extra_guest_age[$extra_index] ?? 'Unknown', // Default value
+			'hotel_roomid' => $hotel_roomid,
+			'id_proof' => $uploaded_file,
+			'date' => date('Y-m-d H:i:s'),
+			'admin_status' => 'staff',
+			'status' => '1',
+		];
+		$this->HomeModel->insert_guest_details($extra_guest_data);
+	}
+	}
+	redirect('dashboard');
 }
 
 
 
-
+private function _upload_file($file, $upload_path)
+{
+    // Ensure the upload path exists
+    if (!is_dir($upload_path)) {
+        mkdir($upload_path, 0777, true);
+    }
+    // Generate a unique name for the file to avoid overwrites
+    $filename = uniqid() . '_' . basename($file['name']);
+    $destination = $upload_path . $filename;
+    // Move the uploaded file to the destination
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
+        return $filename; // Return the file name to store in the database
+    } else {
+        return 'default.jpg'; // Return default if upload failed
+    }
+}
 
 
 
