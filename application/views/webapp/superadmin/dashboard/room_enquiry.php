@@ -83,6 +83,7 @@
                                                             <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                                 <div class="ms-auto my-auto">
                                                                     <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
+                                                                    <!-- <button class="btn bg-gradient-danger btn-sm mb-0 remove-room" type="button" data-room-index="<?= $index ?>">Remove</button> -->
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -486,3 +487,20 @@ document.getElementById('customerType').addEventListener('change', function() {
     });
 });
 </script>
+
+<script>
+// JavaScript to handle remove button click
+document.addEventListener('DOMContentLoaded', function() {
+    const removeButtons = document.querySelectorAll('.remove-room');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const roomIndex = this.getAttribute('data-room-index');
+            const roomCard = document.getElementById('room-card-' + roomIndex);
+            if (roomCard) {
+                roomCard.remove(); // Remove the room card from the DOM
+            }
+        });
+    });
+});
+</script>
+

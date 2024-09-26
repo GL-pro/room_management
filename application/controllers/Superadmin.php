@@ -837,6 +837,8 @@ public function room_enquiry_submit()
 	$extra_guest_phone = $this->input->post('extra_guest_phone_' . $hotel_roomid) ?? [];
 	$extra_guest_age = $this->input->post('extra_guest_age_' . $hotel_roomid) ?? [];
 	foreach ($extra_guest_name as $extra_index => $name) {
+		if (!empty($name)) {
+
 		 $file = [
 			'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
 			'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
@@ -850,7 +852,6 @@ public function room_enquiry_submit()
 			$uploaded_file = 'default.jpg';
 		}
 
-
 		$extra_guest_data = [
 			'booking_id' => $bookingid, // Use the booking_id from the room booking
 			'guest_name' => $name,
@@ -863,8 +864,9 @@ public function room_enquiry_submit()
 			'status' => '1',
 		];
 		$this->HomeModel->insert_guest_details($extra_guest_data);
+    	}
 	}
-	}
+}
 	redirect('dashboard');
 }
 
