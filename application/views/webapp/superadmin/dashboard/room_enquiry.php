@@ -1,7 +1,8 @@
+
+<head>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<style>
-</style>
 
 <div class="container-fluid py-1 mb-6 vh-100">
     <div class="row">
@@ -10,7 +11,7 @@
                 <div class="col-12  m-auto ">
                     <div class="card">
                         <div class="card-body">
-                        <form action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
+                        <form id="roomEnquiryForm" action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
                                     <div class="d-lg-flex">
                                         <div class="mb-2">
@@ -51,7 +52,7 @@
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-static">
                                                         <label class="form-label text-primary">Customer</label>
-                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
+                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
                                                         <select class="form-control" id="choices-Customer" name="customer_id">
                                                             <option value="">Select Customer</option>
                                                             <?php foreach ($customers as $customer): ?>
@@ -65,7 +66,6 @@
 
                                         <?php if (!empty($room_details)): ?>
                                             <?php foreach ($room_details as $room): ?>
-
                                                 <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>"> 
                                                 <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
                                                 <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
@@ -73,8 +73,9 @@
                                                 <!-- <input type="hidden" name="checkin[]" value="<?= $room['checkin'] ?>">
                                                 <input type="hidden" name="checkout[]" value="<?= $room['checkout'] ?>">
                                                 -->
-                                               
-                                                <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
+                                                <!-- <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);"> -->
+                                                <!-- <div class="card mt-3 room-card" id="room-card-<?= $room['hotel_roomid'] ?>" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">  -->
+                                                    <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>">
                                                     <div class="card-body ">
                                                         <div class="d-lg-flex">
                                                             <div>
@@ -82,8 +83,7 @@
                                                             </div>
                                                             <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                                 <div class="ms-auto my-auto">
-                                                                    <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
-                                                                    <!-- <button class="btn bg-gradient-danger btn-sm mb-0 remove-room" type="button" data-room-index="<?= $index ?>">Remove</button> -->
+                                                                <!-- <button class="btn btn-danger remove-room" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Remove</button> -->
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -98,7 +98,7 @@
                                                                     </div>
                                                                     <div class="col-12 col-sm-4 mt-2">
                                                                         <div class="input-group input-group-outline">
-                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-room-id="<?= $room['hotel_roomid'] ?>">
+                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-rooms-ids="<?= $room['hotel_roomid'] ?>">
                                                                             <option value="">Select Extra Guest Count</option>
                                                                             <?php for ($i = 1; $i <= $room['extguests']; $i++): ?>
                                                                                 <option value="<?= $i ?>"><?= $i ?></option>
@@ -205,12 +205,13 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="customermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+
+<!-- Customer Modal -->
+<div class="modal fade" id="customermodel" tabindex="-1" role="dialog" aria-labelledby="customermodel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Customer </h5>
+                <h5 class="modal-title font-weight-normal" id="customermodel">Add Customer </h5>
                 <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -241,6 +242,7 @@
                     <div class="mt-4 input-group input-group-outline">
                         <textarea class="form-control" name="address" rows="3" placeholder="Address" spellcheck="false" required></textarea>
                     </div>
+
                     <div class="mt-4 input-group input-group-outline">
                         <label class="form-label"></label>
                         <select class="form-control" name="agency_id" required>
@@ -258,6 +260,7 @@
                             <option value="company">Company</option>
                         </select>
                     </div>
+
                     <div id="companyDetails" style="display:none;">
                         <div class="mt-4 input-group input-group-outline">
                             <label class="form-label">Company Name</label>
@@ -278,20 +281,19 @@
                     <button type="submit" class="btn bg-gradient-primary">Add</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- End Customer Modal -->
 
 
 
 <!-- Modal -->
-<div class="modal fade" id="agentmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+<div class="modal fade" id="agentmodel" tabindex="-1" role="dialog" aria-labelledby="agentmodel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Agent </h5>
+                <h5 class="modal-title font-weight-normal" id="agentmodel">Add Agent </h5>
                 <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -341,7 +343,7 @@
 
 
 <script src="<?= base_url() ?>assets2/js/plugins/choices.min.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     if (document.getElementById('choices-Customer')) {
         var element = document.getElementById('choices-Customer');
@@ -373,6 +375,7 @@
 <!-- customer insertion -->
 <script>
     document.getElementById('customerForm').addEventListener('submit', function(event) {
+    console.log("Customer form submitted");
     event.preventDefault(); // Prevent the default form submission
     const formData = new FormData(this);
     fetch('add_customer', {
@@ -393,10 +396,27 @@
 });
 </script>
 
+<script>
+document.querySelectorAll('.modal-content').forEach(function(modalContent) {
+    modalContent.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+});
 
+document.querySelector('.modal-backdrop').addEventListener('click', function() {
+    console.log("Backdrop clicked");
+});
+
+$('#customermodel').modal({
+    backdrop: 'static',
+    keyboard: false
+});
+
+</script>
 <!-- agent insertion -->
 <script>
     document.getElementById('agentForm').addEventListener('submit', function(event) {
+    console.log("Agent form submitted");
     event.preventDefault(); // Prevent the default form submission
     const formData = new FormData(this);
     fetch('add_agent', {
@@ -444,7 +464,7 @@ document.getElementById('customerType').addEventListener('change', function() {
 <script>
     document.querySelectorAll('.extra-guest-count').forEach(function(select) {
     select.addEventListener('change', function() {
-        const roomId = this.getAttribute('data-room-id');
+        const roomId = this.getAttribute('data-rooms-ids');
         const extraGuestCount = parseInt(this.value);
         const container = document.getElementById('extra-guests-' + roomId);
 
@@ -488,19 +508,29 @@ document.getElementById('customerType').addEventListener('change', function() {
 });
 </script>
 
-<script>
-// JavaScript to handle remove button click
-document.addEventListener('DOMContentLoaded', function() {
-    const removeButtons = document.querySelectorAll('.remove-room');
-    removeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const roomIndex = this.getAttribute('data-room-index');
-            const roomCard = document.getElementById('room-card-' + roomIndex);
-            if (roomCard) {
-                roomCard.remove(); // Remove the room card from the DOM
-            }
+
+<!-- <script>
+    let removedRooms = [];
+
+    document.querySelectorAll('.remove-room').forEach(button => {
+        button.addEventListener('click', function () {
+            const roomId = this.getAttribute('data-room-id');
+            // Hide or remove the room card
+            const roomCard = document.getElementById('room-card-' + roomId);
+            roomCard.style.display = 'none'; // You can also use roomCard.remove();
+            
+            // Add the room ID to the removedRooms array
+            removedRooms.push(roomId);
         });
     });
-});
-</script>
 
+    // When submitting the form
+    document.getElementById('roomEnquiryForm').addEventListener('submit', function() {
+        // Convert removedRooms array to a JSON string and include it in the form
+        const removedRoomsInput = document.createElement('input');
+        removedRoomsInput.type = 'hidden';
+        removedRoomsInput.name = 'removed_rooms';
+        removedRoomsInput.value = JSON.stringify(removedRooms);
+        this.appendChild(removedRoomsInput);
+    });
+</script> -->
