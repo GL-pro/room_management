@@ -394,7 +394,12 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->insert('guest_details', $data);
     }
     
-
+    public function update_room_status($room_id, $status)
+    {
+        $data = ['room_status' => $status];
+        $this->db->where('hotel_roomid', $room_id);
+        return $this->db->update('hotel_room', $data);
+    }
 
 
 

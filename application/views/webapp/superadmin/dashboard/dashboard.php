@@ -347,7 +347,7 @@
 
    
 
-<div class="row mt-4">
+<!-- <div class="row mt-4">
     <div class="col-xl-12">
         <div class="card">
             <div class="card-header pb-0">
@@ -356,8 +356,8 @@
                         <h5 class="mb-0">Rooms</h5>
                     </div>
                     <div class="ms-auto my-auto">
-                        <!-- Use form for redirection -->
-                        <form id="room-form" method="POST" action="room_enquiry">
+                     
+                        <form id="room-form" method="POST" action="room_enquiry1">
                             <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
                             <button id="proceed-btn" class="btn btn-secondary mb-0" type="submit" disabled>Proceed</button>
                         </form>
@@ -407,8 +407,69 @@
             <?php endforeach; ?>
         </div>
     </div>
-</div>
+</div> -->
 
+<div class="row mt-4">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex">
+                    <div>
+                        <h5 class="mb-0">Rooms</h5>
+                    </div>
+                    <div class="ms-auto my-auto">
+                        <!-- Use form for redirection -->
+                        <form id="room-form" method="POST" action="">
+                            <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
+                            <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-success"></i>
+                        <span class="text-dark text-xs">Vacant</span>
+                    </span>
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-warning"></i>
+                        <span class="text-dark text-xs">Booked</span>
+                    </span>
+                    <span class="badge badge-md badge-dot me-4">
+                        <i class="bg-danger"></i>
+                        <span class="text-dark text-xs">Occupied</span>
+                    </span>
+                </div>
+            </div>
+
+            <?php foreach ($room_data as $room_type => $rooms): ?>
+                <div class="card">
+                    <div class="card-header py-0">
+                        <div class="d-flex">
+                            <div class="col-md-8 me-auto my-auto text-left">
+                                <h5><?php echo $room_type; ?> Room</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body row py-0">
+                        <div class="">
+                            <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
+                                <?php foreach ($rooms as $room): ?>
+                                    <?php
+                                    $status_class = ($room['status'] === 'vaccant') ? 'btn-success' : (($room['status'] === 'booked') ? 'btn-warning' : 'btn-danger');
+                                    ?>
+                                    <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo $room['status']; ?>" autocomplete="off">
+                                    <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                                        <?php echo $room['roomno']; ?>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
 
 
 
@@ -513,7 +574,7 @@
 
 
 <!-- JavaScript for room selection and button behavior -->
-<script>
+<!-- <script>
    document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('.room-checkbox');
     const proceedBtn = document.getElementById('proceed-btn');
@@ -569,4 +630,89 @@
     });
 });
 
+</script> -->
+
+
+<!-- JavaScript for room selection and button behavior -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.room-checkbox');
+        const proceedBtn = document.getElementById('proceed-btn');
+        const selectedRoomsInput = document.getElementById('selected_rooms');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                let selectedRooms = [];
+                let selectedStatuses = new Set(); // To keep track of room statuses
+                let anyChecked = false;
+                let status = null;
+                
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        anyChecked = true;
+                        selectedRooms.push(cb.id.replace('btncheck', '')); // Get room IDs
+                        status = cb.getAttribute('data-status'); // Track last room's status
+                        selectedStatuses.add(status); // Track room status
+                    }
+                });
+
+                if (selectedStatuses.size > 1) {
+                    // Multiple statuses selected: disable proceed button, show warning
+                    proceedBtn.classList.remove('btn-primary');
+                    proceedBtn.classList.add('btn-secondary');
+                    proceedBtn.disabled = true;
+                    proceedBtn.textContent = 'Select rooms with the same status';
+                } else if (anyChecked) {
+                    // If all rooms have the same status, enable the proceed button and update text
+                    proceedBtn.classList.remove('btn-secondary');
+                    proceedBtn.classList.add('btn-primary');
+                    proceedBtn.disabled = false;
+
+                    // Set button text based on the room status
+                    if (status === 'vaccant') {
+                        proceedBtn.textContent = 'Proceed to Enquiry';
+                    } else if (status === 'booked') {
+                        proceedBtn.textContent = 'Proceed to Occupy';
+                    } else if (status === 'occupied') {
+                        proceedBtn.textContent = 'Continue to Occupy';
+                    }
+                } else {
+                    // No rooms selected, disable button
+                    proceedBtn.classList.remove('btn-primary');
+                    proceedBtn.classList.add('btn-secondary');
+                    proceedBtn.disabled = true;
+                    proceedBtn.textContent = 'Proceed';
+                }
+
+                // Store selected room IDs in the hidden input field
+                selectedRoomsInput.value = selectedRooms.join(',');
+            });
+        });
+
+        // Add click event for the proceed button
+        proceedBtn.addEventListener('click', function() {
+            // Determine the status of the selected rooms
+            const selectedRooms = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => ({
+                    id: checkbox.id.replace('btncheck', ''),
+                    status: checkbox.dataset.status,
+                }));
+
+            if (selectedRooms.length > 0) {
+                const firstRoomStatus = selectedRooms[0].status; // Get the status of the first selected room
+
+                // Redirect based on status
+                if (firstRoomStatus === 'vaccant') {
+                    // Set action for the form and submit it
+                    document.getElementById('room-form').action = 'room_enquiry1'; // Redirect to room_enquiry1
+                    document.getElementById('room-form').submit(); // Submit the form
+                } else if (firstRoomStatus === 'booked') {
+                    window.location.href = 'room_occupy'; // Redirect to room occupy page
+                } else if (firstRoomStatus === 'occupied') {
+                    window.location.href = 'continue_to_occupy'; // Redirect to continue to occupy page
+                }
+            }
+        });
+    });
 </script>

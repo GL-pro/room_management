@@ -76,7 +76,37 @@ class Superadmin extends CI_Controller {
 	}
 
 	
+	public function room_enquiry1() {
+		$data['menu'] = 'room_enquiry';
+		$data['pagetitle'] = 'Room Enquiry';
+		$data['agencies'] = $this->HomeModel->getAgents();
+		$data['customers'] = $this->HomeModel->getCustomers(); // Fetch customers
+	
+		$selected_rooms = $this->input->post('selected_rooms');
+		if (!empty($selected_rooms)) {
+			$room_ids = explode(',', $selected_rooms);
+		} else {
+			$room_ids = [];
+		}
+		$data['room_ids'] = $room_ids;
 
+		// Fetch room details based on hotel_roomids
+		$room_details = [];
+		foreach ($room_ids as $room_id) {
+			$room_info = $this->HomeModel->getRoomDetails($room_id);
+			if ($room_info) {
+				$room_details[] = $room_info;
+			}
+		}
+		$data['room_details'] = $room_details;
+
+
+		$this->load->view('webapp/superadmin/include/header', $data);
+		$this->load->view('webapp/superadmin/dashboard/room_enquiry1', $data);
+		$this->load->view('webapp/superadmin/include/footer');
+	}
+
+	
     public function logout() {
         $this->session->unset_userdata('logged_in'); 
         $this->session->sess_destroy(); 
@@ -1055,6 +1085,9 @@ public function room_enquiry_submit()
         ];
         $booking_id = $this->HomeModel->insert_room_booking($booking_data);
 		$bookingid= $booking_id;
+		
+		$this->HomeModel->update_room_status($hotel_roomid, 'booked');
+
         // Insert room details into room_booking_details table
         $room_detail_data = [
             'booking_id' => $booking_id,
@@ -1063,7 +1096,6 @@ public function room_enquiry_submit()
 			'hotel_roomid' => $hotel_roomid,
         ];
         $this->HomeModel->insert_room_booking_details($room_detail_data);
-
 	// }
       // Insert guest details for the current room
 	  if (!empty($guest_names[$hotel_roomid])) {

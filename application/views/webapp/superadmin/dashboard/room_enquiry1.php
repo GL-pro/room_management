@@ -1,40 +1,38 @@
-
-<head>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+
+</style>
+
 
 <div class="container-fluid py-1 mb-6 vh-100">
     <div class="row">
         <div class="col-12">
+
             <div class="row  ">
                 <div class="col-12  m-auto ">
                     <div class="card">
                         <div class="card-body">
-                        <form id="roomEnquiryForm" action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
+                            <!-- <form action=""> -->
+                            <form id="roomEnquiryForm" action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
+
                                     <div class="d-lg-flex">
                                         <div class="mb-2">
                                             <h5 class="font-weight-bolder mb-0"> Room Enquiry </h5>
                                         </div>
+
+                                        <!-- <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                            <div class="ms-auto my-auto">
+                                                <button class="btn bg-gradient-info btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">+&nbsp;Add Customer</button>
+                                            </div>
+                                        </div> -->
                                     </div>
 
 
-                                    <!-- <input type="hidden" name="room_ids[]" value="101">
-                                    <input type="hidden" name="room_ids[]" value="102">
-                                    <input type="text" name="daterange[]" value="2024-09-26 to 2024-09-27">
-                                    <input type="text" name="extra_guest_count[]" value="1"> -->
 
-
-                                       <!-- Display Selected Room IDs -->
-                                    <!-- <div class="row mt-3">
-                                        <div class="col-12">
-                                            <h6>Selected Room IDs:</h6>
-                                            <p><?php echo implode(', ', $room_ids); ?></p> 
-                                        </div>
-                                    </div> -->
-
-                                 <div class=" ">
+                                    <div class=" ">
                                         <div class="">
                                             <div class="row">
                                                 <div class="col-12 col-sm-4 mt-2">
@@ -64,6 +62,13 @@
                                             </div>
                                         </div>
 
+
+                                 
+
+
+
+
+
                                         <?php if (!empty($room_details)): ?>
                                             <?php foreach ($room_details as $room): ?>
                                                 <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>"> 
@@ -83,7 +88,7 @@
                                                             </div>
                                                             <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                                 <div class="ms-auto my-auto">
-                                                                <!-- <button class="btn btn-danger remove-room" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Remove</button> -->
+                                                                <button class="btn btn-danger remove-room" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Remove</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -145,13 +150,9 @@
                                                                             </div>
                                                                         <?php endfor; ?>
                                                                     </div>
-
                                                                 </div>
-
                                                                  <!-- Extra Guests will be appended here -->
                                                                   <div id="extra-guests-<?= $room['hotel_roomid'] ?>"></div>
-
-
                                                             </div>
                                                         </div>
                                                     </div>
@@ -160,6 +161,10 @@
                                         <?php else: ?>
                                             <p>No rooms selected.</p>
                                         <?php endif; ?>
+
+
+
+
 
 
 
@@ -174,7 +179,7 @@
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-outline ">
                                                         <label class="form-label">Advance Amount</label>
-                                                        <input class="form-control" type="number" name="advance_amount" placeholder=" " />
+                                                        <input class="  form-control" type="number"  name="advance_amount" placeholder=" " />
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-sm-4 mt-2">
@@ -193,7 +198,7 @@
                                 </div>
 
                                 <div class="button-row d-flex mt-4">
-                                    <a href=" " class="ms-auto mb-0">
+                                    <!-- <a href=" " class="ms-auto mb-0"> -->
                                     <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button>
                                 </div>
                             </form>
@@ -204,6 +209,116 @@
         </div>
     </div>
 </div>
+
+
+
+<script src="<?= base_url() ?>assets2/js/plugins/choices.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+    if (document.getElementById('choices-Customer')) {
+        var element = document.getElementById('choices-Customer');
+        const example = new Choices(element, {
+            searchEnabled: true,
+            shouldSort: false,
+        });
+    };
+    if (document.getElementById('choices-Agency')) {
+        var element = document.getElementById('choices-Agency');
+        const example = new Choices(element, {
+            searchEnabled: true,
+            shouldSort: false,
+        });
+    };
+</script>
+
+
+<script>
+    flatpickr("#daterange", {
+        mode: "range", // Enable date range selection
+        dateFormat: "Y-m-d", // Format for displaying the selected dates
+        minDate: "today", // Set the minimum date as today
+        onClose: function(selectedDates, dateStr, instance) {
+            console.log("Selected range: ", dateStr); // Logs the selected date range (optional)
+        }
+    });
+</script>
+
+
+<script>
+    document.querySelectorAll('.extra-guest-count').forEach(function(select) {
+    select.addEventListener('change', function() {
+        const roomId = this.getAttribute('data-rooms-ids');
+        const extraGuestCount = parseInt(this.value);
+        const container = document.getElementById('extra-guests-' + roomId);
+        // Clear previous extra guest fields
+        container.innerHTML = '';
+        if (extraGuestCount > 0) {
+            for (let i = 1; i <= extraGuestCount; i++) {
+                // Create the guest detail fields for each extra guest
+                container.innerHTML += `
+                    <div class="row mt-3 border py-2">
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Extra Guest ${i} Name</label>
+                                <input class="form-control" type="text" name="extra_guest_name_${roomId}[]" placeholder="Extra Guest Name" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Age</label>
+                                <input class="form-control" type="number" name="extra_guest_age_${roomId}[]" placeholder="Guest Age" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Phone Number</label>
+                                <input class="form-control" type="text" name="extra_guest_phone_${roomId}[]" placeholder="Phone Number" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 mt-2">
+                            <div class="input-group input-group-outline is-focused">
+                                <label class="form-label">Id Proof</label>
+                                <input class="form-control" type="file" name="extra_guest_id_proof_${roomId}[]" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    });
+});
+</script>
+
+
+<script>
+    let removedRooms = [];
+    document.querySelectorAll('.remove-room').forEach(button => {
+        button.addEventListener('click', function () {
+            const roomId = this.getAttribute('data-room-id');
+            // Hide or remove the room card
+            const roomCard = document.getElementById('room-card-' + roomId);
+            roomCard.style.display = 'none'; // You can also use roomCard.remove();
+            // Add the room ID to the removedRooms array
+            removedRooms.push(roomId);
+        });
+    });
+    // When submitting the form
+    document.getElementById('roomEnquiryForm').addEventListener('submit', function() {
+        // Convert removedRooms array to a JSON string and include it in the form
+        const removedRoomsInput = document.createElement('input');
+        removedRoomsInput.type = 'hidden';
+        removedRoomsInput.name = 'removed_rooms';
+        removedRoomsInput.value = JSON.stringify(removedRooms);
+        this.appendChild(removedRoomsInput);
+    });
+</script> 
+
+
+
+
+
 
 
 <!-- Customer Modal -->
@@ -287,6 +402,30 @@
 <!-- End Customer Modal -->
 
 
+<!-- JavaScript to Toggle Company Fields -->
+<script>
+document.getElementById('customerType').addEventListener('change', function() {
+    const companyDetails = document.getElementById('companyDetails');
+    const companyNameField = document.querySelector('input[name="company_name"]');
+    const companyAddressField = document.querySelector('textarea[name="company_address"]');
+    const gstNumberField = document.querySelector('input[name="gst_number"]');
+
+    if (this.value === 'company') {
+        companyDetails.style.display = 'block';
+        companyNameField.required = true; // Make required
+        companyAddressField.required = true; // Make required
+        gstNumberField.required = true; // Make required
+    } else {
+        companyDetails.style.display = 'none';
+        companyNameField.required = false; // Not required
+        companyAddressField.required = false; // Not required
+        gstNumberField.required = false; // Not required
+    }
+});
+</script>
+
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="agentmodel" tabindex="-1" role="dialog" aria-labelledby="agentmodel" aria-hidden="true">
@@ -342,35 +481,10 @@
 <!-- Modal -->
 
 
-<script src="<?= base_url() ?>assets2/js/plugins/choices.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    if (document.getElementById('choices-Customer')) {
-        var element = document.getElementById('choices-Customer');
-        const example = new Choices(element, {
-            searchEnabled: true,
-            shouldSort: false,
-        });
-    };
-    if (document.getElementById('choices-Agency')) {
-        var element = document.getElementById('choices-Agency');
-        const example = new Choices(element, {
-            searchEnabled: true,
-            shouldSort: false,
-        });
-    };
-</script>
 
-<script>
-    flatpickr("#daterange", {
-        mode: "range", // Enable date range selection
-        dateFormat: "Y-m-d", // Format for displaying the selected dates
-        minDate: "today", // Set the minimum date as today
-        onClose: function(selectedDates, dateStr, instance) {
-            console.log("Selected range: ", dateStr); // Logs the selected date range (optional)
-        }
-    });
-</script>
+
+
+
 
 <!-- customer insertion -->
 <script>
@@ -402,7 +516,6 @@ document.querySelectorAll('.modal-content').forEach(function(modalContent) {
         event.stopPropagation();
     });
 });
-
 document.querySelector('.modal-backdrop').addEventListener('click', function() {
     console.log("Backdrop clicked");
 });
@@ -437,100 +550,3 @@ $('#customermodel').modal({
 });
 </script>
 
-
-
-<!-- JavaScript to Toggle Company Fields -->
-<script>
-document.getElementById('customerType').addEventListener('change', function() {
-    const companyDetails = document.getElementById('companyDetails');
-    const companyNameField = document.querySelector('input[name="company_name"]');
-    const companyAddressField = document.querySelector('textarea[name="company_address"]');
-    const gstNumberField = document.querySelector('input[name="gst_number"]');
-
-    if (this.value === 'company') {
-        companyDetails.style.display = 'block';
-        companyNameField.required = true; // Make required
-        companyAddressField.required = true; // Make required
-        gstNumberField.required = true; // Make required
-    } else {
-        companyDetails.style.display = 'none';
-        companyNameField.required = false; // Not required
-        companyAddressField.required = false; // Not required
-        gstNumberField.required = false; // Not required
-    }
-});
-</script>
-
-<script>
-    document.querySelectorAll('.extra-guest-count').forEach(function(select) {
-    select.addEventListener('change', function() {
-        const roomId = this.getAttribute('data-rooms-ids');
-        const extraGuestCount = parseInt(this.value);
-        const container = document.getElementById('extra-guests-' + roomId);
-
-        // Clear previous extra guest fields
-        container.innerHTML = '';
-
-        if (extraGuestCount > 0) {
-            for (let i = 1; i <= extraGuestCount; i++) {
-                // Create the guest detail fields for each extra guest
-                container.innerHTML += `
-                    <div class="row mt-3 border py-2">
-                        <div class="col-12 col-sm-3 mt-2">
-                            <div class="input-group input-group-outline is-focused">
-                                <label class="form-label">Extra Guest ${i} Name</label>
-                                <input class="form-control" type="text" name="extra_guest_name_${roomId}[]" placeholder="Extra Guest Name" />
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-3 mt-2">
-                            <div class="input-group input-group-outline is-focused">
-                                <label class="form-label">Age</label>
-                                <input class="form-control" type="number" name="extra_guest_age_${roomId}[]" placeholder="Guest Age" />
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-3 mt-2">
-                            <div class="input-group input-group-outline is-focused">
-                                <label class="form-label">Phone Number</label>
-                                <input class="form-control" type="text" name="extra_guest_phone_${roomId}[]" placeholder="Phone Number" />
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-3 mt-2">
-                            <div class="input-group input-group-outline is-focused">
-                                <label class="form-label">Id Proof</label>
-                                <input class="form-control" type="file" name="extra_guest_id_proof_${roomId}[]" />
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-    });
-});
-</script>
-
-
-<!-- <script>
-    let removedRooms = [];
-
-    document.querySelectorAll('.remove-room').forEach(button => {
-        button.addEventListener('click', function () {
-            const roomId = this.getAttribute('data-room-id');
-            // Hide or remove the room card
-            const roomCard = document.getElementById('room-card-' + roomId);
-            roomCard.style.display = 'none'; // You can also use roomCard.remove();
-            
-            // Add the room ID to the removedRooms array
-            removedRooms.push(roomId);
-        });
-    });
-
-    // When submitting the form
-    document.getElementById('roomEnquiryForm').addEventListener('submit', function() {
-        // Convert removedRooms array to a JSON string and include it in the form
-        const removedRoomsInput = document.createElement('input');
-        removedRoomsInput.type = 'hidden';
-        removedRoomsInput.name = 'removed_rooms';
-        removedRoomsInput.value = JSON.stringify(removedRooms);
-        this.appendChild(removedRoomsInput);
-    });
-</script> -->
