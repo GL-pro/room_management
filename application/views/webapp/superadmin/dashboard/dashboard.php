@@ -193,12 +193,18 @@
                         </div>
                         <div class=" col-lg-3">
                             <div class="input-group input-group-outline  my-3 ">
-                                <select class="form-control" id="exampleFormControlSelect1">
+                                <!-- <select class="form-control" id="exampleFormControlSelect1">
                                     <option selected disabled>Room Type</option>
                                     <option>2</option>
                                     <option>3</option>
                                     <option>4</option>
                                     <option>5</option>
+                                </select> -->
+                                <select id="exampleFormControlSelect1" class="form-control">
+                                    <option selected disabled >Room Type</option>
+                                    <?php foreach ($room_types as $type): ?>
+                                        <option value="<?= htmlspecialchars($type['roomtype']) ?>"><?= htmlspecialchars($type['roomtype']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -225,10 +231,8 @@
                                         </div>
                                         <div class="d-flex flex-column">
                                             <h6 class="mb-1 text-dark text-sm">Single Room</h6>
-
                                             <span class="text-xs">Booked <span class="font-weight-bold">3</span></span>
                                             <span class="text-xs">vacant <span class="font-weight-bold">3</span></span>
-
                                         </div>
                                     </div>
                                     <div class="d-flex">
@@ -302,9 +306,10 @@
                                 </li>
                             </ul>
                         </div>
-
                     </div>
 
+
+                    
                     <div class=" ">
                         <div class="mt-3">
                             <h6 class="mb-0">Filter Rooms</h6>
@@ -316,23 +321,33 @@
                         </div>
                         <div class=" ">
                             <div class="input-group input-group-outline  my-3">
-                                <select id="filterType" class="form-control  ">
+                                <!-- <select id="filterType" class="form-control  ">
                                     <option value="">Filter by Type</option>
                                     <option value="type1">Type 1</option>
                                     <option value="type2">Type 2</option>
                                     <option value="type3">Type 3</option>
-                                    <!-- Add more options as needed -->
+                                </select> -->
+                                <select id="filterType" class="form-control">
+                                    <option value="">Filter by Type</option>
+                                    <?php foreach ($room_types as $type): ?>
+                                        <option value="<?= htmlspecialchars($type['roomtype']) ?>"><?= htmlspecialchars($type['roomtype']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
                         <div class=" ">
                             <div class="input-group input-group-outline  my-3">
-                                <select id="filterRoom" class="form-control  ">
+                                <!-- <select id="filterRoom" class="form-control  ">
                                     <option value="">Filter by Room</option>
                                     <option value="room1">Room 1</option>
                                     <option value="room2">Room 2</option>
                                     <option value="room3">Room 3</option>
-                                    <!-- Add more options as needed -->
+                                </select> -->
+                                <select id="filterRoom" class="form-control">
+                                    <option value="">Filter by Room</option>
+                                    <?php foreach ($hotel_rooms as $rooms): ?>
+                                        <option value="<?= htmlspecialchars($rooms['room_name']) ?>"><?= htmlspecialchars($rooms['room_name']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -340,6 +355,8 @@
                             <button id="searchButton" class="btn btn-primary w-100  mb-0">Search</button>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -701,7 +718,6 @@
 
             if (selectedRooms.length > 0) {
                 const firstRoomStatus = selectedRooms[0].status; // Get the status of the first selected room
-
                 // Redirect based on status
                 if (firstRoomStatus === 'vaccant') {
                     // Set action for the form and submit it

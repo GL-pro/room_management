@@ -2,7 +2,23 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
+/* Styles for the date range input */
+.input-group-outline {
+    position: relative;
+}
 
+.input-group-outline input:focus {
+    outline: none;
+    border: 2px solid red; /* Red outline when focused */
+}
+
+.input-group-outline input.error {
+    border: 2px solid red; /* Red outline for error state */
+}
+
+.input-group-outline input {
+    cursor: pointer; /* Change cursor to pointer */
+}
 </style>
 
 
@@ -125,27 +141,27 @@
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Name</label>
                                                                                     <!-- <input class="form-control" type="text" name="guest_name[<?= $i ?>]" placeholder="Guest Name" /> -->
-                                                                                    <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Name" />
+                                                                                    <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Name"   />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Age</label>
-                                                                                    <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Age" />
+                                                                                    <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Age"  />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Phone Number</label>
                                                                                     <!-- <input class="form-control" type="text" name="guest_phone[<?= $i ?>]" placeholder="Phone Number" /> -->
-                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" placeholder="Phone Number" />
+                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" placeholder="Phone Number"  />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Id Proof</label>
                                                                                     <!-- <input class="form-control" type="file" name="guest_id_proof[<?= $i ?>]" /> -->
-                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]" />
+                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]"  />
                                                                                 </div>
                                                                             </div>
                                                                         <?php endfor; ?>
@@ -549,4 +565,46 @@ $('#customermodel').modal({
     .catch(error => console.error('Error:', error));
 });
 </script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the date picker for the date range input
+        flatpickr("#daterange", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        document.getElementById('roomEnquiryForm').addEventListener('submit', function(event) {
+            const dateRangeInput = document.getElementById('daterange').value; // Get the value of the date range
+            let isValid = false; // Flag to check if at least one guest detail is filled
+            const roomCards = document.querySelectorAll('.card');
+            // First, check if the date range is selected
+            if (!dateRangeInput) {
+                event.preventDefault(); // Prevent form submission
+                alert('Please select a date range for the room.'); // Show warning message
+                return; // Exit the function early
+            }
+            // Now check for guest details
+            roomCards.forEach((roomCard) => {
+                const guestInputs = roomCard.querySelectorAll('input[name^="guest_name"], input[name^="guest_age"], input[name^="guest_phone"]');
+                let hasGuestDetail = false; // Flag for this specific room card
+                // Check if at least one guest's details are filled
+                guestInputs.forEach((input) => {
+                    if (input.value.trim() !== '') {
+                        hasGuestDetail = true; // Set the flag if at least one field is filled
+                    }
+                });
+                if (hasGuestDetail) {
+                    isValid = true; // Set overall validity to true
+                }
+            });
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission
+                alert('Please add at least one guest detail before submitting the form.'); // Show warning message
+            }
+        });
+    });
+</script>
+
 

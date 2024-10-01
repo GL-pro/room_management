@@ -401,7 +401,18 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $this->db->update('hotel_room', $data);
     }
 
-
+    public function getRoomTypes() {
+        $this->db->select('roomtype'); // Adjust according to your database structure
+        $this->db->distinct(); // Get unique room types
+        $query = $this->db->get('admin_room'); // Replace 'rooms' with your actual table name
+        return $query->result_array();
+    }
+    public function getHotelRoom() {
+        $this->db->select('room_name'); // Adjust according to your database structure
+        $this->db->distinct(); // Get unique room types
+        $query = $this->db->get('hotel_room'); // Replace 'rooms' with your actual table name
+        return $query->result_array();
+    }
 
 
 
