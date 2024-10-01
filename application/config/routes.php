@@ -62,6 +62,7 @@ $route['dashboard'] = 'Superadmin/dashboard';
 $route['room_enquiry'] = 'Superadmin/room_enquiry'; 
 
 $route['room_enquiry1'] = 'Superadmin/room_enquiry1'; 
+$route['room_occupy'] = 'Superadmin/room_occupy'; 
 
 $route['hotel_room_add_staff'] = 'Superadmin/hotel_room_add_staff';
 $route['hotel_added_rooms_staff'] = 'Superadmin/hotel_added_rooms_staff';

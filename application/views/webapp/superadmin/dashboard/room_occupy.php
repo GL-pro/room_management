@@ -25,7 +25,6 @@
 <div class="container-fluid py-1 mb-6 vh-100">
     <div class="row">
         <div class="col-12">
-
             <div class="row  ">
                 <div class="col-12  m-auto ">
                     <div class="card">
@@ -33,15 +32,11 @@
                             <!-- <form action=""> -->
                             <form id="roomEnquiryForm" action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
-
                                     <div class="d-lg-flex">
                                         <div class="mb-2">
-                                            <h5 class="font-weight-bolder mb-0"> Room Enquiry </h5>
+                                            <h5 class="font-weight-bolder mb-0"> Room Occupy </h5>
                                         </div>
                                     </div>
-
-
-
                                     <div class=" ">
                                         <div class="">
                                             <div class="row">
@@ -71,21 +66,13 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                 
-
-
-
-
-
+                                
                                         <?php if (!empty($room_details)): ?>
                                             <?php foreach ($room_details as $room): ?>
                                                 <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>"> 
                                                 <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
                                                 <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
                                                 <input type="hidden" name="noofguests[]" value="<?= $room['noofguests'] ?>">
-
                                                     <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>">
                                                     <div class="card-body ">
                                                         <div class="d-lg-flex">
@@ -367,7 +354,7 @@
                     <div class="mt-4 input-group input-group-outline">
                         <label class="form-label"></label>
                         <select class="form-control" name="agency_id" required>
-                            <option value="">-- Select Agent --</option>
+                            <option value="">-- Select Agency --</option>
                             <?php foreach ($agencies as $agency): ?>
                                 <option value="<?= $agency['agent_id'] ?>"><?= $agency['agent_name'] ?></option>
                             <?php endforeach; ?>
