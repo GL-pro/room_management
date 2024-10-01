@@ -17,6 +17,19 @@ class Superadmin extends CI_Controller {
 	{
         $data['menu']='dashboard';
         $data['pagetitle']='DashBoard';
+	   // Get filter values from POST request
+	   $filterDate = $this->input->post('filterDate');
+	   $filterType = $this->input->post('filterType');
+	   $filterRoom = $this->input->post('filterRoom');
+	   // Fetch filtered data
+	   if ($filterDate || $filterType || $filterRoom) {
+		   // Get room data based on filters
+		   $data['room_data1'] = $this->HomeModel->getsearchbydate($filterDate, $filterType, $filterRoom);
+		} else {
+		   // Fetch all data if no filters are applied
+		   $data['room_data1'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
+	   }
+
 		$data['room_types'] = $this->HomeModel->getRoomTypes();
 		$data['hotel_rooms'] = $this->HomeModel->getHotelRoom();
 		$data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
