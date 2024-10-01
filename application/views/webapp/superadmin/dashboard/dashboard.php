@@ -309,7 +309,7 @@
                     </div>
 
 
-                    
+
                     <div class=" ">
                         <div class="mt-3">
                             <h6 class="mb-0">Filter Rooms</h6>
@@ -351,8 +351,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class=" ">
-                            <button id="searchButton" class="btn btn-primary w-100  mb-0">Search</button>
+                        <div class="my-3">
+                            <button id="searchButton" type="button" class="btn btn-primary w-100 mb-0">Search</button>
                         </div>
                     </div>
 
@@ -487,6 +487,7 @@
         </div>
     </div>
 </div>
+
 
 
 
@@ -732,3 +733,35 @@
         });
     });
 </script>
+
+
+
+
+
+
+
+
+<script>
+$(document).ready(function() {
+    $('#searchButton').click(function() {
+        var filterDate = $('#filterDate').val();
+        var filterType = $('#filterType').val();
+        var filterRoom = $('#filterRoom').val();
+
+        $.ajax({
+            url: '<?= base_url("Superadmin/dashboard") ?>',
+            type: 'POST',
+            data: {
+                filterDate: filterDate,
+                filterType: filterType,
+                filterRoom: filterRoom
+            },
+            success: function(response) {
+                // Update the part of the page that displays the rooms
+                $('#room-results').html($(response).find('#room-results').html());
+            }
+        });
+    });
+});
+</script>
+

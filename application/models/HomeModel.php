@@ -414,8 +414,32 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $query->result_array();
     }
 
-
-
+    public function getsearchbydate($filterDate = null, $filterType = null, $filterRoom = null)
+    {
+        $this->db->select('room_booking.*, hotel_room.roomtypeid');  // Select all room_booking columns and roomtype from hotel_room
+        $this->db->from('room_booking');
+        $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');  // Join hotel_room on roomid
+        $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid', 'left');
+        
+        // Check that the booking status is 1 (assuming status = 1 means active/available bookings)
+        $this->db->where('room_booking.status', 1); 
+    
+        // Apply filters if they are set
+        if (!empty($filterDate)) {
+            $this->db->where('room_booking.checkin <=', $filterDate);
+            $this->db->where('room_booking.checkout >=', $filterDate);
+        }
+        if (!empty($filterType)) {
+            $this->db->where('admin_room.roomtype', $filterType);  // Filter by room type
+        }
+        if (!empty($filterRoom)) {
+            $this->db->where('hotel_room.room_name', $filterRoom);  // Filter by room name
+        }
+        
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+    
 
 
 
