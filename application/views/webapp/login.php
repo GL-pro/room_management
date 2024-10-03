@@ -33,23 +33,27 @@
 </style>
 <!-- styling the error alert box -->
 <style>
-        .custom-alert {
-            color: #155724; /* Change this color to your desired color */
-            background-color: #d4edda; /* Change this color to your desired background color */
-            border-color: #c3e6cb; /* Change this color to your desired border color */
-            padding: .75rem 1.25rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            border-radius: .25rem;
-        }
-    </style>
+  .custom-alert {
+    color: #155724;
+    /* Change this color to your desired color */
+    background-color: #d4edda;
+    /* Change this color to your desired background color */
+    border-color: #c3e6cb;
+    /* Change this color to your desired border color */
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+  }
+</style>
 <!-- styling the error alert box -->
+
 <body class=" ">
 
   <!-- Display error message -->
   <?php if ($this->session->flashdata('error')): ?>
-        <div class="custom-alert" ><?php echo $this->session->flashdata('error'); ?></div>
-    <?php endif; ?>
+    <div class="custom-alert"><?php echo $this->session->flashdata('error'); ?></div>
+  <?php endif; ?>
 
   <!-- Navbar -->
   <!-- <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-100 shadow-none my-3 navbar-transparent mt-4">
@@ -60,7 +64,7 @@
 
         </div>
     </nav> -->
-  <!-- End Navbar -->
+  <!-- End Navbar --> 
 
   <main class="main-content  mt-0">
     <section>
@@ -85,31 +89,31 @@
                   <p class="mb-0">Enter your email and password to sign in</p>
                 </div>
                 <div class="card-body mt-2">
-                <form action="<?php echo base_url(); ?>logincheck" method="post" enctype="multipart/form-data">
-                                        <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="text" name="email" class="form-control" required>
-                                        </div>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label">Password</label>
-                                            <input type="password" name="password" class="form-control" required>
-                                        </div>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <label class="form-label"> </label>
-                                            <select class="form-control" name="usertype" id="usertype" required>
-                                                <option value="" selected disabled>Select User Type</option>
-                                                <!-- <option value="user">User</option> -->
-                                            <option value="admin">Admin</option>
-                                            <option value="staff">Staff</option>                                      
-                                            </select>
-                                        </div>
-                                        <div class="text-center">                          
-                                            <button type="submit" name="submit" value="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0">Sign in</button>
-                                        </div>
-                                    </form>
-                </div> 
+                  <form action="<?php echo base_url(); ?>logincheck" method="post" enctype="multipart/form-data">
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="text" name="email" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label">Password</label>
+                      <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                      <label class="form-label"> </label>
+                      <select class="form-control" name="usertype" id="usertype" required>
+                        <option value="" selected disabled>Select User Type</option>
+                        <!-- <option value="user">User</option> -->
+                        <option value="admin">Admin</option>
+                        <option value="staff">Staff</option>
+                      </select>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" name="submit" value="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0">Sign in</button>
+                    </div>
+                  </form>
+                </div>
 
-               
+
               </div>
             </div>
           </div>

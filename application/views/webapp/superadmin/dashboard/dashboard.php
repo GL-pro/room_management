@@ -77,7 +77,7 @@
                     </div>
                     <div class="text-end pt-1">
                         <h5 class="mb-0">
-                            70
+                            100
                         </h5>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                     </div>
                     <div class="text-end pt-1">
                         <h5 class="mb-0">
-                            235
+                            50
                         </h5>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                 <div class="card-footer d-flex align-items-center px-3 py-1">
                     <p class="text-md font-weight-bolder mb-0 text-capitalize">
                         <span class="text-xs mt-n5 mb-0 text-capitalize">Total <br></span>
-                        Availiable Rooms
+                        Vacant Rooms
                     </p>
                     <div class="ms-auto">
                         <a href=" " class="text-primary text-xs icon-move-right ">See more
@@ -129,7 +129,7 @@
                     </div>
                     <div class="text-end pt-1">
                         <h5 class="mb-0">
-                            235
+                            20
                         </h5>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
                     </div>
                     <div class="text-end pt-1">
                         <h5 class="mb-0">
-                            235
+                            30
                         </h5>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                 <div class="card-footer d-flex align-items-center px-3 py-1">
                     <p class="text-md font-weight-bolder mb-0 text-capitalize">
                         <span class="text-xs mt-n5 mb-0 text-capitalize">Total <br></span>
-                        Reservations
+                        Occupied Rooms
                     </p>
                     <div class="ms-auto">
                         <a href=" " class="text-primary text-xs icon-move-right ">See more

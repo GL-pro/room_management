@@ -2,23 +2,26 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
-/* Styles for the date range input */
-.input-group-outline {
-    position: relative;
-}
+    /* Styles for the date range input */
+    .input-group-outline {
+        position: relative;
+    }
 
-.input-group-outline input:focus {
-    outline: none;
-    border: 2px solid red; /* Red outline when focused */
-}
+    .input-group-outline input:focus {
+        outline: none;
+        border: 2px solid red;
+        /* Red outline when focused */
+    }
 
-.input-group-outline input.error {
-    border: 2px solid red; /* Red outline for error state */
-}
+    .input-group-outline input.error {
+        border: 2px solid red;
+        /* Red outline for error state */
+    }
 
-.input-group-outline input {
-    cursor: pointer; /* Change cursor to pointer */
-}
+    .input-group-outline input {
+        cursor: pointer;
+        /* Change cursor to pointer */
+    }
 </style>
 
 
@@ -73,7 +76,7 @@
                                         </div>
 
 
-                                 
+
 
 
 
@@ -81,20 +84,20 @@
 
                                         <?php if (!empty($room_details)): ?>
                                             <?php foreach ($room_details as $room): ?>
-                                                <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>"> 
+                                                <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>">
                                                 <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
                                                 <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
                                                 <input type="hidden" name="noofguests[]" value="<?= $room['noofguests'] ?>">
 
                                                     <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>">
                                                     <div class="card-body ">
-                                                        <div class="d-lg-flex">
+                                                        <div class="d-flex">
                                                             <div>
                                                                 <h5 class="font-weight-bolder mb-0"><?= $room['room_name'] ?> - <?= $room['roomno'] ?> <span class="text-sm">(<?= $room['roomtype'] ?>)</span></h5>
                                                             </div>
                                                             <div class="ms-auto my-auto mt-lg-0 mt-4">
-                                                                <div class="ms-auto my-auto">
-                                                                <button class="btn btn-danger remove-room" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Remove</button>
+                                                                <div class="ms-auto my-auto"> 
+                                                                    <button class="btn btn-danger btn-sm remove-room" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Remove the room</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -109,12 +112,12 @@
                                                                     </div>
                                                                     <div class="col-12 col-sm-4 mt-2">
                                                                         <div class="input-group input-group-outline">
-                                                                        <select class="form-control extra-guest-count" name="extra_guest_count[]" data-rooms-ids="<?= $room['hotel_roomid'] ?>">
-                                                                            <option value="">Select Extra Guest Count</option>
-                                                                            <?php for ($i = 1; $i <= $room['extguests']; $i++): ?>
-                                                                                <option value="<?= $i ?>"><?= $i ?></option>
-                                                                            <?php endfor; ?>
-                                                                        </select>
+                                                                            <select class="form-control extra-guest-count" name="extra_guest_count[]" data-rooms-ids="<?= $room['hotel_roomid'] ?>">
+                                                                                <option value="">Select Extra Guest Count</option>
+                                                                                <?php for ($i = 1; $i <= $room['extguests']; $i++): ?>
+                                                                                    <option value="<?= $i ?>"><?= $i ?></option>
+                                                                                <?php endfor; ?>
+                                                                            </select>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -131,34 +134,178 @@
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Name</label>
                                                                                     <!-- <input class="form-control" type="text" name="guest_name[<?= $i ?>]" placeholder="Guest Name" /> -->
-                                                                                    <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Name"   />
+                                                                                    <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Name" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Age</label>
-                                                                                    <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Age"  />
+                                                                                    <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" placeholder="Guest Age" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Phone Number</label>
                                                                                     <!-- <input class="form-control" type="text" name="guest_phone[<?= $i ?>]" placeholder="Phone Number" /> -->
-                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" placeholder="Phone Number"  />
+                                                                                    <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" placeholder="Phone Number" />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 mt-2">
                                                                                 <div class="input-group input-group-outline is-focused">
                                                                                     <label class="form-label">Id Proof</label>
                                                                                     <!-- <input class="form-control" type="file" name="guest_id_proof[<?= $i ?>]" /> -->
-                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]"  />
+                                                                                    <input class="form-control" type="file" name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]" />
                                                                                 </div>
                                                                             </div>
                                                                         <?php endfor; ?>
                                                                     </div>
                                                                 </div>
-                                                                 <!-- Extra Guests will be appended here -->
-                                                                  <div id="extra-guests-<?= $room['hotel_roomid'] ?>"></div>
+
+                                                                <!-- Extra Guests will be appended here -->
+                                                                <div id="extra-guests-<?= $room['hotel_roomid'] ?>"></div>
+                                                                <!-- Extra Guests will be appended here -->
+
+                                                                <div class="row mt-3 border py-2">
+                                                                    <div class="d-flex">
+                                                                        <div class="mb-2">
+                                                                            <h6 class="font-weight-bolder mb-0">Item Details</h6>
+                                                                        </div>
+                                                                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                                                            <div class="ms-auto my-auto">
+                                                                                <button class="btn btn-primary btn-sm remove-room " type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Items</button> 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row ">
+                                                                        <div class=" ">
+                                                                            <div class="table-responsive ">
+                                                                                <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
+                                                                                    <thead class="bg-light">
+                                                                                        <tr>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">quantity </th>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Totel Price</th>
+                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td class="w-30">
+                                                                                                <div class="d-flex px-2 py-1 w-30">
+                                                                                                    <div>
+                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                                                                                    </div>
+                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
+                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class=" input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td class="w-30">
+                                                                                                <div class="d-flex px-2 py-1 w-30">
+                                                                                                    <div>
+                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                                                                                    </div>
+                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
+                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class=" input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td class="w-30">
+                                                                                                <div class="d-flex px-2 py-1 w-30">
+                                                                                                    <div>
+                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                                                                                    </div>
+                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
+                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class="input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <div class=" input-group input-group-outline">
+                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                                                                            </td>
+                                                                                            <td class="align-middle text-center">
+                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
+                                                                                            </td>
+                                                                                        </tr>
+
+                                                                                        <tr></tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -167,12 +314,6 @@
                                         <?php else: ?>
                                             <p>No rooms selected.</p>
                                         <?php endif; ?>
-
-
-
-
-
-
 
                                         <div class=" mt-3">
                                             <div class="d-lg-flex">
@@ -185,7 +326,7 @@
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-outline ">
                                                         <label class="form-label">Advance Amount</label>
-                                                        <input class="  form-control" type="number"  name="advance_amount" placeholder=" " />
+                                                        <input class="  form-control" type="number" name="advance_amount" placeholder=" " />
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-sm-4 mt-2">
@@ -254,16 +395,16 @@
 
 <script>
     document.querySelectorAll('.extra-guest-count').forEach(function(select) {
-    select.addEventListener('change', function() {
-        const roomId = this.getAttribute('data-rooms-ids');
-        const extraGuestCount = parseInt(this.value);
-        const container = document.getElementById('extra-guests-' + roomId);
-        // Clear previous extra guest fields
-        container.innerHTML = '';
-        if (extraGuestCount > 0) {
-            for (let i = 1; i <= extraGuestCount; i++) {
-                // Create the guest detail fields for each extra guest
-                container.innerHTML += `
+        select.addEventListener('change', function() {
+            const roomId = this.getAttribute('data-rooms-ids');
+            const extraGuestCount = parseInt(this.value);
+            const container = document.getElementById('extra-guests-' + roomId);
+            // Clear previous extra guest fields
+            container.innerHTML = '';
+            if (extraGuestCount > 0) {
+                for (let i = 1; i <= extraGuestCount; i++) {
+                    // Create the guest detail fields for each extra guest
+                    container.innerHTML += `
                     <div class="row mt-3 border py-2">
                         <div class="col-12 col-sm-3 mt-2">
                             <div class="input-group input-group-outline is-focused">
@@ -291,17 +432,17 @@
                         </div>
                     </div>
                 `;
+                }
             }
-        }
+        });
     });
-});
 </script>
 
 
 <script>
     let removedRooms = [];
     document.querySelectorAll('.remove-room').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const roomId = this.getAttribute('data-room-id');
             // Hide or remove the room card
             const roomCard = document.getElementById('room-card-' + roomId);
@@ -319,7 +460,7 @@
         removedRoomsInput.value = JSON.stringify(removedRooms);
         this.appendChild(removedRoomsInput);
     });
-</script> 
+</script>
 
 
 
@@ -410,24 +551,24 @@
 
 <!-- JavaScript to Toggle Company Fields -->
 <script>
-document.getElementById('customerType').addEventListener('change', function() {
-    const companyDetails = document.getElementById('companyDetails');
-    const companyNameField = document.querySelector('input[name="company_name"]');
-    const companyAddressField = document.querySelector('textarea[name="company_address"]');
-    const gstNumberField = document.querySelector('input[name="gst_number"]');
+    document.getElementById('customerType').addEventListener('change', function() {
+        const companyDetails = document.getElementById('companyDetails');
+        const companyNameField = document.querySelector('input[name="company_name"]');
+        const companyAddressField = document.querySelector('textarea[name="company_address"]');
+        const gstNumberField = document.querySelector('input[name="gst_number"]');
 
-    if (this.value === 'company') {
-        companyDetails.style.display = 'block';
-        companyNameField.required = true; // Make required
-        companyAddressField.required = true; // Make required
-        gstNumberField.required = true; // Make required
-    } else {
-        companyDetails.style.display = 'none';
-        companyNameField.required = false; // Not required
-        companyAddressField.required = false; // Not required
-        gstNumberField.required = false; // Not required
-    }
-});
+        if (this.value === 'company') {
+            companyDetails.style.display = 'block';
+            companyNameField.required = true; // Make required
+            companyAddressField.required = true; // Make required
+            gstNumberField.required = true; // Make required
+        } else {
+            companyDetails.style.display = 'none';
+            companyNameField.required = false; // Not required
+            companyAddressField.required = false; // Not required
+            gstNumberField.required = false; // Not required
+        }
+    });
 </script>
 
 
@@ -486,6 +627,142 @@ document.getElementById('customerType').addEventListener('change', function() {
 </div>
 <!-- Modal -->
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Items</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="table-responsive ">
+                        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">quantity </th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Totel Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-30">
+                                        <div class="d-flex px-2 py-1 w-30">
+                                            <div>
+                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center w-30">
+                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class=" input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-30">
+                                        <div class="d-flex px-2 py-1 w-30">
+                                            <div>
+                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center w-30">
+                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class=" input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-30">
+                                        <div class="d-flex px-2 py-1 w-30">
+                                            <div>
+                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center w-30">
+                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
+                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
+                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class=" input-group input-group-outline">
+                                            <!-- <label class="form-label"> </label> -->
+                                            <input class="form-control" type="number" name="commamt" required />
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
+                                    </td>
+                                </tr>
+
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
 
 
 
@@ -495,65 +772,64 @@ document.getElementById('customerType').addEventListener('change', function() {
 <!-- customer insertion -->
 <script>
     document.getElementById('customerForm').addEventListener('submit', function(event) {
-    console.log("Customer form submitted");
-    event.preventDefault(); // Prevent the default form submission
-    const formData = new FormData(this);
-    fetch('add_customer', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Customer added successfully!');
-            // Optionally, you can reload the page or update the table dynamically
-            location.reload();
-        } else {
-            alert('Error adding customer');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
+        console.log("Customer form submitted");
+        event.preventDefault(); // Prevent the default form submission
+        const formData = new FormData(this);
+        fetch('add_customer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Customer added successfully!');
+                    // Optionally, you can reload the page or update the table dynamically
+                    location.reload();
+                } else {
+                    alert('Error adding customer');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 </script>
 
 <script>
-document.querySelectorAll('.modal-content').forEach(function(modalContent) {
-    modalContent.addEventListener('click', function(event) {
-        event.stopPropagation();
+    document.querySelectorAll('.modal-content').forEach(function(modalContent) {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
     });
-});
-document.querySelector('.modal-backdrop').addEventListener('click', function() {
-    console.log("Backdrop clicked");
-});
+    document.querySelector('.modal-backdrop').addEventListener('click', function() {
+        console.log("Backdrop clicked");
+    });
 
-$('#customermodel').modal({
-    backdrop: 'static',
-    keyboard: false
-});
-
+    $('#customermodel').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 </script>
 <!-- agent insertion -->
 <script>
     document.getElementById('agentForm').addEventListener('submit', function(event) {
-    console.log("Agent form submitted");
-    event.preventDefault(); // Prevent the default form submission
-    const formData = new FormData(this);
-    fetch('add_agent', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Agent added successfully!');
-            // Optionally, you can reload the page or update the table dynamically
-            location.reload();
-        } else {
-            alert('Error adding agent');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
+        console.log("Agent form submitted");
+        event.preventDefault(); // Prevent the default form submission
+        const formData = new FormData(this);
+        fetch('add_agent', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Agent added successfully!');
+                    // Optionally, you can reload the page or update the table dynamically
+                    location.reload();
+                } else {
+                    alert('Error adding agent');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 </script>
 
 
@@ -596,5 +872,3 @@ $('#customermodel').modal({
         });
     });
 </script>
-
-

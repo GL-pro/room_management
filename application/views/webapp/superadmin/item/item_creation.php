@@ -8,13 +8,13 @@
                          <div class="card-body">
                             <form action="<?php echo base_url(); ?>item_reg" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
-                                    <h5 class="font-weight-bolder mb-2">Item Creation</h5>
+                                    <h5 class="font-weight-bolder">Item Creation</h5>
                                     <div class="">
                                         <div class="row mt-3">
                                             <!-- Category Dropdown -->
-                                         <div class="col-12 col-sm-6">
-                                            <div class="input-group input-group-static">
-                                                <label>Category</label>
+                                         <div class="col-12 col-sm-4  mt-3">
+                                            <div class="input-group input-group-outline is-focused">
+                                                <label class="form-label">Category</label>
                                                 <select class="form-control" name="category_id" id="category" required>
                                                     <option value="">Select Category</option>
                                                     <?php foreach ($categories as $category): ?>
@@ -25,9 +25,9 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-sm-6">
-                                            <div class="input-group input-group-static">
-                                                <label>Subcategory</label>
+                                        <div class="col-12 col-sm-4  mt-3">
+                                            <div class="input-group input-group-outline is-focused">
+                                                <label class="form-label">Subcategory</label>
                                                 <select class="form-control" name="subcategory_id" id="subcategory" required>
                                                     <option value="">Select subCategory</option>
                                                     <?php foreach ($subcategories as $subcategory): ?>
@@ -38,60 +38,52 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Item</label>
+                                  
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Item</label>
                                                     <input class="form-control" name="roomtypename" type="text" placeholder="Item Name" required />
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Image Upload</label>
-                                                    <input class="form-control custom-file-upload mt-2" name="roomtype_image" type="file" accept="image/*" id="facilityImageInput" onchange="previewFacilityImage(event)" required>
-                                                    <div class="mt-2">
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Image Upload</label>
+                                                    <input class="form-control custom-file-upload " name="roomtype_image" type="file" accept="image/*" id="facilityImageInput" onchange="previewFacilityImage(event)" required>
+                                                    <div class="">
                                                         <img id="facilityImagePreview" style="max-width: 200px; display: none;" alt="Image Preview" />
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Price1</label>
+                                         
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Price1</label>
                                                     <input class="form-control" name="price1" type="text" placeholder="Price1" required />
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Price2</label>
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Price2</label>
                                                     <input class="form-control" name="price2" type="text" placeholder="Price2" required />
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Tax</label>
+                                        
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Tax</label>
                                                     <input class="form-control" name="tax" type="text" placeholder="Tax" required />
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Description</label>
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Description</label>
                                                     <input class="form-control" name="description" type="text" placeholder="Description" required />
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-12 col-sm-6">
-                                                <div class="input-group input-group-static">
-                                                    <label>Available</label>
+                                        
+                                            <div class="col-12 col-sm-4  mt-3">
+                                                <div class="input-group input-group-outline is-focused">
+                                                    <label class="form-label">Available</label>
                                                     <select class="form-control" name="availability" required>
                                                         <option value="" disabled selected>Select availability</option>
                                                         <option value="yes">Yes</option>
@@ -104,7 +96,7 @@
 
                                    </div>
                                 </div>
-                                <div class="row mt-5">
+                                <div class="row mt-2">
                                     <h5 class="font-weight-bolder mb-0">Status</h5>
                                     <div class="col-12 col-sm-6 mt-3">
                                         <div class="form-check form-switch">
@@ -114,7 +106,7 @@
                                     </div>
                                 </div>
                                 <input type="hidden" id="status" name="status" value="1">
-                                <div class="button-row d-flex mt-4">
+                                <div class="button-row d-flex mt-2">
                                     <a href="all_room_type" class="ms-auto mb-0">
                                         <button class="ms-auto mb-0 px-6 btn bg-gradient-dark" type="submit" title="submit" data-bs-toggle="modal" data-bs-target="#modal-coordinator">Submit</button>
                                     </a>

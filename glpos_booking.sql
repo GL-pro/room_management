@@ -27,21 +27,21 @@ SET time_zone = "+00:00";
 -- Table structure for table `adminlogin`
 --
 
-CREATE TABLE `adminlogin` (
-  `id` bigint(20) NOT NULL,
-  `email` text NOT NULL,
-  `password` text NOT NULL,
-  `usertype` text NOT NULL,
-  `status` text NOT NULL,
-  `date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- CREATE TABLE `adminlogin` (
+--   `id` bigint(20) NOT NULL,
+--   `email` text NOT NULL,
+--   `password` text NOT NULL,
+--   `usertype` text NOT NULL,
+--   `status` text NOT NULL,
+--   `date` datetime(6) DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `adminlogin`
---
+-- --
+-- -- Dumping data for table `adminlogin`
+-- --
 
-INSERT INTO `adminlogin` (`id`, `email`, `password`, `usertype`, `status`, `date`) VALUES
-(1, 'a@gmail.com', '1234', 'admin', 'active', '2024-08-15 16:14:27.000000');
+-- INSERT INTO `adminlogin` (`id`, `email`, `password`, `usertype`, `status`, `date`) VALUES
+-- (1, 'a@gmail.com', '1234', 'admin', 'active', '2024-08-15 16:14:27.000000');
 
 -- --------------------------------------------------------
 
