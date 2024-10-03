@@ -410,7 +410,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->select('*');
         $this->db->from('room_booking');
         $this->db->where('hotel_roomid', $hotel_roomid);
-        $this->db->where('booking_status !=', 'canceled'); // Exclude canceled bookings
+        $this->db->where('booking_status !=', 'cancelled'); // Exclude canceled bookings
         $this->db->group_start();
         $this->db->where('checkin <', $checkout);
         $this->db->where('checkout >', $checkin);
@@ -419,6 +419,12 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $query->num_rows() > 0; // Return true if there are conflicting bookings
     }
 
+
+    // public function getItemsForRoom($room_id) {
+    //     $this->db->where('room_id', $room_id); // Adjust the column name according to your database schema
+    //     $query = $this->db->get('item'); // Replace 'items' with your actual items table
+    //     return $query->result_array();
+    // }
     
     public function update_room_status($room_id, $status)
     {

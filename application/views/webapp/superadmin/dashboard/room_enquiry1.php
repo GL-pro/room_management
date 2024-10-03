@@ -227,7 +227,7 @@
                                                                                                 <button class="btn btn-dark btn-sm mb-0">Remove</button>
                                                                                             </td>
                                                                                         </tr>
-                                                                                        <tr>
+                                                                                        <!-- <tr>
                                                                                             <td class="w-30">
                                                                                                 <div class="d-flex px-2 py-1 w-30">
                                                                                                     <div>
@@ -245,13 +245,13 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                  
                                                                                                     <input class="form-control" type="number" name="commamt" required />
                                                                                                 </div>
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class=" input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                   
                                                                                                     <input class="form-control" type="number" name="commamt" required />
                                                                                                 </div>
                                                                                             </td>
@@ -280,13 +280,13 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                             
                                                                                                     <input class="form-control" type="number" name="commamt" required />
                                                                                                 </div>
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class=" input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
+                                                                                                 
                                                                                                     <input class="form-control" type="number" name="commamt" required />
                                                                                                 </div>
                                                                                             </td>
@@ -296,7 +296,7 @@
                                                                                             <td class="align-middle text-center">
                                                                                                 <button class="btn btn-dark btn-sm mb-0">Remove</button>
                                                                                             </td>
-                                                                                        </tr>
+                                                                                        </tr> -->
 
                                                                                         <tr></tr>
                                                                                     </tbody>
@@ -683,7 +683,7 @@
                                         <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td class="w-30">
                                         <div class="d-flex px-2 py-1 w-30">
                                             <div>
@@ -701,21 +701,21 @@
                                     </td>
                                     <td>
                                         <div class="input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
+                                           
                                             <input class="form-control" type="number" name="commamt" required />
                                         </div>
                                     </td>
                                     <td>
                                         <div class=" input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
+                                         
                                             <input class="form-control" type="number" name="commamt" required />
                                         </div>
                                     </td>
                                     <td class="align-middle text-center">
                                         <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
                                     </td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td class="w-30">
                                         <div class="d-flex px-2 py-1 w-30">
                                             <div>
@@ -733,20 +733,20 @@
                                     </td>
                                     <td>
                                         <div class="input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
+                                          
                                             <input class="form-control" type="number" name="commamt" required />
                                         </div>
                                     </td>
                                     <td>
                                         <div class=" input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
+                                           
                                             <input class="form-control" type="number" name="commamt" required />
                                         </div>
                                     </td>
                                     <td class="align-middle text-center">
                                         <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
                                     </td>
-                                </tr>
+                                </tr> -->
 
                                 <tr></tr>
                             </tbody>
