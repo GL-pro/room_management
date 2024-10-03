@@ -18,27 +18,26 @@ class Superadmin extends CI_Controller {
         $data['menu']='dashboard';
         $data['pagetitle']='DashBoard';
 
+		
 	 // Get filter values from POST request
 	 $filterDate = $this->input->post('filterDate');
 	 $filterType = $this->input->post('filterType');
 	 $filterRoom = $this->input->post('filterRoom');
-	 // Fetch filtered data
 	 if ($filterDate || $filterType || $filterRoom) {
-		 // Get room data based on filters
 		 $data['room_data'] = $this->HomeModel->getsearchbydate($filterDate, $filterType, $filterRoom);
 	 } else {
-		 // Fetch all data if no filters are applied
-		 $data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
+		 $data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType1();
 	 }
-		// Check if the request is an AJAX request
 		if ($this->input->is_ajax_request()) {
 			echo json_encode($data); // Send room data as JSON
 		} else {
 
 
+
 		$data['room_types'] = $this->HomeModel->getRoomTypes();
 		$data['hotel_rooms'] = $this->HomeModel->getHotelRoom();
-		$data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
+		// $data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
+		$data['room_data1'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType1();
 		$this->load->view('webapp/superadmin/include/header',$data);
 		$this->load->view('webapp/superadmin/dashboard/dashboard', $data);
 		$this->load->view('webapp/superadmin/include/footer');
@@ -818,6 +817,13 @@ public function room_enquiry_submit()
             $checkin = null;
             $checkout = null;
         }
+
+		// Step 1: Check for room availability before proceeding
+        if ($this->HomeModel->checkRoomAvailability($hotel_roomid, $checkin, $checkout)) {
+            // Room is not available
+            return "Room {$hotel_roomid} is not available for the selected dates.";
+        }
+		
         $booking_data = [
 			'order_id' => $order_id, // Store the unique order ID
             'agent_id' => $agent_id,
@@ -844,11 +850,25 @@ public function room_enquiry_submit()
         // Insert room details into room_booking_details table
         $room_detail_data = [
             'booking_id' => $booking_id,
-            'date' => date('Y-m-d H:i:s'),
+            'date' =>$adding_date,
             'extra_guest_count' => $extra_guest_counts[$index],
 			'hotel_roomid' => $hotel_roomid,
         ];
         $this->HomeModel->insert_room_booking_details($room_detail_data);
+		$availability_date = $checkout; // Room becomes available after the checkout date
+		  // Insert room details into room_status_log table
+		  $room_status_log = [
+            'booking_id' => $booking_id,
+            'date' => $adding_date,
+			'status_change_date' =>$adding_date,
+			'availability_date' =>$availability_date,
+			'hotel_roomid' => $hotel_roomid,
+			'customer_id' => $customer_id,
+			'status' => 'vaccant',
+        ];
+        $this->HomeModel->insert_room_status_log($room_status_log);
+
+
 	// }
       // Insert guest details for the current room
 	  if (!empty($guest_names[$hotel_roomid])) {

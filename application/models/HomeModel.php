@@ -317,19 +317,27 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query= $this->db->get();
             return $query->result();
     }
-    // public function getRoomTypesWithRooms() {
-    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno,
-    //     hotel_room.hotel_roomid');
+
+    // public function getRoomTypesWithRoomsGroupedByType() {
+    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
     //     $this->db->from('hotel_room');
     //     $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
     //     $this->db->order_by('hotel_room.roomtypeid', 'ASC');
     //     $query = $this->db->get();
-    //     return $query->result_array();
+    //     $rooms = $query->result_array();
+    //     $groupedRooms = [];
+    //     foreach ($rooms as $room) {
+    //         $groupedRooms[$room['roomtype']][] = $room;
+    //     }
+    //     return $groupedRooms;
     // }
-    public function getRoomTypesWithRoomsGroupedByType() {
-        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
+
+    public function getRoomTypesWithRoomsGroupedByType1() {
+        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid, room_booking.customer_id');
         $this->db->from('hotel_room');
         $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
+        // Use LEFT JOIN to include all rooms, even those not booked
+        $this->db->join('room_booking', 'room_booking.hotel_roomid = hotel_room.hotel_roomid', 'left');
         $this->db->order_by('hotel_room.roomtypeid', 'ASC');
         $query = $this->db->get();
         $rooms = $query->result_array();
@@ -340,8 +348,6 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $groupedRooms;
     }
     
-
-
 
 
 
@@ -394,6 +400,25 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     {
         $this->db->insert('guest_details', $data);
     }
+    
+    public function insert_room_status_log($data)
+    {
+        $this->db->insert('room_status_log', $data);
+    }
+
+    public function checkRoomAvailability($hotel_roomid, $checkin, $checkout) {
+        $this->db->select('*');
+        $this->db->from('room_booking');
+        $this->db->where('hotel_roomid', $hotel_roomid);
+        $this->db->where('booking_status !=', 'canceled'); // Exclude canceled bookings
+        $this->db->group_start();
+        $this->db->where('checkin <', $checkout);
+        $this->db->where('checkout >', $checkin);
+        $this->db->group_end();
+        $query = $this->db->get();
+        return $query->num_rows() > 0; // Return true if there are conflicting bookings
+    }
+
     
     public function update_room_status($room_id, $status)
     {
