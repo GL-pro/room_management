@@ -317,19 +317,27 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query= $this->db->get();
             return $query->result();
     }
-    // public function getRoomTypesWithRooms() {
-    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno,
-    //     hotel_room.hotel_roomid');
+
+    // public function getRoomTypesWithRoomsGroupedByType() {
+    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
     //     $this->db->from('hotel_room');
     //     $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
     //     $this->db->order_by('hotel_room.roomtypeid', 'ASC');
     //     $query = $this->db->get();
-    //     return $query->result_array();
+    //     $rooms = $query->result_array();
+    //     $groupedRooms = [];
+    //     foreach ($rooms as $room) {
+    //         $groupedRooms[$room['roomtype']][] = $room;
+    //     }
+    //     return $groupedRooms;
     // }
-    public function getRoomTypesWithRoomsGroupedByType() {
-        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
+
+    public function getRoomTypesWithRoomsGroupedByType1() {
+        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid, room_booking.customer_id');
         $this->db->from('hotel_room');
         $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
+        // Use LEFT JOIN to include all rooms, even those not booked
+        $this->db->join('room_booking', 'room_booking.hotel_roomid = hotel_room.hotel_roomid', 'left');
         $this->db->order_by('hotel_room.roomtypeid', 'ASC');
         $query = $this->db->get();
         $rooms = $query->result_array();
@@ -340,8 +348,6 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $groupedRooms;
     }
     
-
-
 
 
 
@@ -364,7 +370,8 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     }
 
     public function getRoomDetails($room_id) {
-        $this->db->select('hotel_room.*,admin_room.*,hotel_room.noofguests,hotel_room.extguests,hotel_room.room_name, hotel_room.roomno, admin_room.roomtype');
+        $this->db->select('hotel_room.*,admin_room.*,hotel_room.noofguests,hotel_room.extguests,hotel_room.room_name, 
+        hotel_room.roomno, admin_room.roomtype,hotel_room.hotel_roomid');
         $this->db->from('hotel_room');
         $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
         $this->db->where('hotel_room.hotel_roomid', $room_id); // Fetch details based on hotel_roomid
@@ -394,6 +401,31 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->insert('guest_details', $data);
     }
     
+    public function insert_room_status_log($data)
+    {
+        $this->db->insert('room_status_log', $data);
+    }
+
+    public function checkRoomAvailability($hotel_roomid, $checkin, $checkout) {
+        $this->db->select('*');
+        $this->db->from('room_booking');
+        $this->db->where('hotel_roomid', $hotel_roomid);
+        $this->db->where('booking_status !=', 'cancelled'); // Exclude canceled bookings
+        $this->db->group_start();
+        $this->db->where('checkin <', $checkout);
+        $this->db->where('checkout >', $checkin);
+        $this->db->group_end();
+        $query = $this->db->get();
+        return $query->num_rows() > 0; // Return true if there are conflicting bookings
+    }
+
+
+    // public function getItemsForRoom($room_id) {
+    //     $this->db->where('room_id', $room_id); // Adjust the column name according to your database schema
+    //     $query = $this->db->get('item'); // Replace 'items' with your actual items table
+    //     return $query->result_array();
+    // }
+    
     public function update_room_status($room_id, $status)
     {
         $data = ['room_status' => $status];
@@ -413,34 +445,42 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query = $this->db->get('hotel_room'); // Replace 'rooms' with your actual table name
         return $query->result_array();
     }
-
     public function getsearchbydate($filterDate = null, $filterType = null, $filterRoom = null)
     {
-        $this->db->select('room_booking.*, hotel_room.roomtypeid');  // Select all room_booking columns and roomtype from hotel_room
+        $this->db->select('room_booking.*, hotel_room.roomtypeid, hotel_room.roomno, hotel_room.status');
         $this->db->from('room_booking');
-        $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');  // Join hotel_room on roomid
+        $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
         $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid', 'left');
-        
-        // Check that the booking status is 1 (assuming status = 1 means active/available bookings)
-        $this->db->where('room_booking.status', 1); 
     
-        // Apply filters if they are set
+        // Apply filters
         if (!empty($filterDate)) {
             $this->db->where('room_booking.checkin <=', $filterDate);
             $this->db->where('room_booking.checkout >=', $filterDate);
         }
         if (!empty($filterType)) {
-            $this->db->where('admin_room.roomtype', $filterType);  // Filter by room type
+            $this->db->where('admin_room.roomtype', $filterType);
         }
         if (!empty($filterRoom)) {
-            $this->db->where('hotel_room.room_name', $filterRoom);  // Filter by room name
+            $this->db->where('hotel_room.room_name', $filterRoom);
         }
-        
+    
+        // Check status
+        $this->db->where('room_booking.status', 1);
+    
         $query = $this->db->get();
         return $query->result_array();
     }
     
-
+        public function updateCategory($roomid, $roomtype, $status, $roomtype_image) {
+        $data = array(
+            'category_name' => $roomtype,
+            'status' => $status,
+            'category_image' => $roomtype_image
+        );
+        $this->db->where('category_id', $roomid);
+        $this->db->update('category', $data);
+        return $this->db->affected_rows() > 0;
+    }
 
 
 

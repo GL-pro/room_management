@@ -79,7 +79,9 @@
               <div class="container d-flex">
                 <a class=" text-center " href="index">
                   <img class="w-50 mx-auto" src="<?= base_url() ?>assets/img/hotel/logo/ITDS  LOGO1 primary.png" alt="">
-                </a> 
+                </a>
+
+<!-- comment -->
               </div>
               <div class="card card-plain">
                 <div class="card-header text-center">
