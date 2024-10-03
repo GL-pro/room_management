@@ -77,6 +77,26 @@ class Superadmin extends CI_Controller {
 		$this->load->view('webapp/superadmin/include/footer');
 	}
 
+	public function booked_enquiry() {
+		$data['menu'] = 'booked_enquiry';
+		$data['pagetitle'] = 'Booked Enquiry';
+		 
+		//var_dump($data['room_details']);die;
+		$this->load->view('webapp/superadmin/include/header', $data);
+		$this->load->view('webapp/superadmin/dashboard/booked_enquiry', $data);
+		$this->load->view('webapp/superadmin/include/footer');
+	}
+
+	public function occupied_enquiry() {
+		$data['menu'] = 'occupied_enquiry';
+		$data['pagetitle'] = 'Booked Enquiry';
+		 
+		//var_dump($data['room_details']);die;
+		$this->load->view('webapp/superadmin/include/header', $data);
+		$this->load->view('webapp/superadmin/dashboard/occupied_enquiry', $data);
+		$this->load->view('webapp/superadmin/include/footer');
+	}
+
 	
 	public function room_enquiry1() {
 		$data['menu'] = 'room_enquiry';
@@ -455,7 +475,7 @@ class Superadmin extends CI_Controller {
 			'roomtypeid' => $roomType,
 			'noofguests' => $noOfGuests,
 			'extguests' => $extguests,
-			'normalprice' => $normalPrice,
+			'normalprice' => $normalPrice, 
 			'discountprice' => $discountPrice,
 			'description' => $description,
 			'room_status'=> 'vaccant',

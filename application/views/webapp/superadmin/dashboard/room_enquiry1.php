@@ -63,7 +63,7 @@
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-static">
                                                         <label class="form-label text-primary">Customer</label>
-                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
+                                                        <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
                                                         <select class="form-control" id="choices-Customer" name="customer_id">
                                                             <option value="">Select Customer</option>
                                                             <?php foreach ($customers as $customer): ?>
@@ -88,8 +88,12 @@
                                                 <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
                                                 <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
                                                 <input type="hidden" name="noofguests[]" value="<?= $room['noofguests'] ?>">
-
-                                                    <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>">
+                                                <!-- <input type="hidden" name="checkin[]" value="<?= $room['checkin'] ?>">
+                                                <input type="hidden" name="checkout[]" value="<?= $room['checkout'] ?>">
+                                                -->
+                                                <!-- <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);"> -->
+                                                <!-- <div class="card mt-3 room-card" id="room-card-<?= $room['hotel_roomid'] ?>" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">  -->
+                                                <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
                                                     <div class="card-body ">
                                                         <div class="d-flex">
                                                             <div>
