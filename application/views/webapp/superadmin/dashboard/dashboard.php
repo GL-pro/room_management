@@ -479,6 +479,12 @@
                                         <?php echo $room['roomno']; ?>
                                     </label>
                                 <?php endforeach; ?>
+
+                               <a href="booked_enquiry"><input type="button" class="btn-check1" id="btncheck11" autocomplete="off">
+                               <label class="btn btn-warning  " for="btncheck11">1111</label></a>  
+                               <a href="occupied_enquiry"><input type="button" class="btn-check1" id="btncheck12" autocomplete="off">
+                               <label class="btn btn-danger  " for="btncheck12">2222</label></a>  
+
                             </div>
                         </div>
                     </div>
