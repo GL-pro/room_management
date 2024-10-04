@@ -417,11 +417,6 @@
                                     </label>
                                 <?php endforeach; ?>
 
-                               <a href="booked_enquiry"><input type="button" class="btn-check1" id="btncheck11" autocomplete="off">
-                               <label class="btn btn-warning  " for="btncheck11">1111</label></a>  
-                               <a href="occupied_enquiry"><input type="button" class="btn-check1" id="btncheck12" autocomplete="off">
-                               <label class="btn btn-danger  " for="btncheck12">2222</label></a>  
-
                             </div>
                         </div>
                     </div>
@@ -613,10 +608,10 @@
                 document.getElementById('room-form').action = '<?php echo site_url("room_enquiry1"); ?>';
                 document.getElementById('room-form').submit();
             } else if (firstRoomStatus === 'booked') {
-                document.getElementById('room-form').action = '<?php echo site_url("room_occupy"); ?>';
+                document.getElementById('room-form').action = '<?php echo site_url("booked_enquiry"); ?>';
                 document.getElementById('room-form').submit();
             } else if (firstRoomStatus === 'occupied') {
-                document.getElementById('room-form').action = '<?php echo site_url("continue_to_occupy"); ?>';
+                document.getElementById('room-form').action = '<?php echo site_url("occupied_enquiry"); ?>';
                 document.getElementById('room-form').submit();
             }
         }

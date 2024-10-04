@@ -121,7 +121,7 @@ class Superadmin extends CI_Controller {
 			}
 		}
 		$data['room_details'] = $room_details;
-
+		$data['items'] = $this->HomeModel->getItemsWithCategories();
 
 		$this->load->view('webapp/superadmin/include/header', $data);
 		$this->load->view('webapp/superadmin/dashboard/room_enquiry1', $data);
@@ -985,31 +985,6 @@ private function _upload_file($file, $upload_path)
 
 
 
-// public function room_occupy() {
-// 	$data['menu'] = 'room_occupy';
-// 	$data['pagetitle'] = 'room_occupy';
-// 	$data['agencies'] = $this->HomeModel->getAgents();
-// 	$data['customers'] = $this->HomeModel->getCustomers(); // Fetch customers
-// 	$selected_rooms = $this->input->post('selected_rooms');
-// 	if (!empty($selected_rooms)) {
-// 		$room_ids = explode(',', $selected_rooms);
-// 	} else {
-// 		$room_ids = [];
-// 	}
-// 	$data['room_ids'] = $room_ids;
-// 	// Fetch room details based on hotel_roomids
-// 	$room_details = [];
-// 	foreach ($room_ids as $room_id) {
-// 		$room_info = $this->HomeModel->getRoomDetails($room_id);
-// 		if ($room_info) {
-// 			$room_details[] = $room_info;
-// 		}
-// 	}
-// 	$data['room_details'] = $room_details;
-// 	$this->load->view('webapp/superadmin/include/header', $data);
-// 	$this->load->view('webapp/superadmin/dashboard/room_occupy', $data);
-// 	$this->load->view('webapp/superadmin/include/footer');
-// }
 
 
 

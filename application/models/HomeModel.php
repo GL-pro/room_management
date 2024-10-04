@@ -482,7 +482,30 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $this->db->affected_rows() > 0;
     }
 
-
+    public function getItemsWithCategories() {
+        $this->db->select('item.item_id, item.item_name, item.price1, category.category_name, subcategory.subcategory_name');
+        $this->db->from('item');
+        $this->db->join('category', 'item.category_id = category.category_id');
+        $this->db->join('subcategory', 'item.subcategory_id = subcategory.subcategory_id', 'left'); // Adjust as needed
+        $query = $this->db->get();
+        $items = $query->result_array();
+    
+        $result = [];
+        foreach ($items as $item) {
+            $categoryName = $item['category_name'];
+            if (!isset($result[$categoryName])) {
+                $result[$categoryName] = [];
+            }
+            $result[$categoryName][] = [
+                'item_id' => $item['item_id'],
+                'item_name' => $item['item_name'],
+                'price1' => $item['price1'],
+                'subcategory_name' => $item['subcategory_name']
+            ];
+        }
+        return $result;
+    }
+    
 
 
 

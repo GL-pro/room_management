@@ -88,9 +88,6 @@
                                                 <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
                                                 <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
                                                 <input type="hidden" name="noofguests[]" value="<?= $room['noofguests'] ?>">
-                                                <!-- <input type="hidden" name="checkin[]" value="<?= $room['checkin'] ?>">
-                                                <input type="hidden" name="checkout[]" value="<?= $room['checkout'] ?>">
-                                                -->
                                                 <!-- <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);"> -->
                                                 <!-- <div class="card mt-3 room-card" id="room-card-<?= $room['hotel_roomid'] ?>" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">  -->
                                                 <div class="card mt-3" id="room-card-<?= $room['hotel_roomid'] ?>" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
@@ -176,12 +173,13 @@
                                                                         </div>
                                                                         <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                                             <div class="ms-auto my-auto">
-                                                                                <button class="btn btn-primary btn-sm remove-room " type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Items</button> 
-                                                                            </div>
+                                                                                <!-- <button class="btn btn-primary btn-sm remove-room" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Items</button>  -->
+                                                                                <button class="btn btn-primary btn-sm open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button>
+                                                                                </div>
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="row ">
+                                                                    <!-- <div class="row ">
                                                                         <div class=" ">
                                                                             <div class="table-responsive ">
                                                                                 <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
@@ -195,6 +193,7 @@
                                                                                             <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Action</th>
                                                                                         </tr>
                                                                                     </thead>
+
                                                                                     <tbody>
                                                                                         <tr>
                                                                                             <td class="w-30">
@@ -214,51 +213,16 @@
                                                                                             </td>
                                                                                             <td>
                                                                                                 <div class="input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class=" input-group input-group-outline">
-                                                                                                    <!-- <label class="form-label"> </label> -->
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                        <!-- <tr>
-                                                                                            <td class="w-30">
-                                                                                                <div class="d-flex px-2 py-1 w-30">
-                                                                                                    <div>
-                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                                                                                    </div>
-                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
-                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class="input-group input-group-outline">
-                                                                                                  
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class=" input-group input-group-outline">
                                                                                                    
                                                                                                     <input class="form-control" type="number" name="commamt" required />
                                                                                                 </div>
                                                                                             </td>
+                                                                                            <td>
+                                                                                                <div class=" input-group input-group-outline">
+                                                                                             
+                                                                                                    <input class="form-control" type="number" name="commamt" required />
+                                                                                                </div>
+                                                                                            </td>
                                                                                             <td class="align-middle text-center">
                                                                                                 <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
                                                                                             </td>
@@ -266,48 +230,50 @@
                                                                                                 <button class="btn btn-dark btn-sm mb-0">Remove</button>
                                                                                             </td>
                                                                                         </tr>
-                                                                                        <tr>
-                                                                                            <td class="w-30">
-                                                                                                <div class="d-flex px-2 py-1 w-30">
-                                                                                                    <div>
-                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                                                                                    </div>
-                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
-                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class="input-group input-group-outline">
-                                                                                             
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class=" input-group input-group-outline">
-                                                                                                 
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
-                                                                                            </td>
-                                                                                        </tr> -->
-
+                                                                                       
                                                                                         <tr></tr>
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> -->
+
+
+                                            <div class="row">
+                                                <div class="">
+                                                    <!-- Main Table -->
+<!-- Room Section with Add Items Button -->
+<div class="room-section" data-room-id="<?= $room['hotel_roomid'] ?>">
+    <h5>Room ID: <?= $room['hotel_roomid'] ?></h5>
+    <!-- <button class="open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items for Room <?= $room['hotel_roomid'] ?></button> -->
+   <!-- Updated "Add Items for Room" Button -->
+    <div class="table-responsive">
+        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe" id="table-room-<?= $room['hotel_roomid'] ?>">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Current Price</th>
+                    <th>New Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Items will be added here for this specific room -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+                                                </div>
+                                            </div>
+
+
+
+
                                                                 </div>
 
                                                             </div>
@@ -632,7 +598,7 @@
 <!-- Modal -->
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -673,38 +639,6 @@
                                     </td>
                                     <td>
                                         <div class="input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                            <!-- <label class="form-label"> </label> -->
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr>
-                                <!-- <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
                                            
                                             <input class="form-control" type="number" name="commamt" required />
                                         </div>
@@ -718,40 +652,8 @@
                                     <td class="align-middle text-center">
                                         <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
                                     </td>
-                                </tr> -->
-                                <!-- <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
-                                          
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                           
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr> -->
-
+                                </tr>
+                                
                                 <tr></tr>
                             </tbody>
                         </table>
@@ -764,10 +666,95 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
+
+
+
+
+
 <!-- Modal -->
-
-
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Items</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Quantity</th>
+                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $category => $categoryItems): ?>
+                                    <?php foreach ($categoryItems as $item): ?>
+                                        <tr class="item-row" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
+                                            data-category="<?= htmlspecialchars($category); ?>"
+                                            data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
+                                            data-price="<?= $item['price1']; ?>">
+                                            <td class="w-30">
+                                                <div class="d-flex px-2 py-1 w-30">
+                                                    <div>
+                                                        <input type="checkbox" class="item-checkbox" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
+                                                               data-category="<?= htmlspecialchars($category); ?>"
+                                                               data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
+                                                               data-price="<?= $item['price1']; ?>" />
+                                                    </div>
+                                                    <div>
+                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto" alt="Item Image">
+                                                    </div>
+                                                    <div class="d-flex flex-column justify-content-center w-30">
+                                                        <h6 class="mb-0 text-md w-30"><?= htmlspecialchars($item['item_name']); ?></h6>
+                                                        <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($category); ?></p>
+                                                        <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($item['subcategory_name']); ?></p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-md font-weight-bold mb-0">₹ <?= number_format($item['price1'], 2); ?>/-</p>
+                                            </td>
+                                            <td>
+                                                <div class="input-group input-group-outline">
+                                                    <input class="form-control new-price" type="number" name="new_price_<?= $item['item_id']; ?>" placeholder="Enter new price" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group input-group-outline">
+                                                    <input class="form-control quantity" type="number" name="quantity_<?= $item['item_id']; ?>" value="1" min="1" placeholder="Quantity" />
+                                                </div>
+                                            </td>
+                                            <td class="align-middle text-center total-price">
+                                                <p class="text-lg font-weight-bold mb-0">₹ 0.00</p>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- <button id="addItemsButton" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Add Selected Items</button> -->
+         <!-- Updated "Add Selected Items" Button -->
+            <button id="addItemsButton" class="btn btn-primary btn-sm" type="button" data-room-id="<?= $room['hotel_roomid'] ?>">Add Selected Items</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -875,4 +862,73 @@
             }
         });
     });
+</script>
+
+
+
+<script>
+    let selectedRoomId;
+$(document).ready(function () {
+    // When an "Add Items" button is clicked for a room
+    $('.open-modal-btn').on('click', function () {
+        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
+    });
+
+    // When the "Add Selected Items" button in the modal is clicked
+    $('#addItemsButton').on('click', function () {
+        const selectedItems = []; // Array to hold selected items
+
+        // Loop through each item in the modal
+        $('.item-row').each(function () {
+            const $checkbox = $(this).find('.item-checkbox');
+            if ($checkbox.is(':checked')) { // If the checkbox is checked
+                const itemName = $checkbox.data('item-name');
+                const itemPrice = parseFloat($checkbox.data('price'));
+                const quantity = $(this).find('.quantity').val() || 1; // Get the quantity value
+                const newPrice = parseFloat($(this).find('.new-price').val()) || itemPrice; // Get the new price value
+
+                selectedItems.push({
+                    name: itemName,
+                    currentPrice: itemPrice,
+                    newPrice: newPrice,
+                    quantity: quantity,
+                    totalPrice: (newPrice * quantity).toFixed(2) // Calculate total price
+                });
+            }
+        });
+
+        // Append each selected item only to the specific room's table
+        selectedItems.forEach(item => {
+            $(`#table-room-${selectedRoomId} tbody`).append(`
+                <tr>
+                    <td>${item.name}</td>
+                    <td>₹ ${item.currentPrice.toFixed(2)}</td>
+                    <td>
+                        <input class="form-control" type="number" name="new_price[]" value="${item.newPrice}" required />
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" name="quantity[]" value="${item.quantity}" required />
+                    </td>
+                    <td class="total-price">₹ ${item.totalPrice}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
+                    </td>
+                </tr>
+            `);
+        });
+
+        // Clear the selection in the modal after adding them
+        $('.item-checkbox').prop('checked', false);
+        $('.new-price').val('');
+        $('.quantity').val(1);
+    });
+
+    // Function to remove an item from the room's table
+    $(document).on('click', '.remove-item', function () {
+        $(this).closest('tr').remove();
+    });
+});
+
+
+
 </script>
