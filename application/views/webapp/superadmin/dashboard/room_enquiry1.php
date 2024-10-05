@@ -174,8 +174,10 @@
                                                                         <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                                             <div class="ms-auto my-auto">
                                                                                 <!-- <button class="btn btn-primary btn-sm remove-room" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Items</button>  -->
-                                                                                <button class="btn btn-primary btn-sm open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button>
-                                                                                </div>
+                                                                                <!-- <button class="btn btn-primary btn-sm open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button> -->
+                                                                                     <button class="btn btn-primary btn-sm open-modal-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button>
+
+                                                                            </div>
                                                                         </div>
                                                                     </div>
 
@@ -316,7 +318,9 @@
 
                                 <div class="button-row d-flex mt-4">
                                     <!-- <a href=" " class="ms-auto mb-0"> -->
+                                    <!-- <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button> -->
                                     <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button>
+
                                 </div>
                             </form>
                         </div>
@@ -697,51 +701,47 @@
                                     <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Total Price</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php foreach ($items as $category => $categoryItems): ?>
-                                    <?php foreach ($categoryItems as $item): ?>
-                                        <tr class="item-row" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
-                                            data-category="<?= htmlspecialchars($category); ?>"
-                                            data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
-                                            data-price="<?= $item['price1']; ?>">
-                                            <td class="w-30">
-                                                <div class="d-flex px-2 py-1 w-30">
-                                                    <div>
-                                                        <input type="checkbox" class="item-checkbox" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
-                                                               data-category="<?= htmlspecialchars($category); ?>"
-                                                               data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
-                                                               data-price="<?= $item['price1']; ?>" />
+
+                             <tbody>
+                                    <?php foreach ($items as $category => $categoryItems): ?>
+                                        <?php foreach ($categoryItems as $item): ?>
+                                            <tr class="item-row" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
+                                                data-category="<?= htmlspecialchars($category); ?>"
+                                                data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
+                                                data-price="<?= $item['price1']; ?>">
+                                                <td class="w-30">
+                                                    <div class="d-flex px-2 py-1 w-30">
+                                                        <div>
+                                                            <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto" alt="Item Image">
+                                                        </div>
+                                                        <div class="d-flex flex-column justify-content-center w-30">
+                                                            <h6 class="mb-0 text-md w-30"><?= htmlspecialchars($item['item_name']); ?></h6>
+                                                            <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($category); ?></p>
+                                                            <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($item['subcategory_name']); ?></p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto" alt="Item Image">
+                                                </td>
+                                                <td>
+                                                    <p class="text-md font-weight-bold mb-0">₹ <?= number_format($item['price1'], 2); ?>/-</p>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group input-group-outline">
+                                                        <input class="form-control new-price" type="number" name="new_price_<?= $item['item_id']; ?>" placeholder="Enter new price" />
                                                     </div>
-                                                    <div class="d-flex flex-column justify-content-center w-30">
-                                                        <h6 class="mb-0 text-md w-30"><?= htmlspecialchars($item['item_name']); ?></h6>
-                                                        <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($category); ?></p>
-                                                        <p class="text-sm text-secondary mb-0 w-30"><?= htmlspecialchars($item['subcategory_name']); ?></p>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group input-group-outline">
+                                                        <input class="form-control quantity" type="number" name="quantity_<?= $item['item_id']; ?>" value="1" min="1" placeholder="Quantity" />
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <p class="text-md font-weight-bold mb-0">₹ <?= number_format($item['price1'], 2); ?>/-</p>
-                                            </td>
-                                            <td>
-                                                <div class="input-group input-group-outline">
-                                                    <input class="form-control new-price" type="number" name="new_price_<?= $item['item_id']; ?>" placeholder="Enter new price" />
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group input-group-outline">
-                                                    <input class="form-control quantity" type="number" name="quantity_<?= $item['item_id']; ?>" value="1" min="1" placeholder="Quantity" />
-                                                </div>
-                                            </td>
-                                            <td class="align-middle text-center total-price">
-                                                <p class="text-lg font-weight-bold mb-0">₹ 0.00</p>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td class="align-middle text-center total-price">
+                                                    <p class="text-lg font-weight-bold mb-0">₹ 0.00</p>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
                                     <?php endforeach; ?>
-                                <?php endforeach; ?>
-                            </tbody>
+                                </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -826,109 +826,179 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the date picker for the date range input
-        flatpickr("#daterange", {
-            mode: "range",
-            dateFormat: "Y-m-d"
-        });
-        document.getElementById('roomEnquiryForm').addEventListener('submit', function(event) {
-            const dateRangeInput = document.getElementById('daterange').value; // Get the value of the date range
-            let isValid = false; // Flag to check if at least one guest detail is filled
-            const roomCards = document.querySelectorAll('.card');
-            // First, check if the date range is selected
-            if (!dateRangeInput) {
-                event.preventDefault(); // Prevent form submission
-                alert('Please select a date range for the room.'); // Show warning message
-                return; // Exit the function early
-            }
-            // Now check for guest details
-            roomCards.forEach((roomCard) => {
-                const guestInputs = roomCard.querySelectorAll('input[name^="guest_name"], input[name^="guest_age"], input[name^="guest_phone"]');
-                let hasGuestDetail = false; // Flag for this specific room card
-                // Check if at least one guest's details are filled
-                guestInputs.forEach((input) => {
-                    if (input.value.trim() !== '') {
-                        hasGuestDetail = true; // Set the flag if at least one field is filled
-                    }
-                });
-                if (hasGuestDetail) {
-                    isValid = true; // Set overall validity to true
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the date picker for the date range input
+    flatpickr("#daterange", {
+        mode: "range",
+        dateFormat: "Y-m-d"
+    });
+
+    // Prevent form submission when "Add Items" button is clicked
+    document.querySelector('.open-modal-btn').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the form from submitting when Add Items is clicked
+    });
+
+    // Form submission validation
+    document.getElementById('roomEnquiryForm').addEventListener('submit', function(event) {
+        const dateRangeInput = document.getElementById('daterange').value; // Get the value of the date range
+        let isValid = false; // Flag to check if at least one guest detail is filled
+        const roomCards = document.querySelectorAll('.card');
+
+        // First, check if the date range is selected
+        if (!dateRangeInput) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please select a date range for the room.'); // Show warning message
+            return; // Exit the function early
+        }
+
+        // Now check for guest details
+        roomCards.forEach((roomCard) => {
+            const guestInputs = roomCard.querySelectorAll('input[name^="guest_name"], input[name^="guest_age"], input[name^="guest_phone"]');
+            let hasGuestDetail = false; // Flag for this specific room card
+
+            // Check if at least one guest's details are filled
+            guestInputs.forEach((input) => {
+                if (input.value.trim() !== '') {
+                    hasGuestDetail = true; // Set the flag if at least one field is filled
                 }
             });
-            if (!isValid) {
-                event.preventDefault(); // Prevent form submission
-                alert('Please add at least one guest detail before submitting the form.'); // Show warning message
+
+            if (hasGuestDetail) {
+                isValid = true; // Set overall validity to true
             }
         });
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please add at least one guest detail before submitting the form.'); // Show warning message
+        }
     });
+});
+
 </script>
-
-
-
 <script>
-    let selectedRoomId;
+let selectedRoomId;
 $(document).ready(function () {
     // When an "Add Items" button is clicked for a room
     $('.open-modal-btn').on('click', function () {
         selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
     });
 
+    // Handle row selection
+    $('.item-row').on('click', function () {
+        $(this).toggleClass('selected-row'); // Toggle the selected state by adding/removing a class
+        const isSelected = $(this).hasClass('selected-row');
+        if (isSelected) {
+            $(this).css('background-color', '#d3f4ff'); // Highlight the row when selected
+        } else {
+            $(this).css('background-color', ''); // Remove highlight when deselected
+        }
+    });
+
+    function calculateTotal($row) {
+    const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
+    let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
+
+    // If new price is empty or invalid, use current price
+    if (isNaN(newPrice) || newPrice <= 0) {
+        newPrice = currentPrice;
+    }
+
+    const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
+    const totalPrice = newPrice * quantity; // Calculate the total price
+
+    // Update the total price in the DOM
+    $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
+}
+
+
+    // Event listener for changes in new price and quantity inputs in the modal
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest item row
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
+
     // When the "Add Selected Items" button in the modal is clicked
     $('#addItemsButton').on('click', function () {
         const selectedItems = []; // Array to hold selected items
 
-        // Loop through each item in the modal
-        $('.item-row').each(function () {
-            const $checkbox = $(this).find('.item-checkbox');
-            if ($checkbox.is(':checked')) { // If the checkbox is checked
-                const itemName = $checkbox.data('item-name');
-                const itemPrice = parseFloat($checkbox.data('price'));
-                const quantity = $(this).find('.quantity').val() || 1; // Get the quantity value
-                const newPrice = parseFloat($(this).find('.new-price').val()) || itemPrice; // Get the new price value
+        // Loop through each selected row in the modal
+        $('.item-row.selected-row').each(function () {
+            const itemName = $(this).data('item-name');
+            const itemPrice = parseFloat($(this).data('price')) || 0;
+            let newPrice = parseFloat($(this).find('.new-price').val().trim()); // Get new price value
 
-                selectedItems.push({
-                    name: itemName,
-                    currentPrice: itemPrice,
-                    newPrice: newPrice,
-                    quantity: quantity,
-                    totalPrice: (newPrice * quantity).toFixed(2) // Calculate total price
-                });
+            // If new price is empty or invalid, use the current price
+            if (isNaN(newPrice) || newPrice <= 0) {
+                newPrice = itemPrice;
             }
+
+            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1; // Get quantity value
+
+            // Calculate total price
+            const totalPrice = newPrice * quantity;
+
+            // Add the selected item to the array
+            selectedItems.push({
+                name: itemName,
+                currentPrice: itemPrice,
+                newPrice: newPrice, // Use the new price if available, otherwise current price
+                quantity: quantity,
+                totalPrice: totalPrice.toFixed(2) // Format total price to two decimal points
+            });
         });
 
-        // Append each selected item only to the specific room's table
-        selectedItems.forEach(item => {
-            $(`#table-room-${selectedRoomId} tbody`).append(`
-                <tr>
-                    <td>${item.name}</td>
-                    <td>₹ ${item.currentPrice.toFixed(2)}</td>
-                    <td>
-                        <input class="form-control" type="number" name="new_price[]" value="${item.newPrice}" required />
-                    </td>
-                    <td>
-                        <input class="form-control" type="number" name="quantity[]" value="${item.quantity}" required />
-                    </td>
-                    <td class="total-price">₹ ${item.totalPrice}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
-                    </td>
-                </tr>
-            `);
-        });
+        // Append each selected item to the corresponding room's table
+      // Append each selected item to the corresponding room's table
+// Append each selected item to the corresponding room's table
+selectedItems.forEach(item => {
+    const rowHtml = `
+        <tr data-price="${item.currentPrice}">
+            <td>${item.name}</td>
+            <td>₹ ${item.currentPrice.toFixed(2)}</td>
+            <td>
+                <input class="form-control new-price" type="number" name="new_price[]" value="${item.newPrice > 0 ? item.newPrice : ''}" />
+            </td>
+            <td>
+                <input class="form-control quantity" type="number" name="quantity[]" value="${item.quantity > 0 ? item.quantity : 1}" />
+            </td>
+            <td class="total-price">₹ ${item.totalPrice}</td>
+            <td>
+                <button class="btn btn-danger btn-sm remove-item">Remove</button>
+            </td>
+        </tr>
+    `;
+    $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
+});
 
-        // Clear the selection in the modal after adding them
-        $('.item-checkbox').prop('checked', false);
-        $('.new-price').val('');
-        $('.quantity').val(1);
+
+        // Clear the modal inputs after adding items
+        $('.item-row').removeClass('selected-row').css('background-color', ''); // Reset selected rows
+        $('.new-price').val(''); // Clear new price inputs in the modal
+        $('.quantity').val(1); // Reset quantities to 1
+
+        // Close the modal
+        $('#exampleModal').modal('hide');
     });
 
     // Function to remove an item from the room's table
     $(document).on('click', '.remove-item', function () {
-        $(this).closest('tr').remove();
+        $(this).closest('tr').remove(); // Remove the row from the table
     });
+
+    // Event listener for changes in new price and quantity inputs in the main table
+  // Event listener for changes in new price and quantity inputs in the main table
+$(document).on('input', '.new-price, .quantity', function () {
+    const $row = $(this).closest('tr'); // Get the closest row in the main table
+    calculateTotal($row); // Recalculate total price when new price or quantity changes
 });
-
-
-
+});
 </script>
+
+
+
+
+
+
+
+
