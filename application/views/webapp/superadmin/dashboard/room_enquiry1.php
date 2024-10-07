@@ -896,21 +896,20 @@ $(document).ready(function () {
     });
 
     function calculateTotal($row) {
-    const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
-    let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
+        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
+        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
 
-    // If new price is empty or invalid, use current price
-    if (isNaN(newPrice) || newPrice <= 0) {
-        newPrice = currentPrice;
+        // If new price is empty or invalid, use current price
+        if (isNaN(newPrice) || newPrice <= 0) {
+            newPrice = currentPrice; // Use current price for calculation
+        }
+
+        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
+        const totalPrice = newPrice * quantity; // Calculate the total price
+
+        // Update the total price in the DOM
+        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
     }
-
-    const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
-    const totalPrice = newPrice * quantity; // Calculate the total price
-
-    // Update the total price in the DOM
-    $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
-}
-
 
     // Event listener for changes in new price and quantity inputs in the modal
     $(document).on('input', '.new-price, .quantity', function () {
@@ -930,47 +929,40 @@ $(document).ready(function () {
 
             // If new price is empty or invalid, use the current price
             if (isNaN(newPrice) || newPrice <= 0) {
-                newPrice = itemPrice;
+                newPrice = 0; // Set new price to 0 if not valid
             }
 
             const quantity = parseInt($(this).find('.quantity').val().trim()) || 1; // Get quantity value
 
-            // Calculate total price
-            const totalPrice = newPrice * quantity;
+            // Calculate total price based on current price if newPrice is 0
+            const totalPrice = (newPrice > 0 ? newPrice : itemPrice) * quantity;
 
             // Add the selected item to the array
             selectedItems.push({
                 name: itemName,
                 currentPrice: itemPrice,
-                newPrice: newPrice, // Use the new price if available, otherwise current price
+                newPrice: newPrice, // Use the new price if available, otherwise set to 0
                 quantity: quantity,
                 totalPrice: totalPrice.toFixed(2) // Format total price to two decimal points
             });
         });
 
         // Append each selected item to the corresponding room's table
-      // Append each selected item to the corresponding room's table
-// Append each selected item to the corresponding room's table
-selectedItems.forEach(item => {
-    const rowHtml = `
-        <tr data-price="${item.currentPrice}">
-            <td>${item.name}</td>
-            <td>₹ ${item.currentPrice.toFixed(2)}</td>
-            <td>
-                <input class="form-control new-price" type="number" name="new_price[]" value="${item.newPrice > 0 ? item.newPrice : ''}" />
-            </td>
-            <td>
-                <input class="form-control quantity" type="number" name="quantity[]" value="${item.quantity > 0 ? item.quantity : 1}" />
-            </td>
-            <td class="total-price">₹ ${item.totalPrice}</td>
-            <td>
-                <button class="btn btn-danger btn-sm remove-item">Remove</button>
-            </td>
-        </tr>
-    `;
-    $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
-});
-
+        selectedItems.forEach(item => {
+            const rowHtml = `
+                <tr data-price="${item.currentPrice}">
+                    <td>${item.name}</td>
+                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
+                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
+                    <td class="quantity">${item.quantity}</td>
+                    <td class="total-price">₹ ${item.totalPrice}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
+                    </td>
+                </tr>
+            `;
+            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
+        });
 
         // Clear the modal inputs after adding items
         $('.item-row').removeClass('selected-row').css('background-color', ''); // Reset selected rows
@@ -987,11 +979,10 @@ selectedItems.forEach(item => {
     });
 
     // Event listener for changes in new price and quantity inputs in the main table
-  // Event listener for changes in new price and quantity inputs in the main table
-$(document).on('input', '.new-price, .quantity', function () {
-    const $row = $(this).closest('tr'); // Get the closest row in the main table
-    calculateTotal($row); // Recalculate total price when new price or quantity changes
-});
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest row in the main table
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
 });
 </script>
 
