@@ -34,7 +34,7 @@
                     <div class="card">
                         <div class="card-body">
                             <!-- <form action=""> -->
-                            <form id="roomEnquiryForm" action="<?= base_url('Superadmin/room_enquiry_submit') ?>" method="post" enctype="multipart/form-data">
+                            <form id="roomEnquiryForm" action="" method="post" enctype="multipart/form-data">
                                 <div class="border-radius-xl bg-white">
 
                                     <div class="d-lg-flex">
@@ -315,12 +315,8 @@
 
                                     </div>
                                 </div>
-
                                 <div class="button-row d-flex mt-4">
-                                    <!-- <a href=" " class="ms-auto mb-0"> -->
-                                    <!-- <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button> -->
                                     <button class="ms-auto mb-0 btn bg-gradient-dark" type="submit" title="submit">Submit</button>
-
                                 </div>
                             </form>
                         </div>
@@ -706,6 +702,7 @@
                                     <?php foreach ($items as $category => $categoryItems): ?>
                                         <?php foreach ($categoryItems as $item): ?>
                                             <tr class="item-row" data-item-name="<?= htmlspecialchars($item['item_name']); ?>"
+                                               
                                                 data-category="<?= htmlspecialchars($category); ?>"
                                                 data-subcategory="<?= htmlspecialchars($item['subcategory_name']); ?>"
                                                 data-price="<?= $item['price1']; ?>">
@@ -737,6 +734,10 @@
                                                 <td class="align-middle text-center total-price">
                                                     <p class="text-lg font-weight-bold mb-0">₹ 0.00</p>
                                                 </td>
+
+                                                  <!-- Add hidden input for item_id -->
+                <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
+
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php endforeach; ?>
@@ -876,7 +877,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-<script>
+<!-- <script>
 let selectedRoomId;
 $(document).ready(function () {
     // When an "Add Items" button is clicked for a room
@@ -947,6 +948,9 @@ $(document).ready(function () {
             });
         });
 
+              
+
+
         // Append each selected item to the corresponding room's table
         selectedItems.forEach(item => {
             const rowHtml = `
@@ -986,10 +990,179 @@ $(document).ready(function () {
 });
 </script>
 
+ -->
+
+ <script>
+let selectedRoomId;
+let selectedItems = []; // Define this globally
+
+$(document).ready(function () {
+    // When an "Add Items" button is clicked for a room
+    $('.open-modal-btn').on('click', function () {
+        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
+        // Reset selected items when opening the modal
+        selectedItems = []; // Clear the selected items when opening the modal
+    });
+
+    // Handle row selection
+    $('.item-row').on('click', function () {
+        $(this).toggleClass('selected-row'); // Toggle the selected state
+        const isSelected = $(this).hasClass('selected-row');
+        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
+    });
+
+    function calculateTotal($row) {
+        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
+        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
+
+        // If new price is empty or invalid, use current price
+        if (isNaN(newPrice) || newPrice <= 0) {
+            newPrice = currentPrice; // Use current price for calculation
+        }
+
+        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
+        const totalPrice = newPrice * quantity; // Calculate the total price
+
+        // Update the total price in the DOM
+        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
+    }
+
+    // Event listener for changes in new price and quantity inputs in the modal
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest item row
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
+
+    // When the "Add Selected Items" button in the modal is clicked
+    $('#addItemsButton').on('click', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        selectedItems = []; // Clear the selectedItems array
+
+        // Loop through each selected row in the modal
+        $('.item-row.selected-row').each(function () {
+            const itemName = $(this).data('item-name');
+            const itemPrice = parseFloat($(this).data('price')) || 0;
+            let newPrice = parseFloat($(this).find('.new-price').val().trim()); // Get new price value
+
+            // If new price is empty or invalid, use the current price
+            if (isNaN(newPrice) || newPrice <= 0) {
+                newPrice = itemPrice; // Use current price if new price is invalid
+            }
+
+            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1; // Get quantity value
+
+            // Calculate total price
+            const totalPrice = newPrice * quantity;
+
+            // Add the selected item to the array
+            selectedItems.push({
+                name: itemName,
+                currentPrice: itemPrice,
+                newPrice: newPrice,
+                quantity: quantity,
+                totalPrice: totalPrice.toFixed(2) // Format total price to two decimal points
+            });
+        });
+
+        console.log('Selected Items:', selectedItems); // Debugging line
+
+        // Append each selected item to the corresponding room's table
+        selectedItems.forEach(item => {
+            const rowHtml = `
+                <tr data-price="${item.currentPrice}">
+                    <td>${item.name}</td>
+                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
+                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
+                    <td class="quantity">${item.quantity}</td>
+                    <td class="total-price">₹ ${item.totalPrice}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
+                    </td>
+                </tr>
+            `;
+            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
+        });
+
+        // Clear the modal inputs after adding items
+        $('.item-row').removeClass('selected-row').css('background-color', ''); // Reset selected rows
+        $('.new-price').val(''); // Clear new price inputs in the modal
+        $('.quantity').val(1); // Reset quantities to 1
+
+        // Close the modal
+        $('#exampleModal').modal('hide');
+
+        // Call the function to submit the form
+        submitRoomEnquiryForm();
+    });
+
+    // Function to remove an item from the room's table
+    $(document).on('click', '.remove-item', function () {
+        $(this).closest('tr').remove(); // Remove the row from the table
+    });
+
+    // Event listener for changes in new price and quantity inputs in the main table
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest row in the main table
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
+});
+</script>
 
 
+<script>
+    // Handle form submission
+$('#roomEnquiryForm').on('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission
+    const formData = new FormData(this); // Create FormData object from the form
+    const itemsData = {}; // Initialize an empty object for items data
+
+    // Collect items from the room's table
+    $(`#table-room-${selectedRoomId} tbody tr`).each(function () {
+        const row = $(this);
+        const roomId = row.data('room-id'); // Get room ID from data attribute
+
+        if (!itemsData[roomId]) {
+            itemsData[roomId] = []; // Initialize if not already done
+        }
+
+        // Get item details
+        const itemDetails = {
+            item_id: row.find('input[name="item_id[]"]').val(), // Get item_id
+            name: row.find('td').eq(0).text().trim(), // Trim to remove extra spaces
+            currentPrice: parseFloat(row.find('td').eq(1).text().replace('₹ ', '').replace(',', '')),
+            newPrice: parseFloat(row.find('.new-price').text().replace('₹ ', '').replace(',', '')),
+            quantity: parseInt(row.find('.quantity').text()),
+            totalPrice: parseFloat(row.find('.total-price').text().replace('₹ ', '').replace(',', '')) // Ensure totalPrice is a float
+        };
+
+        itemsData[roomId].push(itemDetails); // Add item details to the respective room
+    });
+
+    // Log collected items data to check if it's populated
+    console.log('Collected items data:', itemsData);
+
+    // Append items data to the FormData object
+    formData.append('items_data', JSON.stringify(itemsData)); // Send as a JSON string
+
+    // Send data to the server via AJAX
+    $.ajax({
+        url: '<?= base_url('Superadmin/room_enquiry_submit') ?>', // Adjust to your endpoint
+        type: 'POST',
+        data: formData, // Send form data
+        contentType: false, // Prevent jQuery from overriding content type
+        processData: false, // Prevent jQuery from processing the data
+        success: function (response) {
+            console.log('Form submitted successfully:', response); // Log response for debugging
+            // Handle successful submission (e.g., show a success message)
+        },
+        error: function (xhr, status, error) {
+            console.error('Error submitting form:', xhr.responseText); // Log the server's response for debugging
+        }
+    });
+});
 
 
-
+</script>
 
 

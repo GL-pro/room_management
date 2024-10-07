@@ -963,7 +963,83 @@ public function room_enquiry_submit()
     	}
 	}
 }
-	redirect('dashboard');
+
+// $items_data = json_decode($this->input->post('items_data'), true);
+//         if (empty($items_data)) {
+//             echo json_encode(['status' => 'error', 'message' => 'Invalid data.']);
+//             return;
+//         }
+//         foreach ($items_data as $item) {
+//             $item_name = $item['name'];
+//             $current_price = $item['currentPrice'];
+//             $new_price = $item['newPrice'];
+//             $quantity = $item['quantity'];
+//             $total_price = $item['totalPrice'];
+// 			//$item_id= $item['item_id'];
+//             $data = [
+//                 'booking_id' => $bookingid,
+//                 'item_name' => $item_name,
+//                 'item_price' => $current_price,
+//                 'new_price' => $new_price,
+//                 'quantity' => $quantity,
+//                 'item_total_price' => $total_price,
+// 				'hotel_roomid' => $hotel_roomid,
+// 				'adding_date' => $adding_date,
+// 				'admin_status' => 'staff',
+// 				'status' => '1',
+// 				//'item_id' => $item_id
+//             ];
+//             $this->HomeModel->insert_room_items($data); // Adjust this as per your model
+//         }
+// 	redirect('dashboard');
+// }
+$items_data = json_decode($this->input->post('items_data'), true);
+if (empty($items_data)) {
+    error_log('Received items_data: ' . $this->input->post('items_data')); // Log the raw input for debugging
+    echo json_encode(['status' => 'error', 'message' => 'Invalid data.']);
+    return;
+}
+
+// Loop through each room and its items
+foreach ($items_data as $room_id => $room_items) {
+    if (!is_array($room_items)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid item data for room: ' . $room_id]);
+        return;
+    }
+    
+    foreach ($room_items as $item) {
+        if (!is_array($item) || !isset($item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid item data.']);
+            return;
+        }
+
+        $item_name = $item['name'];
+        $current_price = $item['currentPrice'];
+        $new_price = $item['newPrice'];
+        $quantity = $item['quantity'];
+        $total_price = $item['totalPrice'];
+
+        $data = [
+            'booking_id' => $bookingid, // Ensure $bookingid is defined
+            'item_name' => $item_name,
+            'item_price' => $current_price,
+            'new_price' => $new_price,
+            'quantity' => $quantity,
+            'item_total_price' => $total_price,
+            'hotel_roomid' => $hotel_roomid, // Ensure $hotel_roomid is defined
+            'adding_date' => $adding_date, // Ensure $adding_date is defined
+            'admin_status' => 'staff',
+            'status' => '1',
+        ];
+
+        // Insert each item into the database
+        $this->HomeModel->insert_room_items($data);
+    }
+}
+
+echo json_encode(['status' => 'success', 'message' => 'All items inserted successfully.']);
+
+redirect('dashboard');
 }
 
 private function _upload_file($file, $upload_path)

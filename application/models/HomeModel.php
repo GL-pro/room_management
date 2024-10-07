@@ -506,7 +506,10 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $result;
     }
     
-
+    public function insert_room_items($data)
+    {
+        return $this->db->insert('room_item_details', $data); // Replace 'room_item_details' with your actual table name
+    }
 
 
 
