@@ -409,8 +409,15 @@
                             <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
                                 <?php foreach ($rooms as $room): ?>
                                     <?php
-                                    $status_class = ($room['status'] === 'vaccant') ? 'btn-success' : (($room['status'] === 'booked') ? 'btn-warning' : 'btn-danger');
-                                    ?>
+                        // Check the room status and assign the appropriate class for button color
+                        if ($room['status'] === 'vacant' || $room['status'] === 'available') {
+                            $status_class = 'btn-success'; // Green for available or vacant
+                        } elseif ($room['status'] === 'booked') {
+                            $status_class = 'btn-warning'; // Yellow for booked
+                        } else {
+                            $status_class = 'btn-danger'; // Red for any other status (e.g., occupied)
+                        }
+                        ?>
                                     <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo $room['status']; ?>" data-userid="<?php echo $room['customer_id']; ?>" autocomplete="off">
                                     <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
                                         <?php echo $room['roomno']; ?>
@@ -485,8 +492,6 @@
                 end: '2024-09-21',
                 className: 'bg-gradient-success'
             }, 
-
-
 
         ],
         views: {
@@ -604,7 +609,7 @@
         if (selectedRooms.length > 0) {
             const firstRoomStatus = selectedRooms[0].status; // Get the status of the first selected room
             // Redirect based on status
-            if (firstRoomStatus === 'vaccant') {
+            if (firstRoomStatus === 'vaccant' || firstRoomStatus === 'available') {
                 document.getElementById('room-form').action = '<?php echo site_url("room_enquiry1"); ?>';
                 document.getElementById('room-form').submit();
             } else if (firstRoomStatus === 'booked') {

@@ -22,17 +22,51 @@
                                         <div class="mb-2">
                                             <h5 class="font-weight-bolder mb-0"> Room Enquiry </h5>
                                         </div>
-
-                                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                                        <!-- <div class="ms-auto my-auto mt-lg-0 mt-4">
                                             <div class="ms-auto my-auto">
                                                 <button class="btn bg-gradient-info btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">+&nbsp;Add Customer</button>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class=" ">
 
-                                        <div class=" ">
+                                  
+                                    <div class="">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-4 mt-2">
+                                                <div class="input-group input-group-static">
+                                                    <label class="form-label text-primary">Agent</label>
+                                                    <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#agentmodel"> + Add Agent</a>
+                                                    <select class="form-control" id="choices-Agency" name="agent_id">
+                                                        <option value="">Select Agent</option>
+                                                        <?php foreach ($agencies as $agent): ?>
+                                                            <option value="<?= $agent['agent_id'] ?>" <?= (isset($booking_details[0]) && $booking_details[0]['agent_id'] == $agent['agent_id']) ? 'selected' : '' ?>>
+                                                                <?= $agent['agent_name'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-4 mt-2">
+                                                <div class="input-group input-group-static">
+                                                    <label class="form-label text-primary">Customer</label>
+                                                    <a href="#" class="ms-auto btn btn-sm mb-0 btn-outline-info" style="border-radius: .375rem" data-bs-toggle="modal" data-bs-target="#customermodel"> + Add Customer</a>
+                                                    <select class="form-control" id="choices-Customer" name="customer_id">
+                                                        <option value="">Select Customer</option>
+                                                        <?php foreach ($customers as $customer): ?>
+                                                            <option value="<?= $customer['customer_id'] ?>" <?= (isset($booking_details[0]) && $booking_details[0]['customer_id'] == $customer['customer_id']) ? 'selected' : '' ?>>
+                                                                <?= $customer['customer_name'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                        <!-- <div class=" ">
                                             <div class="row  ">
                                                 <div class="col-12 col-sm-4 mt-2">
                                                     <div class="input-group input-group-outline ">
@@ -45,19 +79,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <div class="card mt-3" style="box-shadow: 0 4px 6px 1px rgb(111 111 111 / 50%), 0 2px 4px 1px rgb(174 174 174 / 50%);">
                                             <div class="card-body ">
                                                 <div class="d-lg-flex">
                                                     <div>
                                                         <h5 class="font-weight-bolder mb-0">Room Name - 201 <span class="text-sm">(Room Type)</span></h5>
-
                                                     </div>
-
                                                     <div class="ms-auto my-auto mt-lg-0 mt-4">
                                                         <div class="ms-auto my-auto">
-
                                                             <button class="btn bg-gradient-danger btn-sm mb-0" type="button">Remove</button>
                                                         </div>
                                                     </div>

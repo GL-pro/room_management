@@ -407,17 +407,24 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     }
 
     public function checkRoomAvailability($hotel_roomid, $checkin, $checkout) {
+        // Ensure checkin and checkout are provided
+        if (empty($checkin) || empty($checkout)) {
+            return false; // No need to check availability if dates are missing
+        }
+    
         $this->db->select('*');
         $this->db->from('room_booking');
         $this->db->where('hotel_roomid', $hotel_roomid);
         $this->db->where('booking_status !=', 'cancelled'); // Exclude canceled bookings
         $this->db->group_start();
-        $this->db->where('checkin <', $checkout);
-        $this->db->where('checkout >', $checkin);
+        $this->db->where('checkin <', $checkout); // Checkin should be before checkout
+        $this->db->where('checkout >', $checkin); // Checkout should be after checkin
         $this->db->group_end();
+    
         $query = $this->db->get();
         return $query->num_rows() > 0; // Return true if there are conflicting bookings
     }
+    
 
 
     // public function getItemsForRoom($room_id) {
@@ -432,6 +439,14 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->where('hotel_roomid', $room_id);
         return $this->db->update('hotel_room', $data);
     }
+
+    // public function update_room_status1($room_id, $status)
+    // {
+    //     $data = ['room_status' => $status];
+    //     $this->db->where('hotel_roomid', $room_id);
+    //     return $this->db->update('hotel_room', $data);
+    // }
+
 
     public function getRoomTypes() {
         $this->db->select('roomtype'); // Adjust according to your database structure
@@ -511,7 +526,23 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         return $this->db->insert('room_item_details', $data); // Replace 'room_item_details' with your actual table name
     }
 
-
+    public function getBookingDetails($room_ids = []) {
+        // Selecting the booking details along with agent and customer information
+        $this->db->select('rb.*, a.agent_name, c.customer_name');
+        $this->db->from('room_booking rb'); // Use an alias for the room booking table
+        $this->db->join('agent a', 'rb.agent_id = a.agent_id', 'left'); // Join with agents table
+        $this->db->join('customer c', 'rb.customer_id = c.customer_id', 'left'); // Join with customers table
+    
+        // Check if there are room IDs to filter by
+        if (!empty($room_ids)) {
+            $this->db->where_in('rb.hotel_roomid', $room_ids); // Use 'rb.hotel_roomid' for clarity
+        }
+    
+        // Execute the query
+        $query = $this->db->get();
+        return $query->result_array(); // Return the results as an associative array
+    }
+    
 
 
 
