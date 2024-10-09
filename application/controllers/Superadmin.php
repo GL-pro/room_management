@@ -18,32 +18,38 @@ class Superadmin extends CI_Controller {
         $data['menu']='dashboard';
         $data['pagetitle']='DashBoard';
 
-		
-	 // Get filter values from POST request
-	 $filterDate = $this->input->post('filterDate');
-	 $filterType = $this->input->post('filterType');
-	 $filterRoom = $this->input->post('filterRoom');
-	 if ($filterDate || $filterType || $filterRoom) {
-		 $data['room_data'] = $this->HomeModel->getsearchbydate($filterDate, $filterType, $filterRoom);
-	 } else {
-		 $data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType1();
-	 }
-		if ($this->input->is_ajax_request()) {
-			echo json_encode($data); // Send room data as JSON
-		} else {
-
+		// Update room statuses to "availale" after datesof the rooms
+		$this->HomeModel->updateRoomStatus();
 
 
 		$data['room_types'] = $this->HomeModel->getRoomTypes();
 		$data['hotel_rooms'] = $this->HomeModel->getHotelRoom();
 		// $data['room_data'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType();
-		$data['room_data1'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType1();
+		//$data['room_data1'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType1();
+		$data['room_data2'] = $this->HomeModel->getRoomTypesWithRoomsGroupedByType11();
+		//var_dump($data['room_data2']);die;
 		$this->load->view('webapp/superadmin/include/header',$data);
 		$this->load->view('webapp/superadmin/dashboard/dashboard', $data);
 		$this->load->view('webapp/superadmin/include/footer');
-	} 
+	
 }
 
+
+		// public function getBookingsForCurrentDate() {
+		// 	date_default_timezone_set('Asia/Kolkata');
+		// 	$adding_date = date('Y-m-d H:i:s');
+		// 	$bookings = $this->HomeModel->getBookingsByDate($adding_date);
+		// 	echo json_encode($bookings);
+		// }
+		public function getBookingsForDateRange() {
+			date_default_timezone_set('Asia/Kolkata');
+			// Adjust these dates as needed
+			$start_date = date('Y-m-d'); // Start from today
+			$end_date = date('Y-m-d', strtotime('+12 month')); // End one month later
+			$bookings = $this->HomeModel->getBookingsByDateRange($start_date, $end_date);
+			echo json_encode($bookings);
+		}
+		
 
 	public function room_enquiry() {
 		$data['menu'] = 'room_enquiry';

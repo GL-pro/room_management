@@ -395,7 +395,7 @@
                 </div>
             </div>
 
-            <?php foreach ($room_data1 as $room_type => $rooms): ?>
+            <!-- <?php foreach ($room_data1 as $room_type => $rooms): ?>
                 <div class="card">
                     <div class="card-header py-0">
                         <div class="d-flex">
@@ -414,7 +414,7 @@
                             $status_class = 'btn-success'; // Green for available or vacant
                         } elseif ($room['status'] === 'booked') {
                             $status_class = 'btn-warning'; // Yellow for booked
-                        } else {
+                        } elseif ($room['status'] === 'occupied') {
                             $status_class = 'btn-danger'; // Red for any other status (e.g., occupied)
                         }
                         ?>
@@ -428,7 +428,44 @@
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            <?php endforeach; ?> -->
+
+                <?php foreach ($room_data2 as $room_type => $rooms): ?>
+                    <div class="card">
+                        <div class="card-header py-0">
+                            <div class="d-flex">
+                                <div class="col-md-8 me-auto my-auto text-left">
+                                    <h5><?php echo htmlspecialchars($room_type); ?> Room</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body row py-0">
+                            <div class="">
+                                <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
+                                    <?php foreach ($rooms as $room): ?>
+                                        <?php
+                                            // Assign class based on status
+                                            if ($room['status'] === 'available' || $room['status'] === 'vaccant') {
+                                                $status_class = 'btn-success';
+                                            } elseif ($room['status'] === 'booked') {
+                                                $status_class = 'btn-warning';
+                                            } elseif ($room['status'] === 'occupied') {
+                                                $status_class = 'btn-danger';
+                                            }
+                                        ?>
+                                        <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo htmlspecialchars($room['status']); ?>" autocomplete="off">
+                                        <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                                            <?php echo htmlspecialchars($room['roomno']); ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+
+
         </div>
     </div>
 </div>
@@ -438,7 +475,106 @@
 
 </div>
 <script src="assets2/js/plugins/fullcalendar.js"></script>
+
 <script>
+    var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+        contentHeight: 'auto',
+        initialView: "dayGridMonth",
+        headerToolbar: {
+            start: 'title',
+            center: '',
+            end: 'today prev,next'
+        },
+        selectable: true,
+        editable: false,
+        initialDate: new Date(), // Set to the current date
+        events: [], // Start with an empty event array
+        views: {
+            month: {
+                titleFormat: {
+                    month: "long",
+                    year: "numeric"
+                }
+            },
+            agendaWeek: {
+                titleFormat: {
+                    month: "long",
+                    year: "numeric",
+                    day: "numeric"
+                }
+            },
+            agendaDay: {
+                titleFormat: {
+                    month: "short",
+                    year: "numeric",
+                    day: "numeric"
+                }
+            }
+        },
+        dateClick: function(info) {
+            alert('Selected date: ' + info.dateStr);
+        }
+    });
+
+    // Fetch booking data for the specified date range
+    fetch('Superadmin/getBookingsForDateRange') // Replace with your actual endpoint
+        .then(response => response.json())
+        .then(data => {
+            // Prepare events from the data
+            data.forEach(booking => {
+                let className = '';
+                if (booking.booking_status === 'booked') {
+                    className = 'bg-gradient-warning';
+                } else if (booking.booking_status === 'occupied') {
+                    className = 'bg-gradient-danger';
+                } else if (booking.booking_status === 'available') {
+                    className = 'bg-gradient-success';
+                }
+                
+                // Add events for each booking date
+                calendar.addEvent({
+                    title: `${booking.booking_status} (${booking.count}) - Room: ${booking.room_number} - Customer: ${booking.customer_name}`,
+                    start: booking.booking_date, // Use booking date from the response
+                    end: booking.booking_date, // Single day event
+                    className: className,
+                    extendedProps: {
+                        booking_id: booking.booking_id,
+                        customer_name: booking.customer_name,
+                        customer_email: booking.customer_email,
+                        customer_phone: booking.customer_phone,
+                        room_number: booking.room_number,
+                    }
+                });
+            });
+
+            // Render the calendar with the new events
+            calendar.render();
+        })
+        .catch(error => console.error('Error fetching booking data:', error));
+
+    // Add event listener to trigger date search when date is selected
+    document.getElementById('date-search').addEventListener('change', function() {
+        var dateInput = this.value;
+        if (dateInput) {
+            calendar.gotoDate(dateInput); // Navigate to the selected date
+        }
+    });
+
+    // Optional: Add a click listener to display customer details in alert
+    calendar.on('eventClick', function(info) {
+        const event = info.event;
+        alert(`Booking ID: ${event.extendedProps.booking_id}\n` +
+              `Customer Name: ${event.extendedProps.customer_name}`);
+            //   `Email: ${event.extendedProps.customer_email}\n` +
+            //   `Phone: ${event.extendedProps.customer_phone}\n` +
+            //   `Room Number: ${event.extendedProps.room_number}`);
+    });
+</script>
+
+
+
+
+<!-- <script>
     var currentDate = new Date(); // Get the current date
     var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
         contentHeight: 'auto',
@@ -529,7 +665,7 @@
             calendar.gotoDate(dateInput); // Navigate to the selected date
         }
     });
-</script>
+</script> -->
 
 
 
@@ -549,12 +685,27 @@
             let anyChecked = false;
             let status = null;
 
+            // checkboxes.forEach(cb => {
+            //     if (cb.checked) {
+            //         anyChecked = true;
+            //         selectedRooms.push(cb.id.replace('btncheck', '')); // Get room IDs
+            //         status = cb.getAttribute('data-status'); // Track the last selected room's status
+            //         selectedStatuses.add(status); // Add room status to set
+            //         selectedUsers.add(cb.getAttribute('data-userid')); // Add user ID to set
+            //     }
+            // });
             checkboxes.forEach(cb => {
                 if (cb.checked) {
                     anyChecked = true;
                     selectedRooms.push(cb.id.replace('btncheck', '')); // Get room IDs
-                    status = cb.getAttribute('data-status'); // Track the last selected room's status
-                    selectedStatuses.add(status); // Add room status to set
+                    let status = cb.getAttribute('data-status');
+                    // Normalize 'vaccant' and 'available' to the same value
+                    if (status === 'vaccant' || status === 'available') {
+                        normalizedStatus = 'available'; // Treat both as 'available'
+                    } else {
+                        normalizedStatus = status;
+                    }
+                    selectedStatuses.add(normalizedStatus); // Add normalized status to the set
                     selectedUsers.add(cb.getAttribute('data-userid')); // Add user ID to set
                 }
             });
@@ -577,15 +728,15 @@
                 proceedBtn.classList.add('btn-primary');
                 proceedBtn.disabled = false;
 
-                // Update button text based on room status
-                if (status === 'vaccant') {
+               // Update button text based on room status
+               if (normalizedStatus === 'available') {
                     proceedBtn.textContent = 'Proceed to Enquiry';
-                } else if (status === 'booked') {
+                } else if (normalizedStatus === 'booked') {
                     proceedBtn.textContent = 'Proceed to Occupy';
-                } else if (status === 'occupied') {
+                } else if (normalizedStatus === 'occupied') {
                     proceedBtn.textContent = 'Continue to Occupy';
                 }
-            } else {
+            }  else {
                 // No rooms selected, disable the button
                 proceedBtn.classList.remove('btn-primary');
                 proceedBtn.classList.add('btn-secondary');
@@ -598,18 +749,25 @@
         });
     });
 
-    // Add click event for the proceed button
-    proceedBtn.addEventListener('click', function() {
+   // Add click event for the proceed button
+   proceedBtn.addEventListener('click', function() {
         const selectedRooms = Array.from(checkboxes)
             .filter(checkbox => checkbox.checked)
             .map(checkbox => ({
                 id: checkbox.id.replace('btncheck', ''),
                 status: checkbox.dataset.status,
             }));
+
         if (selectedRooms.length > 0) {
-            const firstRoomStatus = selectedRooms[0].status; // Get the status of the first selected room
-            // Redirect based on status
+            let firstRoomStatus = selectedRooms[0].status;
+
+            // Normalize 'vaccant' and 'available' to 'available'
             if (firstRoomStatus === 'vaccant' || firstRoomStatus === 'available') {
+                firstRoomStatus = 'available';
+            }
+
+            // Redirect based on normalized status
+            if (firstRoomStatus === 'available') {
                 document.getElementById('room-form').action = '<?php echo site_url("room_enquiry1"); ?>';
                 document.getElementById('room-form').submit();
             } else if (firstRoomStatus === 'booked') {
@@ -622,6 +780,7 @@
         }
     });
 });
+
 
 </script>
 

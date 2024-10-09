@@ -318,10 +318,13 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
             return $query->result();
     }
 
-    // public function getRoomTypesWithRoomsGroupedByType() {
-    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid');
+
+    // public function getRoomTypesWithRoomsGroupedByType1() {
+    //     $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid, room_booking.customer_id');
     //     $this->db->from('hotel_room');
     //     $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
+    //     // Use LEFT JOIN to include all rooms, even those not booked
+    //     $this->db->join('room_booking', 'room_booking.hotel_roomid = hotel_room.hotel_roomid', 'left');
     //     $this->db->order_by('hotel_room.roomtypeid', 'ASC');
     //     $query = $this->db->get();
     //     $rooms = $query->result_array();
@@ -331,28 +334,153 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //     }
     //     return $groupedRooms;
     // }
+    
 
-    public function getRoomTypesWithRoomsGroupedByType1() {
-        $this->db->select('admin_room.roomtype, hotel_room.room_status AS status, hotel_room.roomno, hotel_room.hotel_roomid, room_booking.customer_id');
-        $this->db->from('hotel_room');
-        $this->db->join('admin_room', 'admin_room.roomid = hotel_room.roomtypeid');
-        // Use LEFT JOIN to include all rooms, even those not booked
-        $this->db->join('room_booking', 'room_booking.hotel_roomid = hotel_room.hotel_roomid', 'left');
-        $this->db->order_by('hotel_room.roomtypeid', 'ASC');
-        $query = $this->db->get();
+    public function getRoomTypesWithRoomsGroupedByType11() {
+        $query = $this->db->query("
+            SELECT hr.roomtypeid, rt.roomtype, hr.hotel_roomid, hr.roomno, hr.room_name, 
+                   IF(rb.booking_status IS NOT NULL, rb.booking_status, hr.room_status) AS status,
+                   rb.checkin, rb.checkout
+            FROM hotel_room hr
+            LEFT JOIN room_booking rb ON hr.hotel_roomid = rb.hotel_roomid 
+                AND NOW() BETWEEN rb.checkin AND rb.checkout
+            LEFT JOIN admin_room rt ON hr.roomtypeid = rt.roomid
+        ");
         $rooms = $query->result_array();
-        $groupedRooms = [];
+        // Group rooms by type
+        $grouped_rooms = [];
         foreach ($rooms as $room) {
-            $groupedRooms[$room['roomtype']][] = $room;
+            $room_type = $room['roomtype']; // Assuming you have room_type_name from room_type table
+            $grouped_rooms[$room_type][] = $room;
         }
-        return $groupedRooms;
+        return $grouped_rooms; // Return the grouped rooms
     }
     
 
 
+    public function updateRoomStatus() {
+        $this->db->query("
+            UPDATE hotel_room hr
+            SET hr.room_status = 'available'
+            WHERE hr.hotel_roomid NOT IN (
+                SELECT rb.hotel_roomid
+                FROM room_booking rb
+                WHERE NOW() BETWEEN rb.checkin AND rb.checkout
+            )
+        ");
+    }
 
-
-
+    // public function getBookingsByDate($date) {
+    //     $this->db->select('COUNT(*) as count, booking_status');
+    //     $this->db->from('room_booking');
+    //     $this->db->where('DATE(checkin) <=', $date);
+    //     $this->db->where('DATE(checkout) >=', $date);
+    //     $this->db->group_by('booking_status');
+    //     $query = $this->db->get();
+    //     return $query->result_array();
+    // }
+    
+    // public function getBookingsByDateRange($start_date, $end_date) {
+    //     $this->db->select('booking_status, checkin, checkout,roombooking.*');
+    //     $this->db->from('room_booking');
+    //     $this->db->where('DATE(checkin) <=', $end_date);
+    //     $this->db->where('DATE(checkout) >=', $start_date);
+    //     $query = $this->db->get();
+        
+    //     $bookings = $query->result_array();
+    //     $date_counts = [];
+    
+    //     // Prepare booking counts for each date
+    //     foreach ($bookings as $booking) {
+    //         $current_date = $booking['checkin'];
+    //         while ($current_date <= $booking['checkout']) {
+    //             $current_date_str = date('Y-m-d', strtotime($current_date));
+    //             if (!isset($date_counts[$current_date_str])) {
+    //                 $date_counts[$current_date_str] = [];
+    //             }
+    //             if (!isset($date_counts[$current_date_str][$booking['booking_status']])) {
+    //                 $date_counts[$current_date_str][$booking['booking_status']] = 0;
+    //             }
+    //             $date_counts[$current_date_str][$booking['booking_status']]++;
+    //             $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+    //         }
+    //     }
+    
+    //     // Format the result for the response
+    //     $result = [];
+    //     foreach ($date_counts as $date => $statuses) {
+    //         foreach ($statuses as $status => $count) {
+    //             $result[] = [
+    //                 'booking_date' => $date,
+    //                 'booking_status' => $status,
+    //                 'count' => $count
+    //             ];
+    //         }
+    //     }
+    
+    //     return $result;
+    // }
+    public function getBookingsByDateRange($start_date, $end_date) {
+        date_default_timezone_set('Asia/Kolkata');
+    
+        $this->db->select('rb.booking_id, c.customer_name, rb.booking_status, rb.checkin, rb.checkout');
+        $this->db->from('room_booking rb');
+        $this->db->join('customer c', 'rb.customer_id = c.customer_id'); // Assuming the foreign key is customer_id
+        $this->db->join('hotel_room r', 'rb.hotel_roomid = r.hotel_roomid'); // Join with the rooms table
+        $this->db->where('DATE(rb.checkin) <=', $end_date);
+        $this->db->where('DATE(rb.checkout) >=', $start_date);
+        $query = $this->db->get();
+        
+        $bookings = $query->result_array();
+        $date_counts = [];
+    
+        // Prepare booking counts for each date
+        foreach ($bookings as $booking) {
+            $current_date = $booking['checkin'];
+            while ($current_date <= $booking['checkout']) {
+                $current_date_str = date('Y-m-d', strtotime($current_date));
+                if (!isset($date_counts[$current_date_str])) {
+                    $date_counts[$current_date_str] = [];
+                }
+                if (!isset($date_counts[$current_date_str][$booking['booking_status']])) {
+                    $date_counts[$current_date_str][$booking['booking_status']] = [];
+                }
+                // Store the booking details
+                $date_counts[$current_date_str][$booking['booking_status']][] = [
+                    'booking_id' => $booking['booking_id'],
+                    'customer_name' => $booking['customer_name'],
+                  //  'customer_email' => $booking['customer_email'],
+                  //  'customer_phone' => $booking['customer_phone'],
+                  //  'room_number' => $booking['room_number'], // Include room number
+                ];
+                $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+            }
+        }
+    
+        // Format the result for the response
+        $result = [];
+        foreach ($date_counts as $date => $statuses) {
+            foreach ($statuses as $status => $bookings) {
+                $count = count($bookings);
+                // Extract the first booking for display (or you can choose to list all)
+                $firstBooking = $bookings[0];
+                $result[] = [
+                    'booking_date' => $date,
+                    'booking_status' => $status,
+                    'count' => $count,
+                    'booking_id' => $firstBooking['booking_id'],
+                    'customer_name' => $firstBooking['customer_name'],
+                   // 'customer_email' => $firstBooking['customer_email'],
+                   // 'customer_phone' => $firstBooking['customer_phone'],
+                  //  'room_number' => $firstBooking['room_number'],
+                ];
+            }
+        }
+    
+        return $result;
+    }
+    
+    
     public function addCustomer($data) {
         return $this->db->insert('customer', $data); // Insert into customer table
     }
