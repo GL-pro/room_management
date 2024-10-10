@@ -111,9 +111,9 @@
                                                                             <input type="text" class="form-control" id="daterange" name="daterange[]" required>
                                                                         </div> -->
                                                                         <div class="input-group input-group-outline">
-    <label class="form-label" for="daterange-<?= $room['hotel_roomid'] ?>">Select Date Range:</label>
-    <input type="text" class="form-control daterange-picker" id="daterange-<?= $room['hotel_roomid'] ?>" name="daterange[]" required data-room-id="<?= $room['hotel_roomid'] ?>">
-</div>
+                                                                            <label class="form-label" for="daterange-<?= $room['hotel_roomid'] ?>">Select Date Range:</label>
+                                                                            <input type="text" class="form-control daterange-picker" id="daterange-<?= $room['hotel_roomid'] ?>" name="daterange[]" required data-room-id="<?= $room['hotel_roomid'] ?>">
+                                                                        </div>
                                                                     </div>
                                                                     <div class="col-12 col-sm-4 mt-2">
                                                                         <div class="input-group input-group-outline">
@@ -184,66 +184,6 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-
-                                                                    <!-- <div class="row ">
-                                                                        <div class=" ">
-                                                                            <div class="table-responsive ">
-                                                                                <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
-                                                                                    <thead class="bg-light">
-                                                                                        <tr>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">quantity </th>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Totel Price</th>
-                                                                                            <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Action</th>
-                                                                                        </tr>
-                                                                                    </thead>
-
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td class="w-30">
-                                                                                                <div class="d-flex px-2 py-1 w-30">
-                                                                                                    <div>
-                                                                                                        <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                                                                                    </div>
-                                                                                                    <div class="d-flex flex-column justify-content-center w-30">
-                                                                                                        <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                                                                        <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class="input-group input-group-outline">
-                                                                                                   
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                <div class=" input-group input-group-outline">
-                                                                                             
-                                                                                                    <input class="form-control" type="number" name="commamt" required />
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                                                                            </td>
-                                                                                            <td class="align-middle text-center">
-                                                                                                <button class="btn btn-dark btn-sm mb-0">Remove</button>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                       
-                                                                                        <tr></tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div> -->
-
 
                                                                             <div class="row">
                                                                                 <div class="">
@@ -1312,6 +1252,7 @@ $(document).ready(function () {
 
         $('.item-row.selected-row').each(function () {
             const itemName = $(this).data('item-name');
+            const itemId = $(this).find('input[name="item_id[]"]').val(); // Get item_id from hidden input
             const itemPrice = parseFloat($(this).data('price')) || 0;
             let newPrice = parseFloat($(this).find('.new-price').val().trim());
 
@@ -1322,7 +1263,8 @@ $(document).ready(function () {
             const quantity = parseInt($(this).find('.quantity').val().trim()) || 1;
             const totalPrice = newPrice * quantity;
 
-            selectedItems.push({
+            selectedItems.push({ 
+                id: itemId, // Include item_id in the selected items
                 name: itemName,
                 currentPrice: itemPrice,
                 newPrice: newPrice,
@@ -1344,6 +1286,7 @@ $(document).ready(function () {
                     <td class="quantity">${item.quantity}</td>
                     <td class="total-price">₹ ${item.totalPrice}</td>
                     <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
+                    <input type="hidden" name="item_id[]" value="${item.id}" /> <!-- Add hidden input for item_id -->
                 </tr>
             `;
             $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);

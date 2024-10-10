@@ -63,6 +63,7 @@ $route['room_enquiry'] = 'Superadmin/room_enquiry';
 
 $route['room_enquiry1'] = 'Superadmin/room_enquiry1'; 
 $route['booked_enquiry'] = 'Superadmin/booked_enquiry'; 
+$route['booked_enquiry/(:any)'] = 'Superadmin/booked_enquiry/$1'; 
 $route['occupied_enquiry'] = 'Superadmin/occupied_enquiry'; 
 
 $route['hotel_room_add_staff'] = 'Superadmin/hotel_room_add_staff';

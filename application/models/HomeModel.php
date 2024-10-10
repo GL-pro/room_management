@@ -677,9 +677,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); // Join customer table
         // Use DATE() to ignore the time part and compare only the date
         $this->db->where("('$date' = DATE(room_booking.checkin) OR '$date' = DATE(room_booking.checkout) OR '$date' BETWEEN DATE(room_booking.checkin) AND DATE(room_booking.checkout))");
-    
         $query = $this->db->get();
-        
         return $query->result();
     }
     
@@ -692,7 +690,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     return $query->result();
 }
 
-public function  update_status_booking($room_id, $status) {
+public function update_status_booking($room_id, $status) {
     $this->db->where('booking_id', $room_id);
     $this->db->update('room_booking', ['status' => $status]);
 }
@@ -707,6 +705,23 @@ public function getBookedDatesByRoomId($roomId) {
 }
 
 
+public function getBookingDetailsById($booking_id) {
+    $this->db->select('room_booking.*,hotel_room.*,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
+     customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
+     room_booking_details.extra_guest_count,guest_details.*');
+    $this->db->from('room_booking'); 
+    $this->db->join('room_booking_details', 'room_booking_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+    $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); 
+    $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left'); 
+    $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
+    $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
+    $this->db->where('room_booking.booking_id', $booking_id);
+    $query = $this->db->get();
+    return $query->result_array(); // Ensure this returns an array
+}
 
 
 

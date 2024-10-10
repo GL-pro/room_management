@@ -76,7 +76,10 @@
                                     </td>
                                     <td class="text-sm text-center">
                                         <!-- Display edit button -->
-                                        <a href="<?php echo base_url();?>item_edit/<?=$booking->booking_id;?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Category">
+                                        <!-- <a href="<?php echo base_url();?>booked_enquiry/<?=$booking->booking_id;?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Category">
+                                            <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
+                                        </a>  -->
+                                        <a href="<?php echo base_url('booked_enquiry?booking_id=' . $booking->booking_id); ?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Category">
                                             <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
                                         </a> 
                                     </td>

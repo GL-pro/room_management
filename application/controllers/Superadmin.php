@@ -86,25 +86,50 @@ class Superadmin extends CI_Controller {
 	public function booked_enquiry() {
 		$data['menu'] = 'booked_enquiry';
 		$data['pagetitle'] = 'Booked Enquiry';
-		 
+
 		$data['agencies'] = $this->HomeModel->getAgents();
 		$data['customers'] = $this->HomeModel->getCustomers(); // Fetch customers
-		
-		$selected_rooms = $this->input->post('selected_rooms');
-		if (!empty($selected_rooms)) {
-			$room_ids = explode(',', $selected_rooms);
-		} else {
-			$room_ids = [];
-		}
-		$data['room_ids'] = $room_ids;
 
-		  // Fetch booking details if a room ID is provided
-		//  $room_ids = $this->input->post('room_id'); // Assuming you're sending room IDs via a POST request
-		  if (!empty($room_ids)) {
-			  $data['booking_details'] = $this->HomeModel->getBookingDetails($room_ids);
-		  } else {
-			  $data['booking_details'] = []; // Default to an empty array if no room IDs
-		  }
+		// Retrieve booking_id from query parameters from booking list page
+		 $booking_id = $this->input->get('booking_id');
+		// Fetch booking details if a booking ID is provided
+		if (!empty($booking_id)) {
+			$data['booking_details'] = $this->HomeModel->getBookingDetailsById($booking_id);
+			//$data['booking_details'] = $booking_details;
+			// Ensure the booking details contain check-in and check-out data
+		if (!empty($booking_details)) {
+			foreach ($booking_details as &$detail) {
+				// Assuming 'checkin_date' and 'checkout_date' are the column names
+				$detail['checkin_date'] = isset($detail['checkin_date']) ? $detail['checkin_date'] : '';
+				$detail['checkout_date'] = isset($detail['checkout_date']) ? $detail['checkout_date'] : '';
+			}
+		}
+	//	$data['booking_details'] = $booking_details;
+
+
+		} else {
+			$data['booking_details'] = []; // Default to an empty array if no booking ID
+		}
+
+		$data['guests'] = array_filter($data['booking_details'], function($item) {
+			return isset($item['guest_name']); // Filter to get only guest details
+		});
+		
+		// $selected_rooms = $this->input->post('selected_rooms');
+		// if (!empty($selected_rooms)) {
+		// 	$room_ids = explode(',', $selected_rooms);
+		// } else {
+		// 	$room_ids = [];
+		// }
+		// $data['room_ids'] = $room_ids;
+
+		//   // Fetch booking details if a room ID is provided
+		// //  $room_ids = $this->input->post('room_id'); // Assuming you're sending room IDs via a POST request
+		//   if (!empty($room_ids)) {
+		// 	  $data['booking_details'] = $this->HomeModel->getBookingDetails($room_ids);
+		//   } else {
+		// 	  $data['booking_details'] = []; // Default to an empty array if no room IDs
+		//   }
 	  
 		//var_dump($data['booking_details']);die;
 		$this->load->view('webapp/superadmin/include/header', $data);
@@ -1097,7 +1122,7 @@ foreach ($items_data as $room_id => $room_items) {
     }
 
     foreach ($room_items as $item) {
-        if (!is_array($item) || !isset($item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
+		if (!is_array($item) || !isset($item['id'], $item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
             echo json_encode(['status' => 'error', 'message' => 'Invalid item data.']);
             return;
         }
@@ -1105,6 +1130,7 @@ foreach ($items_data as $room_id => $room_items) {
         $data = [
             'booking_id' => $booking_ids[$room_id] ?? null, // Use the correct booking ID for this room
             'item_name' => $item['name'],
+			'item_id' => $item['id'],
             'item_price' => $item['currentPrice'],
             'new_price' => $item['newPrice'],
             'quantity' => $item['quantity'],
