@@ -85,6 +85,8 @@ $route['subcategory_edit/(:any)'] = 'Superadmin/subcategory_edit/$1';
 $route['subcategoryupdate'] = 'Superadmin/subcategoryupdate';
 $route['get_subcategories'] = 'Superadmin/get_subcategories';
 $route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
+$route['all_bookings'] = 'Superadmin/all_bookings';
+$route['get_booked_dates'] = 'Superadmin/get_booked_dates';
 
 
 $route['add_customer'] = 'Superadmin/add_customer';

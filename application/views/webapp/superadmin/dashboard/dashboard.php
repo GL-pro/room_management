@@ -563,8 +563,11 @@
     // Optional: Add a click listener to display customer details in alert
     calendar.on('eventClick', function(info) {
         const event = info.event;
-        alert(`Booking ID: ${event.extendedProps.booking_id}\n` +
-              `Customer Name: ${event.extendedProps.customer_name}`);
+        const selectedDate = event.startStr; // Get the selected event's date
+        window.location.href = `all_bookings?date=${selectedDate}`;
+        // window.location.href = `booked_enquiry?booking_id=${event.extendedProps.booking_id}&status=${event.extendedProps.booking_status}`;
+       // alert(`Booking ID: ${event.extendedProps.booking_id}\n` +
+         //     `Customer Name: ${event.extendedProps.customer_name}`);
             //   `Email: ${event.extendedProps.customer_email}\n` +
             //   `Phone: ${event.extendedProps.customer_phone}\n` +
             //   `Room Number: ${event.extendedProps.room_number}`);

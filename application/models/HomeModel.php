@@ -660,22 +660,51 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $this->db->from('room_booking rb'); // Use an alias for the room booking table
         $this->db->join('agent a', 'rb.agent_id = a.agent_id', 'left'); // Join with agents table
         $this->db->join('customer c', 'rb.customer_id = c.customer_id', 'left'); // Join with customers table
-    
         // Check if there are room IDs to filter by
         if (!empty($room_ids)) {
             $this->db->where_in('rb.hotel_roomid', $room_ids); // Use 'rb.hotel_roomid' for clarity
         }
-    
         // Execute the query
         $query = $this->db->get();
         return $query->result_array(); // Return the results as an associative array
     }
     
+    public function get_bookings_by_date($date)
+    {
+        // Query to fetch room bookings along with customer details
+        $this->db->select('room_booking.*, customer.customer_name, customer.email, customer.phone');
+        $this->db->from('room_booking');
+        $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); // Join customer table
+        // Use DATE() to ignore the time part and compare only the date
+        $this->db->where("('$date' = DATE(room_booking.checkin) OR '$date' = DATE(room_booking.checkout) OR '$date' BETWEEN DATE(room_booking.checkin) AND DATE(room_booking.checkout))");
+    
+        $query = $this->db->get();
+        
+        return $query->result();
+    }
+    
+    
+    public function get_all_bookings()
+{
+    $this->db->select('*');
+    $this->db->from('room_booking');
+    $query = $this->db->get();
+    return $query->result();
+}
 
+public function  update_status_booking($room_id, $status) {
+    $this->db->where('booking_id', $room_id);
+    $this->db->update('room_booking', ['status' => $status]);
+}
 
-
-
-
+public function getBookedDatesByRoomId($roomId) {
+    $this->db->select('checkin, checkout');
+    $this->db->from('room_booking');
+    $this->db->where('hotel_roomid', $roomId);
+    $this->db->where('booking_status', 'booked');
+    $query = $this->db->get();
+    return $query->result();
+}
 
 
 

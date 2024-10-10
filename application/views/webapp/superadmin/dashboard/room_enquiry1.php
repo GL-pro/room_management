@@ -106,10 +106,14 @@
                                                             <div class="col-12 p-0">
                                                                 <div class="row">
                                                                     <div class="col-12 col-sm-4 mt-2">
-                                                                        <div class="input-group input-group-outline">
+                                                                        <!-- <div class="input-group input-group-outline">
                                                                             <label class="form-label" for="daterange">Select Date Range:</label>
                                                                             <input type="text" class="form-control" id="daterange" name="daterange[]" required>
-                                                                        </div>
+                                                                        </div> -->
+                                                                        <div class="input-group input-group-outline">
+    <label class="form-label" for="daterange-<?= $room['hotel_roomid'] ?>">Select Date Range:</label>
+    <input type="text" class="form-control daterange-picker" id="daterange-<?= $room['hotel_roomid'] ?>" name="daterange[]" required data-room-id="<?= $room['hotel_roomid'] ?>">
+</div>
                                                                     </div>
                                                                     <div class="col-12 col-sm-4 mt-2">
                                                                         <div class="input-group input-group-outline">
@@ -241,32 +245,32 @@
                                                                     </div> -->
 
 
-                                            <div class="row">
-                                                <div class="">
-                                                    <!-- Main Table -->
-<!-- Room Section with Add Items Button -->
-<div class="room-section" data-room-id="<?= $room['hotel_roomid'] ?>">
-    <h5>Room ID: <?= $room['hotel_roomid'] ?></h5>
-    <!-- <button class="open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items for Room <?= $room['hotel_roomid'] ?></button> -->
-   <!-- Updated "Add Items for Room" Button -->
-    <div class="table-responsive">
-        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe" id="table-room-<?= $room['hotel_roomid'] ?>">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Current Price</th>
-                    <th>New Price</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Items will be added here for this specific room -->
-            </tbody>
-        </table>
-    </div>
-</div>
+                                                                            <div class="row">
+                                                                                <div class="">
+                                                                                    <!-- Main Table -->
+                                <!-- Room Section with Add Items Button -->
+                                <div class="room-section" data-room-id="<?= $room['hotel_roomid'] ?>">
+                                    <h5>Room ID: <?= $room['hotel_roomid'] ?></h5>
+                                    <!-- <button class="open-modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items for Room <?= $room['hotel_roomid'] ?></button> -->
+                                <!-- Updated "Add Items for Room" Button -->
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe" id="table-room-<?= $room['hotel_roomid'] ?>">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Current Price</th>
+                                                    <th>New Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Total Price</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Items will be added here for this specific room -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
 
 
@@ -350,18 +354,111 @@
     };
 </script>
 
+<!-- 
+<script>
+    // flatpickr("#daterange", {
+    //     mode: "range", // Enable date range selection
+    //     dateFormat: "Y-m-d", // Format for displaying the selected dates
+    //     minDate: "today", // Set the minimum date as today
+    //     onClose: function(selectedDates, dateStr, instance) {
+    //         console.log("Selected range: ", dateStr); // Logs the selected date range (optional)
+    //     }
+    // });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const datepickers = document.querySelectorAll('.daterange-picker');
+    datepickers.forEach(picker => {
+        const roomId = picker.getAttribute('data-room-id');
+        // Make an AJAX request to get booked dates for the room
+        fetchBookedDates(roomId, picker);
+    });
+
+    function fetchBookedDates(roomId, picker) {
+        fetch('<?= site_url("get_booked_dates") ?>', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room_id: roomId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const bookedDates = data.flatMap(item => {
+                return [
+                    { from: item.checkin, to: item.checkout }
+                ];
+            });
+
+            // Initialize Flatpickr with disabled booked date ranges
+            flatpickr(picker, {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                minDate: "today", // Only allow future dates
+                disable: bookedDates.map(range => {
+                    return {
+                        from: new Date(range.from), 
+                        to: new Date(range.to)
+                    };
+                }),
+                onClose: function(selectedDates, dateStr, instance) {
+                    console.log("Selected range: ", dateStr); // Optional
+                }
+            });
+        });
+    }
+});
+</script> -->
 
 <script>
-    flatpickr("#daterange", {
-        mode: "range", // Enable date range selection
-        dateFormat: "Y-m-d", // Format for displaying the selected dates
-        minDate: "today", // Set the minimum date as today
-        onClose: function(selectedDates, dateStr, instance) {
-            console.log("Selected range: ", dateStr); // Logs the selected date range (optional)
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    const datepickers = document.querySelectorAll('.daterange-picker');
+    
+    datepickers.forEach(picker => {
+        const roomId = picker.getAttribute('data-room-id');
+        fetchBookedDates(roomId, picker);
     });
-</script>
 
+    function fetchBookedDates(roomId, picker) {
+        fetch('<?= site_url("get_booked_dates") ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ room_id: roomId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            initializeFlatpickr(picker, data);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function initializeFlatpickr(picker, bookedDates) {
+        flatpickr(picker, {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: [
+                function(date) {
+                    // Disable dates in the past
+                    if (date < new Date().setHours(0,0,0,0)) return true;
+                    
+                    // Disable booked dates
+                    return bookedDates.some(range => {
+                        const from = new Date(range.checkin);
+                        const to = new Date(range.checkout);
+                        return date >= from && date <= to;
+                    });
+                }
+            ],
+            onClose: function(selectedDates, dateStr, instance) {
+                console.log("Selected range: ", dateStr);
+            }
+        });
+    }
+});
+</script>
 
 <script>
     document.querySelectorAll('.extra-guest-count').forEach(function(select) {

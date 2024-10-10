@@ -1143,6 +1143,54 @@ private function _upload_file($file, $upload_path)
 }
 
 
+public function all_bookings()
+{
+	$data['menu']='all_bookings';
+	$data['pagetitle']='DashBoard';
+
+	$selected_date = $this->input->get('date'); // '2024-10-10' format, for example
+	$data['selected_date'] = $selected_date;
+
+	if ($selected_date) {
+		$data['bookings'] = $this->HomeModel->get_bookings_by_date($selected_date);
+	} else {
+		$data['bookings1'] = $this->HomeModel->get_all_bookings();
+	}
+	
+	$data['items'] = $this->HomeModel->get_items();
+	$this->load->view('webapp/superadmin/include/header',$data);
+	$this->load->view('webapp/superadmin/dashboard/all_bookings',$data);
+	$this->load->view('webapp/superadmin/include/footer');
+} 
+
+public function update_status_booking() {
+	$room_id = $this->input->post('item_id');
+	$status = $this->input->post('status');
+	if ($room_id !== null && $status !== null) {
+		$this->HomeModel->update_status_booking($room_id, $status);
+		echo json_encode(["success" => true]);
+	} else {
+		echo json_encode(["success" => false]);
+	}
+}
+
+public function get_booked_dates() {
+    $input = json_decode($this->input->raw_input_stream, true);
+    $roomId = $input['room_id'];
+    
+    $booked_dates = $this->HomeModel->getBookedDatesByRoomId($roomId);
+    
+    $response = [];
+    foreach ($booked_dates as $booking) {
+        $response[] = [
+            'checkin' => $booking->checkin,
+            'checkout' => $booking->checkout
+        ];
+    }
+    
+    echo json_encode($response);
+}
+
 
 
 
