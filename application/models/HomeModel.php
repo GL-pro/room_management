@@ -723,12 +723,53 @@ public function getBookingDetailsById($booking_id) {
     return $query->result_array(); // Ensure this returns an array
 }
 
+public function getItemsByBookingIdAndRoomId($booking_id, $hotel_roomid) {
+    $this->db->select('item.*, room_item_details.*');
+    $this->db->from('room_item_details');
+    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+    $this->db->where('room_item_details.booking_id', $booking_id);
+    $this->db->where('room_item_details.hotel_roomid', $hotel_roomid);
+    $query = $this->db->get();
+    return $query->result_array();
+}
+public function update_room_booking($booking_id, $hotel_roomid, $booking_data)
+{
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    $this->db->update('room_booking', $booking_data);
+    if ($this->db->affected_rows() > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+public function update_room_booking_details($booking_id, $hotel_roomid, $room_detail_data)
+{
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    return $this->db->update('room_booking_details', $room_detail_data);
+}
 
+public function update_guest_details($booking_id, $hotel_roomid, $guest_data)
+{
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    return $this->db->update('guest_details', $guest_data);
+}
 
-
-
-
-
+public function delete_items_by_booking_id($booking_id)
+{
+    if (empty($booking_id)) {
+        return false; 
+    }
+    $this->db->where('booking_id', $booking_id);
+    $this->db->delete('item');
+    if ($this->db->affected_rows() > 0) {
+        return true; 
+    } else {
+        return false;
+    }
+}
 
 
 
