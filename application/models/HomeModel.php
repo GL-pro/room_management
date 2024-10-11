@@ -758,11 +758,13 @@ public function update_room_status_log($booking_id, $hotel_roomid, $room_status_
     return $this->db->update('room_status_log', $room_status_log);
 }
 
-public function update_guest_details($guest_id, $guest_data)
-{
-    $this->db->where('guest_id', $guest_id);
-    return $this->db->update('guest_details', $guest_data);
-}
+// public function update_guest_details($guest_id, $guest_data) {
+//     // Make sure the query is using the guest_id to update the specific guest details
+//     $this->db->where('guest_id', $guest_id);
+//     $this->db->update('guest_details', $guest_data);
+//     return $this->db->affected_rows();
+// }
+
 
 public function delete_items_by_booking_id($booking_id)
 {
@@ -778,22 +780,23 @@ public function delete_items_by_booking_id($booking_id)
     }
 }
 
-public function get_guest_id($booking_id, $hotel_roomid, $guest_name)
+public function update_guest_details($guest_id, $data)
 {
-    $this->db->select('guest_id');
-    $this->db->from('guest_details');
-    $this->db->where('booking_id', $booking_id);
-    $this->db->where('hotel_roomid', $hotel_roomid);
-    $this->db->where('guest_name', $guest_name);
-    $query = $this->db->get();
-    
-    // Check if a record is found
-    if ($query->num_rows() > 0) {
-        return $query->row()->guest_id; // Return the guest ID
-    }
-
-    return null; // Return null if no record is found
+    $this->db->where('guest_id', $guest_id)->update('guest_details', $data);
 }
+// public function insert_guest_details($data)
+// {
+//     $this->db->insert('guest_details', $data);
+// }
+public function get_guest_by_booking_and_name($booking_id, $hotel_roomid, $guest_name)
+{
+    return $this->db->where('booking_id', $booking_id)
+                    ->where('hotel_roomid', $hotel_roomid)
+                    ->where('guest_name', $guest_name)
+                    ->get('guest_details')
+                    ->row_array();
+}
+
 
 public function get_booking_by_id($booking_id) {
     $this->db->where('booking_id', $booking_id);
@@ -805,9 +808,31 @@ public function get_booking_by_id($booking_id) {
     }
 }
 
+public function delete_guest($guest_id)
+{
+    $this->db->where('guest_id', $guest_id)->delete('guest_details');
+}
 
 
+public function get_guest_id($booking_id, $hotel_roomid, $guest_name) {
+    // Select the guest_id field from the guest_details table
+    $this->db->select('guest_id');
+    $this->db->from('guest_details');
+    // Where conditions to match booking_id, hotel_roomid, and guest_name
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    $this->db->where('guest_name', $guest_name);
+    // Execute the query
+    $query = $this->db->get();
 
+    // Check if any row is returned
+    if ($query->num_rows() > 0) {
+        // Return the guest_id
+        return $query->row()->guest_id;
+    }
+    // Return null if no match is found
+    return null;
+}
 
 
 

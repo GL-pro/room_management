@@ -1278,15 +1278,11 @@ public function update_room_enquiry_submit()
             }
 
 
+			
 			$guest_id = $this->HomeModel->get_guest_id($booking_id, $hotel_roomid, $guest_name);
-			log_message('debug', 'Fetching guest ID: Booking ID: ' . $booking_id . ' | Room ID: ' . $hotel_roomid . ' | Guest Name: ' . $guest_name . ' | Found ID: ' . $guest_id);
-			
-			
-
-
-			// Insert guest details
+			if ($guest_id !== null) {
 			$guest_data = [
-				'guest_id' => $guest_id, // Add the guest ID
+				//'guest_id' => $guest_id, // Add the guest ID
 				'booking_id' => $booking_id,
 				'guest_name' => $guest_name,
 				'phone' => $guest_phones[$hotel_roomid][$guest_index],
@@ -1297,18 +1293,19 @@ public function update_room_enquiry_submit()
 				'admin_status' => 'staff',
 				'status' => '1',
 			];
-			// $this->HomeModel->insert_guest_details($guest_data);
-			// $this->HomeModel->update_guest_details($guest_id, $guest_data); // Make sure update_guest_details accepts guest_id
-		  // Retrieve existing guest ID, if applicable
-		  if ($guest_id !== null) {
-			$this->HomeModel->update_guest_details($guest_id, $guest_data);
-		} else {
-			log_message('error', 'Guest ID not found for Booking ID: ' . $booking_id . ' | Room ID: ' . $hotel_roomid . ' | Guest Name: ' . $guest_name);
-		}
-		
-		}
-	}
-}
+
+			  // Check if guest already exists
+			  //  $existing_guest = $this->HomeModel->get_guest_by_booking_and_name($booking_id, $hotel_roomid, $guest_name);
+			  $guest_id = $this->HomeModel->get_guest_id($booking_id, $hotel_roomid, $guest_name);
+			  if ($guest_id !== null) {
+				  // Proceed to update the guest details
+				  $this->HomeModel->update_guest_details($guest_id, $guest_data);
+			  } else {
+				  log_message('error', 'Guest ID not found for Booking ID: ' . $booking_id . ' | Room ID: ' . $hotel_roomid . ' | Guest Name: ' . $guest_name);
+			  }
+			}
+}}}
+	//  }
 	// Assuming you're handling form submission and have the booking ID
 	$booking_id = $this->input->post('booking_id'); // Adjust as necessary
 	// Insert extra guests
