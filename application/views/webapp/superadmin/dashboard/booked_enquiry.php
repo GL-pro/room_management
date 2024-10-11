@@ -144,25 +144,26 @@
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline">
                             <label class="form-label">Name</label>
-                            <input class="form-control" type="text" value="<?= $guest['guest_name'] ?>" placeholder="Guest Name"  />
+                            <input class="form-control" type="text" name="guest_name[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['guest_name'] ?>" placeholder="Guest Name"  />
                         </div>
                     </div>
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline ">
                             <label class="form-label">Age</label>
-                            <input class="form-control" type="number" value="<?= $guest['age'] ?>" placeholder="Guest Age" />
+                            <input class="form-control" type="number" name="guest_age[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['age'] ?>" placeholder="Guest Age" />
                         </div>
                     </div>
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline ">
                             <label class="form-label">Phone Number</label>
-                            <input class="form-control" type="text" value="<?= $guest['phone'] ?>" placeholder="Phone Number" />
+                            <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['phone'] ?>" placeholder="Phone Number" />
                         </div>
                     </div>
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline ">
                             <label class="form-label">ID Proof</label>
-                            <input class="form-control" type="text" value="<?= $guest['id_proof'] ?>" placeholder="ID Proof" />
+                            <input class="form-control" type="file"  name="guest_id_proof[<?= $room['hotel_roomid'] ?>][]" 
+                            value="<?= $guest['id_proof'] ?>" placeholder="ID Proof" />
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -252,12 +253,12 @@
                 <div class="input-group input-group-outline">
                     <label class="form-label">Advance Amount</label>
                     <input class="form-control" type="number" placeholder=" " 
-                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>" readonly />
+                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>"  />
                 </div>
             </div>
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
-                    <select class="form-control" disabled>
+                    <select class="form-control" >
                         <option value="" disabled>Select Payment Method</option>
                         <option value="cash" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'cash') ? 'selected' : '' ?>>Cash</option>
                         <option value="card" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'card') ? 'selected' : '' ?>>Card</option>
