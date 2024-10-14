@@ -80,7 +80,6 @@
         $rendered_rooms[] = $room['hotel_roomid']; // Add the room ID to the rendered list
     ?>
 
-
         <input type="hidden" name="room_id[]" value="<?= $room['hotel_roomid'] ?>">
         <input type="hidden" name="roomno[]" value="<?= $room['roomno'] ?>">
         <input type="hidden" name="room_name[]" value="<?= $room['room_name'] ?>">
@@ -1087,6 +1086,7 @@ $(document).ready(function () {
             processData: false,
             success: function (response) {
                 console.log('Form submitted successfully:', response);
+                
             },
             error: function (xhr, status, error) {
                 console.error('Error submitting form:', xhr.responseText);

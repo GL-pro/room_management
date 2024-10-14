@@ -524,10 +524,20 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     {
         $this->db->insert('room_booking_details', $data);
     }
-    public function insert_guest_details($data)
-    {
-        $this->db->insert('guest_details', $data);
+    // public function insert_guest_details($data)
+    // {
+    //     $this->db->insert('guest_details', $data);
+    //     return $this->db->insert_id(); // Return the last inserted ID
+    // }
+    public function insert_guest_details($guest_data) {
+        $this->db->insert('guest_details', $guest_data);
+        return $this->db->insert_id(); // Return the ID of the newly inserted guest
     }
+    
+   
+public function delete_guest_details($guest_id) {
+    return $this->db->delete('guest_details', ['guest_id' => $guest_id]);
+}
     
     public function insert_room_status_log($data)
     {
@@ -706,6 +716,7 @@ public function getBookedDatesByRoomId($roomId) {
 
 
 public function getBookingDetailsById($booking_id) {
+    $this->db->distinct(); // Ensure unique results
     $this->db->select('room_booking.*,hotel_room.*,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
      customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
      room_booking_details.extra_guest_count,guest_details.*');
@@ -721,7 +732,42 @@ public function getBookingDetailsById($booking_id) {
     $this->db->where('room_booking.booking_id', $booking_id);
     $query = $this->db->get();
     return $query->result_array(); // Ensure this returns an array
+    $this->db->distinct(); // Ensure unique results for guests
 }
+// public function getBookingDetailsById($booking_id) {
+//     // Start with the main booking query
+//     $this->db->select('room_booking.*,hotel_room.*,hotel_room.hotel_roomid,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
+//           customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
+//          room_booking_details.extra_guest_count,guest_details.*');
+//         $this->db->from('room_booking'); 
+//         $this->db->join('room_booking_details', 'room_booking_details.booking_id = room_booking.booking_id', 'left');
+//         $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
+//         $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
+//         $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+//         $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); 
+//         $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left'); 
+//         $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
+//         $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
+//         $this->db->where('room_booking.booking_id', $booking_id);
+//     $query = $this->db->get();
+    
+//     $bookingDetails = $query->result_array(); // Fetch the booking details
+    
+//     // Now, fetch distinct guest details separately to avoid duplication
+//     $this->db->distinct(); // Ensure unique results for guests
+//     $this->db->select('guest_details.*');
+//     $this->db->from('guest_details');
+//     $this->db->where('guest_details.booking_id', $booking_id);
+//     $guestQuery = $this->db->get();
+    
+//     $guestDetails = $guestQuery->result_array(); // Fetch the unique guest details
+
+//     // Merge booking and guest details in a single array if needed
+//     return [
+//         'booking' => $bookingDetails,
+//         'guests' => $guestDetails,
+//     ];
+// }
 
 public function getItemsByBookingIdAndRoomId($booking_id, $hotel_roomid) {
     $this->db->select('item.*, room_item_details.*');
@@ -782,19 +828,29 @@ public function delete_items_by_booking_id($booking_id)
 
 public function update_guest_details($guest_id, $data)
 {
-    $this->db->where('guest_id', $guest_id)->update('guest_details', $data);
+    $this->db->where('guest_id', $guest_id);
+    return $this->db->update('guest_details', $data);
 }
+
+
 // public function insert_guest_details($data)
 // {
 //     $this->db->insert('guest_details', $data);
 // }
-public function get_guest_by_booking_and_name($booking_id, $hotel_roomid, $guest_name)
+public function get_guest_by_booking_and_code($booking_id, $hotel_roomid,  $guest_phone)
 {
-    return $this->db->where('booking_id', $booking_id)
-                    ->where('hotel_roomid', $hotel_roomid)
-                    ->where('guest_name', $guest_name)
-                    ->get('guest_details')
-                    ->row_array();
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+
+    $this->db->where('phone', $guest_phone);
+
+    $query = $this->db->get('guest_details');
+
+    if ($query->num_rows() > 0) {
+        return $query->row_array(); // Return the guest details as an array
+    } else {
+        return null; // No matching guest found
+    }
 }
 
 
@@ -813,30 +869,39 @@ public function delete_guest($guest_id)
     $this->db->where('guest_id', $guest_id)->delete('guest_details');
 }
 
-
-public function get_guest_id($booking_id, $hotel_roomid, $guest_name) {
-    // Select the guest_id field from the guest_details table
+public function get_guest_by_booking_and_name111($booking_id, $hotel_roomid, $guest_name, $guest_phone) {
     $this->db->select('guest_id');
-    $this->db->from('guest_details');
-    // Where conditions to match booking_id, hotel_roomid, and guest_name
     $this->db->where('booking_id', $booking_id);
     $this->db->where('hotel_roomid', $hotel_roomid);
     $this->db->where('guest_name', $guest_name);
-    // Execute the query
-    $query = $this->db->get();
+    $this->db->where('phone', $guest_phone); // Add phone to make the query more unique
+    $query = $this->db->get('guest_details');
 
-    // Check if any row is returned
     if ($query->num_rows() > 0) {
-        // Return the guest_id
-        return $query->row()->guest_id;
+        return $query->row_array();
     }
-    // Return null if no match is found
-    return null;
+    return false; // Return false if no guest is found
+}
+
+public function get_guest_by_booking_room_and_name($booking_id, $hotel_roomid, $guest_name) {
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    $this->db->where('guest_name', $guest_name);
+    $query = $this->db->get('guest_details');
+    return $query->row_array();
 }
 
 
 
+public function update_guest_status($guest_id, $status) {
+    if (empty($guest_id) || !isset($status)) {
+        return false; // Return false if invalid data
+    }
 
+    $this->db->set('status', $status);
+    $this->db->where('guest_id', $guest_id);
+    return $this->db->update('guest_details'); // Assuming your table is 'guest_details'
+}
 
 
 

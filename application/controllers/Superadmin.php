@@ -1027,6 +1027,9 @@ public function room_enquiry_submit()
                 // Use default if no file is provided or there's an error
                 $uploaded_file = 'default.jpg';
             }
+
+			$guest_code = uniqid('guest_', true); // Generate unique guest code
+
 			// Insert guest details
 			$guest_data = [
 				'booking_id' => $booking_id,
@@ -1035,6 +1038,7 @@ public function room_enquiry_submit()
 				'age' => !empty($guest_ages[$hotel_roomid][$guest_index]) ? $guest_ages[$hotel_roomid][$guest_index] : 'Unknown', // Check for age
 				'id_proof' => $uploaded_file,
 				'hotel_roomid' => $hotel_roomid,
+				'guest_code' => $guest_code,
 				'date' => $adding_date,
 				'admin_status' => 'staff',
 				'status' => '1',
@@ -1064,12 +1068,14 @@ public function room_enquiry_submit()
 		} else {
 			$uploaded_file = 'default.jpg';
 		}
+		$guest_code = uniqid('guest_', true); // Generate unique guest code
 		$extra_guest_data = [
 			'booking_id' => $bookingid, // Use the booking_id from the room booking
 			'guest_name' => $name,
 			'phone' => $extra_guest_phone[$extra_index] ?? null,
 			'age' => $extra_guest_age[$extra_index] ?? 'Unknown', // Default value
 			'hotel_roomid' => $hotel_roomid,
+			'guest_code' => $guest_code,
 			'id_proof' => $uploaded_file,
 			'date' => $adding_date,
 			'admin_status' => 'staff',
@@ -1254,136 +1260,183 @@ public function update_room_enquiry_submit()
         // $this->HomeModel->insert_room_status_log($room_status_log);
 		$this->HomeModel->update_room_status_log($booking_id, $hotel_roomid, $room_status_log);
 
-	// }
-      // Insert guest details for the current room
-	  if (!empty($guest_names[$hotel_roomid])) {
-		foreach ($guest_names[$hotel_roomid] as $guest_index => $guest_name) {
-			    // Check if the guest name is empty
-                if (!empty($guest_name)) {
-			 $file = [
-                'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
-                'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
-                'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
-                'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
-                'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
-            ];
-            // Check if the file upload was successful
-            if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
-                // Proceed to upload the file
-				$upload_path = './upload/id_proofs/';
-                $uploaded_file = $this->_upload_file($file, $upload_path);
-            } else {
-                // Use default if no file is provided or there's an error
-                $uploaded_file = 'default.jpg';
+
+
+// Capture guest details
+$guest_names = $this->input->post('guest_name');
+$guest_phones = $this->input->post('guest_phone');
+$guest_ages = $this->input->post('guest_age');
+$guest_id_proofs = isset($_FILES['guest_id_proof']) ? $_FILES['guest_id_proof'] : []; // Initialize to an empty array if not set
+
+foreach ($room_ids as $hotel_roomid) {
+    if (!empty($guest_names[$hotel_roomid])) {
+        foreach ($guest_names[$hotel_roomid] as $guest_index => $guest_name) {
+            // Check if the guest name is not empty
+            if (!empty($guest_name)) {
+                $file = [
+                    'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
+                    'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
+                    'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
+                    'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
+                    'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
+                ];
+                
+                // Check if the file upload was successful
+                if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
+                    // Proceed to upload the file
+                    $upload_path = './upload/id_proofs/';
+                    $uploaded_file = $this->_upload_file($file, $upload_path);
+                } else {
+                    // Use default if no file is provided or there's an error
+                    $uploaded_file = 'default.jpg';
+                }
+
+                // Prepare guest data
+                $guest_data = [
+                    'guest_name' => $guest_name,
+                    'phone' => $guest_phones[$hotel_roomid][$guest_index],
+                    'age' => !empty($guest_ages[$hotel_roomid][$guest_index]) ? $guest_ages[$hotel_roomid][$guest_index] : 'Unknown',
+                    'id_proof' => $uploaded_file,
+                    'hotel_roomid' => $hotel_roomid,
+                    'booking_id' => $booking_id,
+                ];
+
+                // Check if the guest already exists in the database
+                $existing_guest = $this->HomeModel->get_guest_by_booking_and_code(
+                    $booking_id,
+                    $hotel_roomid,
+                    $guest_phones[$hotel_roomid][$guest_index] // Assuming phone is unique to guest
+                );
+
+            //    var_dump($existing_guest); // Check if $existing_guest is correct
+           //     die();
+
+                $this->db->trans_start(); // Start transaction
+
+                if ($existing_guest) {
+                    // Guest already exists, update if there's any change
+                    if ($existing_guest['guest_name'] !== $guest_name ||
+                        $existing_guest['phone'] !== $guest_data['phone'] ||
+                        $existing_guest['age'] !== $guest_data['age'] ||
+                        $existing_guest['id_proof'] !== $uploaded_file) {
+
+                        // Update existing guest details
+                        $update_guest_data = [
+                            'guest_name' => $guest_name,
+                            'phone' => $guest_phones[$hotel_roomid][$guest_index],
+                            'age' => $guest_ages[$hotel_roomid][$guest_index],
+                            'id_proof' => $uploaded_file,
+                            // Keep the existing guest_code
+                            'guest_code' => $existing_guest['guest_code'], 
+                        ];
+                        
+                        $this->HomeModel->update_guest_details($existing_guest['guest_id'], $update_guest_data);
+                    }
+                } else {
+                    // Insert new guest if not found
+                    $guest_data['guest_code'] = uniqid('guest_', true); // Unique code for the guest
+                    $guest_data['date'] = $adding_date;
+                    $guest_data['admin_status'] = 'staff';
+                    $guest_data['status'] = '1'; // Set status to active
+                    $this->HomeModel->insert_guest_details($guest_data);
+                }
+
+                $this->db->trans_complete(); // Complete transaction
+
+                if ($this->db->trans_status() === FALSE) {
+                    log_message('error', 'Transaction failed for booking_id: ' . $booking_id);
+                }
             }
-
-
-			
-			$guest_id = $this->HomeModel->get_guest_id($booking_id, $hotel_roomid, $guest_name);
-			if ($guest_id !== null) {
-			$guest_data = [
-				//'guest_id' => $guest_id, // Add the guest ID
-				'booking_id' => $booking_id,
-				'guest_name' => $guest_name,
-				'phone' => $guest_phones[$hotel_roomid][$guest_index],
-				'age' => !empty($guest_ages[$hotel_roomid][$guest_index]) ? $guest_ages[$hotel_roomid][$guest_index] : 'Unknown', // Check for age
-				'id_proof' => $uploaded_file,
-				'hotel_roomid' => $hotel_roomid,
-				'date' => $adding_date,
-				'admin_status' => 'staff',
-				'status' => '1',
-			];
-
-			  // Check if guest already exists
-			  //  $existing_guest = $this->HomeModel->get_guest_by_booking_and_name($booking_id, $hotel_roomid, $guest_name);
-			  $guest_id = $this->HomeModel->get_guest_id($booking_id, $hotel_roomid, $guest_name);
-			  if ($guest_id !== null) {
-				  // Proceed to update the guest details
-				  $this->HomeModel->update_guest_details($guest_id, $guest_data);
-			  } else {
-				  log_message('error', 'Guest ID not found for Booking ID: ' . $booking_id . ' | Room ID: ' . $hotel_roomid . ' | Guest Name: ' . $guest_name);
-			  }
-			}
-}}}
-	//  }
-	// Assuming you're handling form submission and have the booking ID
-	$booking_id = $this->input->post('booking_id'); // Adjust as necessary
-	// Insert extra guests
-	$extra_guest_name = $this->input->post('extra_guest_name_' . $hotel_roomid) ?? [];
-	$extra_guest_phone = $this->input->post('extra_guest_phone_' . $hotel_roomid) ?? [];
-	$extra_guest_age = $this->input->post('extra_guest_age_' . $hotel_roomid) ?? [];
-	foreach ($extra_guest_name as $extra_index => $name) {
-		if (!empty($name)) {
-		 $file = [
-			'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
-			'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
-			'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
-			'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
-			'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
-		];
-		if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
-			$upload_path = './upload/id_proofs/';
-			$uploaded_file = $this->_upload_file($file, $upload_path);
-		} else {
-			$uploaded_file = 'default.jpg';
-		}
-		$extra_guest_data = [
-			'booking_id' => $booking_id, // Use the booking_id from the room booking
-			'guest_name' => $name,
-			'phone' => $extra_guest_phone[$extra_index] ?? null,
-			'age' => $extra_guest_age[$extra_index] ?? 'Unknown', // Default value
-			'hotel_roomid' => $hotel_roomid,
-			'id_proof' => $uploaded_file,
-			'date' => $adding_date,
-			'admin_status' => 'staff',
-			'status' => '1',
-		];
-		// $this->HomeModel->insert_guest_details($extra_guest_data);
-		$this->HomeModel->update_guest_details($booking_id, $hotel_roomid, $extra_guest_data);
-    	}
-	}
+        }
+    }
 }
 
 
-// $items_data = json_decode($this->input->post('items_data'), true);
-// if (empty($items_data)) {
-//     error_log('Received items_data: ' . $this->input->post('items_data'));
-//     echo json_encode(['status' => 'error', 'message' => 'Invalid data.']);
-//     return;
-// }
 
-// // Loop through each room and its items
-// foreach ($items_data as $room_id => $room_items) {
-//     if (!is_array($room_items)) {
-//         echo json_encode(['status' => 'error', 'message' => 'Invalid item data for room: ' . $room_id]);
-//         return;
-//     }
+//Insert or update extra guests
+// $extra_guest_name = $this->input->post('extra_guest_name_' . $hotel_roomid) ?? [];
+// $extra_guest_phone = $this->input->post('extra_guest_phone_' . $hotel_roomid) ?? [];
+// $extra_guest_age = $this->input->post('extra_guest_age_' . $hotel_roomid) ?? [];
 
-//     foreach ($room_items as $item) {
-// 		if (!is_array($item) || !isset($item['id'], $item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
-//             echo json_encode(['status' => 'error', 'message' => 'Invalid item data.']);
-//             return;
-//         }
-
-//         $data = [
-//             'booking_id' => $booking_ids[$room_id] ?? null, // Use the correct booking ID for this room
-//             'item_name' => $item['name'],
-// 			'item_id' => $item['id'],
-//             'item_price' => $item['currentPrice'],
-//             'new_price' => $item['newPrice'],
-//             'quantity' => $item['quantity'],
-//             'item_total_price' => $item['totalPrice'],
-//             'hotel_roomid' => $room_id, // Correct room ID
-//             'adding_date' => $adding_date,
+// foreach ($extra_guest_name as $extra_index => $name) {
+//     if (!empty($name)) {
+//         // Prepare extra guest data
+//         $extra_guest_data = [
+//             'booking_id' => $booking_id,
+//             'guest_name' => $name,
+//             'phone' => $extra_guest_phone[$extra_index] ?? null,
+//             'age' => $extra_guest_age[$extra_index] ?? 'Unknown',
+//             'hotel_roomid' => $hotel_roomid,
+//             'id_proof' => $uploaded_file,
+//             'date' => $adding_date,
 //             'admin_status' => 'staff',
 //             'status' => '1',
 //         ];
 
-//         $this->HomeModel->insert_room_items($data);
+//         // Check if the extra guest already exists
+//         $existing_extra_guest = $this->HomeModel->get_guest_by_booking_and_code($booking_id, $hotel_roomid, $name, $extra_guest_phone[$extra_index]);
+
+//         if ($existing_extra_guest) {
+//             // Update existing extra guest
+//             log_message('debug', 'Updating extra guest details for guest ID: ' . $existing_extra_guest['guest_id'] . ' with data: ' . json_encode($extra_guest_data));
+//             $updated = $this->HomeModel->update_guest_details($existing_extra_guest['guest_id'], $extra_guest_data);
+//             if (!$updated) {
+//                 log_message('error', 'Failed to update extra guest record for ID: ' . $existing_extra_guest['guest_id']);
+//             } else {
+//                 log_message('info', 'Updated extra guest record for ID: ' . $existing_extra_guest['guest_id']);
+//             }
+//         } else {
+//             // Insert new extra guest
+//             log_message('debug', 'Inserting new extra guest with data: ' . json_encode($extra_guest_data));
+//             $guest_id = $this->HomeModel->insert_guest_details($extra_guest_data);
+//             if (!$guest_id) {
+//                 log_message('error', 'Failed to insert new extra guest record');
+//             } else {
+//                 log_message('info', 'Inserted new extra guest record with ID: ' . $guest_id);
+//             }
+//         }
 //     }
 // }
 
-//echo json_encode(['status' => 'success', 'message' => 'All items inserted successfully.']);
+
+	}
+$items_data = json_decode($this->input->post('items_data'), true);
+if (empty($items_data)) {
+    error_log('Received items_data: ' . $this->input->post('items_data'));
+    echo json_encode(['status' => 'error', 'message' => 'Invalid data.']);
+    return;
+}
+
+// Loop through each room and its items
+foreach ($items_data as $room_id => $room_items) {
+    if (!is_array($room_items)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid item data for room: ' . $room_id]);
+        return;
+    }
+
+    foreach ($room_items as $item) {
+		if (!is_array($item) || !isset($item['id'], $item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid item data.']);
+            return;
+        }
+
+        $data = [
+            'booking_id' => $booking_id, // Use the correct booking ID for this room
+            'item_name' => $item['name'],
+			'item_id' => $item['id'],
+            'item_price' => $item['currentPrice'],
+            'new_price' => $item['newPrice'],
+            'quantity' => $item['quantity'],
+            'item_total_price' => $item['totalPrice'],
+            'hotel_roomid' => $room_id, // Correct room ID
+            'adding_date' => $adding_date,
+            'admin_status' => 'staff',
+            'status' => '1',
+        ];
+        $this->HomeModel->insert_room_items($data);
+    }
+}
+echo json_encode(['status' => 'success', 'message' => 'All items inserted successfully.']);
 
 
 redirect('dashboard');
