@@ -75,13 +75,16 @@
                                         </div>
                                     </td>
                                     <td class="text-sm text-center">
-                                        <!-- Display edit button -->
-                                        <!-- <a href="<?php echo base_url();?>booked_enquiry/<?=$booking->booking_id;?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Category">
-                                            <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
-                                        </a>  -->
-                                        <a href="<?php echo base_url('booked_enquiry?booking_id=' . $booking->booking_id); ?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Category">
-                                            <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
-                                        </a> 
+                                        <!-- Display edit button with conditional redirect based on booking status -->
+                                        <?php if ($booking->booking_status == 'booked'): ?>
+                                            <a href="<?php echo base_url('booked_enquiry?booking_id=' . $booking->booking_id); ?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Booking">
+                                                <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
+                                            </a>
+                                        <?php elseif ($booking->booking_status == 'occupied'): ?>
+                                            <a href="<?php echo base_url('occupied_enquiry?booking_id=' . $booking->booking_id); ?>" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit Booking">
+                                                <i class="material-icons text-success position-relative text-lg">drive_file_rename_outline</i>
+                                            </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

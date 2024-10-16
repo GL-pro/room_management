@@ -35,22 +35,29 @@ class Superadmin extends CI_Controller {
 }
 
 
-		// public function getBookingsForCurrentDate() {
+	
+		// public function getBookingsForDateRange() {
 		// 	date_default_timezone_set('Asia/Kolkata');
-		// 	$adding_date = date('Y-m-d H:i:s');
-		// 	$bookings = $this->HomeModel->getBookingsByDate($adding_date);
+		// 	// Adjust these dates as needed
+		// 	$start_date = date('Y-m-d'); // Start from today
+		// 	$end_date = date('Y-m-d', strtotime('+12 month')); // End one month later
+		// 	$bookings = $this->HomeModel->getBookingsByDateRange($start_date, $end_date);
 		// 	echo json_encode($bookings);
 		// }
+		
 		public function getBookingsForDateRange() {
 			date_default_timezone_set('Asia/Kolkata');
-			// Adjust these dates as needed
-			$start_date = date('Y-m-d'); // Start from today
-			$end_date = date('Y-m-d', strtotime('+12 month')); // End one month later
-			$bookings = $this->HomeModel->getBookingsByDateRange($start_date, $end_date);
-			echo json_encode($bookings);
+			$start_date = date('Y-m-d');
+			$end_date = date('Y-m-d', strtotime('+12 month'));
+			
+			$bookings = $this->HomeModel->getBookingCountsByDateRange($start_date, $end_date);
+			$occupied = $this->HomeModel->getOccupiedCountsByDateRange($start_date, $end_date);
+		
+			$combined = array_merge($bookings, $occupied);
+			
+			echo json_encode($combined);
 		}
 		
-
 	public function room_enquiry() {
 		$data['menu'] = 'room_enquiry';
 		$data['pagetitle'] = 'Room Enquiry';
@@ -196,6 +203,41 @@ class Superadmin extends CI_Controller {
 		$data['menu'] = 'occupied_enquiry';
 		$data['pagetitle'] = 'Booked Enquiry';
 		 
+		$data['agencies'] = $this->HomeModel->getAgents();
+		$data['customers'] = $this->HomeModel->getCustomers();  // Fetch customers
+
+		// Retrieve booking_id from query parameters
+		$booking_id = $this->input->get('booking_id');
+		if (!empty($booking_id)) {
+			$booking_details = $this->HomeModel->getBookingDetailsById($booking_id);
+			if (!empty($booking_details)) {
+				foreach ($booking_details as &$detail) {
+					// Ensure that check-in and check-out dates are properly set
+					$detail['checkin_date'] = isset($detail['checkin']) ? date('d/m/Y', strtotime($detail['checkin'])) : '';
+					$detail['checkout_date'] = isset($detail['checkout']) ? date('d/m/Y', strtotime($detail['checkout'])) : '';
+					// get guest details if available
+					if (!empty($detail['guest_name'])) {
+						$detail['guests'][] = [
+							'guest_name' => $detail['guest_name'],
+							'age' => $detail['age'],
+							'phone' => $detail['phone'],
+							'id_proof' => $detail['id_proof']
+						];
+					}
+			 // Fetch room details based on hotel_roomid
+			 $room_details = $this->HomeModel->getRoomDetails($detail['hotel_roomid']);
+			 $detail['room_details'] = $room_details;
+			 // Fetch items associated with the room
+			 $room_items = $this->HomeModel->getItemsByBookingIdAndRoomId($booking_id, $detail['hotel_roomid']);
+			 $detail['items'] = $room_items;
+				$data['itemss'] = $this->HomeModel->getItemsWithCategories();
+		}
+	}
+	$data['booking_details'] = $booking_details;
+} else {
+	$data['booking_details'] = [];  // Default to an empty array if no booking ID
+}
+
 		//var_dump($data['room_details']);die;
 		$this->load->view('webapp/superadmin/include/header', $data);
 		$this->load->view('webapp/superadmin/dashboard/occupied_enquiry', $data);
@@ -1219,7 +1261,7 @@ public function update_room_enquiry_submit()
             'customer_id' => $customer_id,
             'advance_amount' => $advance_amount,
             'payment_method' => $payment_method,
-            'booking_date' => $adding_date,
+            'occupy_date' => $adding_date,
             'hotel_roomid' => $hotel_roomid, 
             'roomno' => $roomnos[$index],
             'room_name' => $room_names[$index],
@@ -1228,7 +1270,7 @@ public function update_room_enquiry_submit()
             'checkout' => $checkout, // Use the check-out time for this room
             'payment_status' => 'payed',
             'admin_status' => 'staff',
-            'booking_status' => 'booked',
+            'booking_status' => 'occupied',
             'status' => '1',
         ];
        // $booking_id = $this->HomeModel->insert_room_booking($booking_data);
@@ -1237,6 +1279,18 @@ public function update_room_enquiry_submit()
 	$this->HomeModel->update_room_booking($booking_id, $hotel_roomid, $booking_data);
 	$this->HomeModel->update_room_status($hotel_roomid, 'available');
 	
+
+	$occupy_data = [
+		'booking_id' => $booking_id,
+		'occupy_date' => $adding_date, // Current timestamp
+		'occupy_status' => 'occupied', // Current timestamp
+	  //  'reason' => $this->input->post('cancel_reason'), // Capture the reason if provided
+	];
+
+	// Call the model function to insert the cancellation data
+	$this->HomeModel->insert_into_occupy_booking($occupy_data);
+
+
         // Insert room details into room_booking_details table
         $room_detail_data = [
             'booking_id' => $booking_id,
@@ -1647,8 +1701,79 @@ public function get_booked_dates() {
 
 
 
+public function change_booking_status() {
+    $bookingId = $this->input->post('booking_id');
+    $status = $this->input->post('booking_status'); // Expecting 'Cancelled'
 
+    // Validate the booking ID and status
+    if (!$bookingId || !$status) {
+        echo json_encode(['success' => false, 'message' => 'Invalid booking ID or status.']);
+        return;
+    }
 
+    // Update the booking status
+    $result = $this->HomeModel->update_booking_status($bookingId, $status);
+
+    // If the status was successfully updated, insert the cancellation details
+    if ($result) {
+        // Insert cancellation details into the cancel_booking table
+    date_default_timezone_set('Asia/Kolkata');
+	$adding_date=date('Y-m-d H:i:s');
+
+        $cancel_data = [
+            'booking_id' => $bookingId,
+            'cancelled_at' => $adding_date, // Current timestamp
+             'cancel_status' => 'cancelled', // Current timestamp
+          //  'reason' => $this->input->post('cancel_reason'), // Capture the reason if provided
+        ];
+
+        // Call the model function to insert the cancellation data
+        $this->HomeModel->insert_cancel_details($cancel_data);
+
+        // Respond with success
+        echo json_encode(['success' => true]);
+    } else {
+        // Respond with failure
+        echo json_encode(['success' => false, 'message' => 'Unable to update status.']);
+    }
+}
+
+public function settlement()
+{
+	$data['menu']='settlement';
+	$data['pagetitle']='DashBoard';
+	$booking_id = $this->input->post('booking_id');
+	if ($booking_id) {
+		$this->load->model('HomeModel');
+		$data['booking_details'] = $this->HomeModel->getBookingDetailsById1($booking_id);
+		$data['agent'] = $this->HomeModel->getAgentById($data['booking_details']['agent_id']);
+		$data['customer'] = $this->HomeModel->getCustomerById($data['booking_details']['customer_id']);
+		$guest_details  = $this->HomeModel->getGuestsById($booking_id);
+		$guest_names = array_column($guest_details, 'guest_name'); // Extract guest names into an array
+		$data['guest_names'] = implode(', ', $guest_names); // Join names with commas
+		  // Generate Invoice Number and Date
+		$data['invoice_no'] = 'INV-' . strtoupper(uniqid()); // Unique invoice number
+		$data['invoice_date'] = date('Y-m-d'); // Current date
+		$data['company_details'] = $this->HomeModel->getCompanyDetails();
+}
+	$this->load->view('webapp/superadmin/include/header',$data);
+	$this->load->view('webapp/superadmin/dashboard/settlement', $data);
+	$this->load->view('webapp/superadmin/include/footer');
+} 
+
+public function fetch_room_details()
+{
+    // Get room details and booking_id from AJAX request
+    $roomData = $this->input->post('roomData');
+    $bookingId = $this->input->post('booking_id'); // Get the booking_id
+	// var_dump($bookingId);die;
+    // Save data in session for later use on the settlement page
+    $this->session->set_userdata('roomDetails', $roomData);
+    $this->session->set_userdata('booking_id', $bookingId); // Save booking_id as well
+
+    // Send a success response
+    echo json_encode(['status' => 'success']);
+}
 
 
 

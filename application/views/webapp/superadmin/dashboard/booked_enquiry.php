@@ -275,8 +275,7 @@
                                 </div>
 
                                 <div class="button-row d-flex mt-4">
-                                    <a href=" " class="  mb-0">
-                                        <button class="  mb-0 btn bg-gradient-danger " type="submit" title="submit">CANCEL BOOKING</button></a>
+                                <button id="change-status-btn" class="mb-0 btn bg-gradient-danger" type="button" title="Change Status">CANCEL BOOKING</button>
                                     <a href=" " class="ms-auto mb-0">
                                         <button class="ms-auto mb-0 btn bg-gradient-success " type="submit" title="submit">Submit FOR Occupied</button></a>
                                 </div>
@@ -1090,6 +1089,36 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error('Error submitting form:', xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
+
+
+<script>
+$(document).ready(function() {
+    $('#change-status-btn').click(function() {
+        // Get the booking_id from the input field
+        const bookingId = $('input[name="booking_id"]').val(); // Ensure this input exists
+
+        $.ajax({
+            url: 'Superadmin/change_booking_status', // Update with your controller and method
+            type: 'POST',
+            data: { booking_id: bookingId, booking_status: 'cancelled' }, // Setting status to 'Cancelled'
+            success: function(response) {
+                // Handle the response
+                if (response.success) {
+                    alert('Booking status changed successfully!');
+                    // Optionally refresh the page or update the UI
+                } else {
+                    alert('Failed to change booking status: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ', status, error);
+                alert('An error occurred while changing the booking status.');
             }
         });
     });

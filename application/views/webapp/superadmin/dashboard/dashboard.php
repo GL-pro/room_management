@@ -517,41 +517,73 @@
     });
 
     // Fetch booking data for the specified date range
-    fetch('Superadmin/getBookingsForDateRange') // Replace with your actual endpoint
-        .then(response => response.json())
-        .then(data => {
-            // Prepare events from the data
-            data.forEach(booking => {
-                let className = '';
-                if (booking.booking_status === 'booked') {
-                    className = 'bg-gradient-warning';
-                } else if (booking.booking_status === 'occupied') {
-                    className = 'bg-gradient-danger';
-                } else if (booking.booking_status === 'available') {
-                    className = 'bg-gradient-success';
-                }
+    // fetch('Superadmin/getBookingsForDateRange') // Replace with your actual endpoint
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // Prepare events from the data
+    //         data.forEach(booking => {
+    //             let className = '';
+    //             if (booking.booking_status === 'booked') {
+    //                 className = 'bg-gradient-warning';
+    //             } else if (booking.booking_status === 'occupied') {
+    //                 className = 'bg-gradient-danger';
+    //             } else if (booking.booking_status === 'available') {
+    //                 className = 'bg-gradient-success';
+    //             }
                 
-                // Add events for each booking date
-                calendar.addEvent({
-                    title: `${booking.booking_status} (${booking.count}) - Room: ${booking.room_number} - Customer: ${booking.customer_name}`,
-                    start: booking.booking_date, // Use booking date from the response
-                    end: booking.booking_date, // Single day event
-                    className: className,
-                    extendedProps: {
-                        booking_id: booking.booking_id,
-                        customer_name: booking.customer_name,
-                        customer_email: booking.customer_email,
-                        customer_phone: booking.customer_phone,
-                        room_number: booking.room_number,
-                    }
-                });
+    //             // Add events for each booking date
+    //             calendar.addEvent({
+    //                 title: `${booking.booking_status} (${booking.count}) - Room: ${booking.room_number} - Customer: ${booking.customer_name}`,
+    //                 start: booking.booking_date, // Use booking date from the response
+    //                 end: booking.booking_date, // Single day event
+    //                 className: className,
+    //                 extendedProps: {
+    //                     booking_id: booking.booking_id,
+    //                     customer_name: booking.customer_name,
+    //                     customer_email: booking.customer_email,
+    //                     customer_phone: booking.customer_phone,
+    //                     room_number: booking.room_number,
+    //                 }
+    //             });
+    //         });
+
+    //         // Render the calendar with the new events
+    //         calendar.render();
+    //     })
+    //     .catch(error => console.error('Error fetching booking data:', error));
+
+
+    fetch('Superadmin/getBookingsForDateRange')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(booking => {
+            let className = '';
+            if (booking.booking_status === 'booked') {
+                className = 'bg-gradient-warning'; // Booked
+            } else if (booking.booking_status === 'occupied') {
+                className = 'bg-gradient-danger'; // Occupied
+            }
+
+            // Add events for each booking date
+            calendar.addEvent({
+                title: `${booking.booking_status} (${booking.count}) - Room: ${booking.room_number} - Customer: ${booking.customer_name}`,
+                start: booking.booking_date,
+                end: booking.booking_date,
+                className: className,
+                extendedProps: {
+                    booking_id: booking.booking_id,
+                    customer_name: booking.customer_name,
+                    room_number: booking.room_number
+                }
             });
+        });
 
-            // Render the calendar with the new events
-            calendar.render();
-        })
-        .catch(error => console.error('Error fetching booking data:', error));
+        calendar.render();
+    })
+    .catch(error => console.error('Error fetching booking data:', error));
 
+
+    
     // Add event listener to trigger date search when date is selected
     document.getElementById('date-search').addEventListener('change', function() {
         var dateInput = this.value;

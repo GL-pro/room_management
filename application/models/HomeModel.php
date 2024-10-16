@@ -370,21 +370,18 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         ");
     }
 
-    // public function getBookingsByDate($date) {
-    //     $this->db->select('COUNT(*) as count, booking_status');
-    //     $this->db->from('room_booking');
-    //     $this->db->where('DATE(checkin) <=', $date);
-    //     $this->db->where('DATE(checkout) >=', $date);
-    //     $this->db->group_by('booking_status');
-    //     $query = $this->db->get();
-    //     return $query->result_array();
-    // }
-    
+   
+
+
+
     // public function getBookingsByDateRange($start_date, $end_date) {
-    //     $this->db->select('booking_status, checkin, checkout,roombooking.*');
-    //     $this->db->from('room_booking');
-    //     $this->db->where('DATE(checkin) <=', $end_date);
-    //     $this->db->where('DATE(checkout) >=', $start_date);
+    //     date_default_timezone_set('Asia/Kolkata');
+    //     $this->db->select('rb.booking_id, c.customer_name, rb.booking_status, rb.checkin, rb.checkout');
+    //     $this->db->from('room_booking rb');
+    //     $this->db->join('customer c', 'rb.customer_id = c.customer_id'); // Assuming the foreign key is customer_id
+    //     $this->db->join('hotel_room r', 'rb.hotel_roomid = r.hotel_roomid'); // Join with the rooms table
+    //     $this->db->where('DATE(rb.checkin) <=', $end_date);
+    //     $this->db->where('DATE(rb.checkout) >=', $start_date);
     //     $query = $this->db->get();
         
     //     $bookings = $query->result_array();
@@ -399,9 +396,16 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //                 $date_counts[$current_date_str] = [];
     //             }
     //             if (!isset($date_counts[$current_date_str][$booking['booking_status']])) {
-    //                 $date_counts[$current_date_str][$booking['booking_status']] = 0;
+    //                 $date_counts[$current_date_str][$booking['booking_status']] = [];
     //             }
-    //             $date_counts[$current_date_str][$booking['booking_status']]++;
+    //             // Store the booking details
+    //             $date_counts[$current_date_str][$booking['booking_status']][] = [
+    //                 'booking_id' => $booking['booking_id'],
+    //                 'customer_name' => $booking['customer_name'],
+    //               //  'customer_email' => $booking['customer_email'],
+    //               //  'customer_phone' => $booking['customer_phone'],
+    //               //  'room_number' => $booking['room_number'], // Include room number
+    //             ];
     //             $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
     //         }
     //     }
@@ -409,32 +413,57 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     //     // Format the result for the response
     //     $result = [];
     //     foreach ($date_counts as $date => $statuses) {
-    //         foreach ($statuses as $status => $count) {
+    //         foreach ($statuses as $status => $bookings) {
+    //             $count = count($bookings);
+    //             // Extract the first booking for display (or you can choose to list all)
+    //             $firstBooking = $bookings[0];
     //             $result[] = [
     //                 'booking_date' => $date,
     //                 'booking_status' => $status,
-    //                 'count' => $count
+    //                 'count' => $count,
+    //                 'booking_id' => $firstBooking['booking_id'],
+    //                 'customer_name' => $firstBooking['customer_name'],
+    //                // 'customer_email' => $firstBooking['customer_email'],
+    //                // 'customer_phone' => $firstBooking['customer_phone'],
+    //               //  'room_number' => $firstBooking['room_number'],
     //             ];
     //         }
     //     }
     
     //     return $result;
     // }
-    public function getBookingsByDateRange($start_date, $end_date) {
-        date_default_timezone_set('Asia/Kolkata');
     
+    public function getBookingCountsByDateRange($start_date, $end_date) {
+        date_default_timezone_set('Asia/Kolkata');
         $this->db->select('rb.booking_id, c.customer_name, rb.booking_status, rb.checkin, rb.checkout');
         $this->db->from('room_booking rb');
-        $this->db->join('customer c', 'rb.customer_id = c.customer_id'); // Assuming the foreign key is customer_id
-        $this->db->join('hotel_room r', 'rb.hotel_roomid = r.hotel_roomid'); // Join with the rooms table
+        $this->db->join('customer c', 'rb.customer_id = c.customer_id');
+        $this->db->where('rb.booking_status', 'booked'); // Only fetch 'booked' status
         $this->db->where('DATE(rb.checkin) <=', $end_date);
         $this->db->where('DATE(rb.checkout) >=', $start_date);
         $query = $this->db->get();
         
-        $bookings = $query->result_array();
-        $date_counts = [];
+        return $this->_prepareDateCounts($query->result_array());
+    }
     
-        // Prepare booking counts for each date
+    public function getOccupiedCountsByDateRange($start_date, $end_date) {
+        date_default_timezone_set('Asia/Kolkata');
+        $this->db->select('rb.booking_id, c.customer_name, rb.booking_status, rb.checkin, rb.checkout');
+        $this->db->from('room_booking rb');
+        $this->db->join('customer c', 'rb.customer_id = c.customer_id');
+        $this->db->where('rb.booking_status', 'occupied'); // Corrected to use booking_status
+        $this->db->where('DATE(rb.checkin) <=', $end_date);
+        $this->db->where('DATE(rb.checkout) >=', $start_date);
+        $query = $this->db->get();
+        
+        return $this->_prepareDateCounts($query->result_array());
+    }
+    
+
+
+    private function _prepareDateCounts($bookings) {
+        $date_counts = [];
+        
         foreach ($bookings as $booking) {
             $current_date = $booking['checkin'];
             while ($current_date <= $booking['checkout']) {
@@ -445,24 +474,18 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
                 if (!isset($date_counts[$current_date_str][$booking['booking_status']])) {
                     $date_counts[$current_date_str][$booking['booking_status']] = [];
                 }
-                // Store the booking details
                 $date_counts[$current_date_str][$booking['booking_status']][] = [
                     'booking_id' => $booking['booking_id'],
                     'customer_name' => $booking['customer_name'],
-                  //  'customer_email' => $booking['customer_email'],
-                  //  'customer_phone' => $booking['customer_phone'],
-                  //  'room_number' => $booking['room_number'], // Include room number
                 ];
                 $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
             }
         }
     
-        // Format the result for the response
         $result = [];
         foreach ($date_counts as $date => $statuses) {
             foreach ($statuses as $status => $bookings) {
                 $count = count($bookings);
-                // Extract the first booking for display (or you can choose to list all)
                 $firstBooking = $bookings[0];
                 $result[] = [
                     'booking_date' => $date,
@@ -470,15 +493,14 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
                     'count' => $count,
                     'booking_id' => $firstBooking['booking_id'],
                     'customer_name' => $firstBooking['customer_name'],
-                   // 'customer_email' => $firstBooking['customer_email'],
-                   // 'customer_phone' => $firstBooking['customer_phone'],
-                  //  'room_number' => $firstBooking['room_number'],
                 ];
             }
         }
     
         return $result;
     }
+
+    
     
     
     public function addCustomer($data) {
@@ -904,12 +926,73 @@ public function update_guest_status($guest_id, $status) {
 }
 
 
+public function update_booking_status($bookingId, $status) {
+    // Ensure you are using the correct field names in your database
+    $this->db->where('booking_id', $bookingId); // Use the correct column name for booking ID
+    // Update the booking status
+    return $this->db->update('room_booking', ['booking_status' => $status]); // Assuming 'booking_status' is the correct column name
+}
+public function insert_cancel_details($cancel_data) {
+    return $this->db->insert('cancel_booking', $cancel_data); // Adjust the table name if necessary
+}
+
+public function insert_into_occupy_booking($occupy_data) {
+    return $this->db->insert('occupy_booking', $occupy_data); // Adjust the table name if necessary
+}
+
+public function getBookingDetailsById1($booking_id) {
+    $this->db->distinct(); // Ensure unique results
+    $this->db->select('room_booking.*,hotel_room.*,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
+     customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
+     room_booking_details.extra_guest_count,guest_details.*');
+    $this->db->from('room_booking'); 
+    $this->db->join('room_booking_details', 'room_booking_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+    $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); 
+    $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left'); 
+    $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
+    $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
+    $this->db->where('room_booking.booking_id', $booking_id);
+    $query = $this->db->get();
+    
+    return $query->row_array(); // Fetch a single row as an associative array
+}
+
+
+public function getGuestsById($booking_id) {
+    $this->db->distinct();
+    $this->db->select('room_booking.*,guest_details.*');
+    $this->db->from('room_booking'); 
+    $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->where('room_booking.booking_id', $booking_id);
+    $query = $this->db->get();
+    return $query->result_array(); // Return as an array of rows (for multiple guests)
+}
+
+public function getCompanyDetails() {
+    $this->db->select('hotel.*');
+    $this->db->from('hotel'); // Adjust this to match your actual hotel table name
+    $query = $this->db->get();
+    return $query->row_array(); // Return a single row as an associative array
+}
 
 
 
+public function getAgentById($agent_id) {
+    // Query to get agent details
+    $this->db->where('agent_id', $agent_id);
+    $query = $this->db->get('agent'); // Assuming agents is your agent table
+    return $query->row_array();
+}
 
-
-
+public function getCustomerById($customer_id) {
+    // Query to get customer details
+    $this->db->where('customer_id', $customer_id);
+    $query = $this->db->get('customer'); // Assuming customers is your customer table
+    return $query->row_array();
+}
 
 
     // public function getTotalRooms() {

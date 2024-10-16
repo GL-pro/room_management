@@ -88,7 +88,8 @@ $route['get_subcategories'] = 'Superadmin/get_subcategories';
 $route['insert_hotel_room_staff'] = 'Superadmin/insert_hotel_room_staff';
 $route['all_bookings'] = 'Superadmin/all_bookings';
 $route['get_booked_dates'] = 'Superadmin/get_booked_dates';
-
+$route['change_booking_status'] = 'Superadmin/change_booking_status';
+$route['settlement'] = 'Superadmin/settlement';
 
 $route['add_customer'] = 'Superadmin/add_customer';
 $route['add_agent'] = 'Superadmin/add_agent';
