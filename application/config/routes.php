@@ -90,6 +90,9 @@ $route['all_bookings'] = 'Superadmin/all_bookings';
 $route['get_booked_dates'] = 'Superadmin/get_booked_dates';
 $route['change_booking_status'] = 'Superadmin/change_booking_status';
 $route['settlement'] = 'Superadmin/settlement';
+$route['hotel_creation'] = 'Superadmin/hotel_creation';
+$route['membhotelreg'] = 'Superadmin/membhotelreg';
+$route['create'] = 'Superadmin/create';
 
 $route['add_customer'] = 'Superadmin/add_customer';
 $route['add_agent'] = 'Superadmin/add_agent';

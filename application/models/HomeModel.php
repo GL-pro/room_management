@@ -961,6 +961,17 @@ public function getBookingDetailsById1($booking_id) {
 }
 
 
+public function getItemsDetailsById($booking_id) {
+    $this->db->distinct();
+    $this->db->select('room_booking.*,room_item_details.*,item.*');
+    $this->db->from('room_booking'); 
+    $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
+    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+    $this->db->where('room_booking.booking_id', $booking_id);
+    $query = $this->db->get();
+    return $query->result_array(); // Return as an array of rows (for multiple guests)
+}
+
 public function getGuestsById($booking_id) {
     $this->db->distinct();
     $this->db->select('room_booking.*,guest_details.*');
@@ -970,6 +981,8 @@ public function getGuestsById($booking_id) {
     $query = $this->db->get();
     return $query->result_array(); // Return as an array of rows (for multiple guests)
 }
+
+
 
 public function getCompanyDetails() {
     $this->db->select('hotel.*');
@@ -993,6 +1006,44 @@ public function getCustomerById($customer_id) {
     $query = $this->db->get('customer'); // Assuming customers is your customer table
     return $query->row_array();
 }
+
+
+public function get_hotel_details_by_hotel_id($hotel_id) {
+    $this->db->select('*');
+    $this->db->from('hotel'); // Assuming your table is named 'hotels'
+    $this->db->where('hotel_id', $hotel_id); // Fetch by hotel ID
+    $query = $this->db->get();
+    if ($query->num_rows() > 0) {
+        return $query->result(); // Return all hotel details
+    } else {
+        return false; // Return false if no record is found
+    }
+}
+
+
+public function update_hotel($hotel_id, $hotel_data) {
+    $this->db->where('hotel_id', $hotel_id);
+    return $this->db->update('hotel', $hotel_data);
+}
+public function inserthotel($inserthotel){
+    if($this->db->insert('hotel', $inserthotel)){
+        return true;
+    } else {
+        return false;
+    } 
+}
+
+public function insert_settlement($data) {
+    return $this->db->insert('settlement', $data);
+}
+
+
+
+
+
+
+
+
 
 
     // public function getTotalRooms() {

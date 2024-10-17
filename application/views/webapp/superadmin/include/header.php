@@ -189,6 +189,28 @@
 
 
 
+        <li class="nav-item">
+          <a data-bs-toggle="collapse" href="#hotel" class="nav-link text-dark 'active bg-dark' : ''; ?>" aria-controls="room_type" role="button" aria-expanded="false">
+            <i class="material-symbols-outlined  opacity-10">menu_book</i>
+            <span class="nav-link-text ms-2 ">Hotel</span>
+          </a>
+          <div class="collapse  <?php echo ($menu == 'hotel_creation' ? 'show' : ''); ?> " id="hotel">
+            <ul class="nav ">
+              <li class="nav-item ">
+                <a class="nav-link text-dark <?php echo ($menu == 'hotel_creation') ? 'active' : ''; ?>" href="<?=base_url('hotel_creation') ?>">
+                  <span class="sidenav-mini-icon"> CC </span>
+                  <span class="sidenav-normal  ms-2  ps-1">Hotel Creation </span>
+                </a>
+              </li>
+             
+            </ul>
+          </div>
+        </li>
+
+
+
+
+
 
 
 

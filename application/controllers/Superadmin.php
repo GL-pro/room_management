@@ -1749,6 +1749,9 @@ public function settlement()
 		$data['agent'] = $this->HomeModel->getAgentById($data['booking_details']['agent_id']);
 		$data['customer'] = $this->HomeModel->getCustomerById($data['booking_details']['customer_id']);
 		$guest_details  = $this->HomeModel->getGuestsById($booking_id);
+		$data['items_details'] = $this->HomeModel->getItemsDetailsById($booking_id);
+
+		//var_dump($items_details);die;
 		$guest_names = array_column($guest_details, 'guest_name'); // Extract guest names into an array
 		$data['guest_names'] = implode(', ', $guest_names); // Join names with commas
 		  // Generate Invoice Number and Date
@@ -1775,6 +1778,130 @@ public function fetch_room_details()
     echo json_encode(['status' => 'success']);
 }
 
+
+
+public function hotel_creation($hotel_id = null)
+	{
+		$data['menu'] = 'hotel_creation';
+		$data['pagetitle'] = 'DashBoard';
+		if ($hotel_id == null) {
+			$hotel_id = 1; // Set a default hotel ID if not passed
+		}
+		$hotel_details = $this->HomeModel->get_hotel_details_by_hotel_id($hotel_id);
+		$data['hotel_details'] = $hotel_details;
+		$this->load->view('webapp/superadmin/include/header', $data);
+		$this->load->view('webapp/superadmin/hotel_creation', $data);
+		$this->load->view('webapp/superadmin/include/footer');
+	}
+	
+
+	public function membhotelreg() {
+		date_default_timezone_set('Asia/Kolkata');
+		$current_date_time = date('Y-m-d H:i:s');
+		$this->load->library('session');
+		if ($_SERVER["REQUEST_METHOD"] == "POST") {
+			$hotel_id = $this->input->post('hotel_id');  // Assuming you are passing hotel_id for updates
+			$hotelname = $this->input->post('hotelname');
+			$hotelowner = $this->input->post('hotelowner');
+			$about = $this->input->post('about');
+			$email = $this->input->post('email');
+			$address = $this->input->post('address');
+			$location = $this->input->post('location');
+			$person1 = $this->input->post('person1');
+			$phone1 = $this->input->post('phone1');
+			$rules = $this->input->post('rules');
+			$whatsappno = $this->input->post('whatsappno');
+			$existing_image = $this->input->post('existing_hotel_image');  // Hidden input value for the existing image
+			$image_path = $existing_image;  // Set default image path to the existing image
+			// Handle new image upload if provided
+			if (isset($_FILES['hotelImage']) && $_FILES['hotelImage']['error'] == 0) {
+				$upload_dir = './upload/hotel_images/';
+				if (!is_dir($upload_dir)) {
+					mkdir($upload_dir, 0777, true); 
+				}
+				$file_name = $_FILES['hotelImage']['name'];
+				$file_tmp = $_FILES['hotelImage']['tmp_name'];
+				$file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+				$allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
+				if (in_array($file_ext, $allowed_ext)) {
+					$new_file_name = uniqid() . '.' . $file_ext;
+					$full_image_path = $upload_dir . $new_file_name;
+					// Move the new image file
+					if (move_uploaded_file($file_tmp, $full_image_path)) {
+						// Remove the old image if a new one is uploaded
+						if (!empty($existing_image) && file_exists('./' . $existing_image)) {
+							unlink('./' . $existing_image);  // Delete old image
+						}
+						$image_path = 'upload/hotel_images/' . $new_file_name;
+					} else {
+						echo json_encode(array('success' => false, 'message' => 'Failed to upload new image.'));
+						exit;
+					}
+				} else {
+					echo json_encode(array('success' => false, 'message' => 'Invalid image file type.'));
+					exit;
+				}
+			}
+			// Prepare hotel data array
+			$hotel_data = array(
+				'hotelname' => $hotelname,
+				'hotelowner' => $hotelowner,
+				'address' => $address,
+				'location' => $location,
+				'about' => $about,
+				'email' => $email,
+				'person1' => $person1,
+				'phone1' => $phone1,
+				'whatsappno' => $whatsappno,
+				'rules' => $rules,
+				'image' => $image_path,  // Use new or existing image path
+				'adminstatus' => 'staff',
+				'status' => '1',
+				'date' => $current_date_time,
+			);
+			// Check if the hotel exists, if so, update; otherwise, insert
+			if (!empty($hotel_id)) {
+				// Update existing hotel record
+				$this->HomeModel->update_hotel($hotel_id, $hotel_data);
+				echo json_encode(array('success' => true, 'message' => 'Hotel profile updated successfully!'));
+			} else {
+				// Insert new hotel record
+				$this->HomeModel->inserthotel($hotel_data);
+				echo json_encode(array('success' => true, 'message' => 'Hotel profile created successfully!'));
+			}
+			exit;
+		}
+	}
+
+	public function create() {
+        // Fetch values from POST request (assuming you're sending them from your form)
+        $data = array(
+            'booking_id' => $this->input->post('booking_id'),
+            'customer_id' => $this->input->post('customer_id'),
+            'invoice_no' => $this->input->post('invoice_no'),
+            'invoice_date' => $this->input->post('invoice_date'),
+            'hotel_roomid' => $this->input->post('room_id'),
+            'base_amt_grand_tot' => $this->input->post('grand_total_base'),
+            'gst_amt_grand_tot' => $this->input->post('grand_total_gst'),
+            'tot_amt_grand_tot' => $this->input->post('grand_total_amount'),
+            'net_amount' => $this->input->post('net_amount'),
+            'by_advance' => $this->input->post('advance_amount'),
+            'amount_payable' => $this->input->post('amount_payable'),
+            'date' => date('Y-m-d H:i:s'), // Assuming you want to save the current timestamp
+            'status' => 'Settled' // or whatever status you want
+        );
+
+        // Insert data into the settlement table
+        if ($this->Settlement_model->insert_settlement($data)) {
+            // Redirect or respond with success message
+            redirect('settlement/success'); // Change to your desired success route
+        } else {
+            // Handle error
+            redirect('settlement/error'); // Change to your desired error route
+        }
+    }
+
+	
 
 
 
