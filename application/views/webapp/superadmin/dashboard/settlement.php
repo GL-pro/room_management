@@ -336,7 +336,7 @@
             </div>
         </div>
         <div class="button-container">
-            <button class="new-btn">New</button>
+            <button class="new-btn" id="new-btn">New</button>
             <button class="save-btn" id="save-btn">Save</button>
             <button class="settlement-btn" id="settle-btn">Settlement</button>
             <button class="print-btn">Print</button>
@@ -618,6 +618,36 @@ document.getElementById('delete-btn').addEventListener('click', function () {
 // Print button functionality
 document.querySelector('.print-btn').addEventListener('click', function() {
     window.print(); // Trigger the print dialog
+});
+</script>
+
+
+<script>
+document.getElementById('new-btn').addEventListener('click', function () {
+    // Select all base amount input fields
+    const baseAmountFields = document.querySelectorAll('.base-amount');
+
+    // Clear each base amount input field
+    baseAmountFields.forEach(function(field) {
+        field.value = ''; // Clear the field
+    });
+
+    // Select all total amount cells and clear their inner text
+    const totalAmountCells = document.querySelectorAll('tbody tr td[data-label="Total Amount"]');
+    totalAmountCells.forEach(function(cell) {
+        cell.innerText = '0.00'; // Clear the total amount field
+    });
+
+    // Reset grand totals to reflect the cleared fields
+    document.getElementById('grand-total-base').innerText = '0.00';
+    document.getElementById('grand-total-gst').innerText = '0.00';
+    document.getElementById('grand-total-amount').innerText = '0.00';
+    document.getElementById('net-amount').innerText = '₹0.00';
+    
+    // Keep advance amount unchanged
+    // document.getElementById('advance-amount').innerText = '0.00'; // Commented out to keep it unchanged
+
+    document.getElementById('amount-payable').innerText = '₹0.00';
 });
 </script>
 
