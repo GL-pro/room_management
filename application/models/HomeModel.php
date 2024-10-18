@@ -1037,6 +1037,40 @@ public function insert_settlement($data) {
     return $this->db->insert('settlement', $data);
 }
 
+// public function save_item($data) {
+//     // Check if an item for this invoice and with this description already exists
+//     $existing_item = $this->db->get_where($this->table, [
+//         'invoice_id' => $data['invoice_id'],
+//         'description' => $data['description']
+//     ])->row();
+//     if ($existing_item) {
+//         // Update existing item
+//         $this->db->where('id', $existing_item->id);
+//         $this->db->update($this->table, $data);
+//         return $existing_item->id;
+//     } else {
+//         // Insert new item
+//         $this->db->insert($this->table, $data);
+//         return $this->db->insert_id();
+//     }
+// }
+
+
+// public function save_invoice($data) {
+//     // Check if an invoice with this invoice_no already exists
+//     $existing_invoice = $this->db->get_where($this->table, ['invoice_no' => $data['invoice_no']])->row();
+
+//     if ($existing_invoice) {
+//         // Update existing invoice
+//         $this->db->where('id', $existing_invoice->id);
+//         $this->db->update($this->table, $data);
+//         return $existing_invoice->id;
+//     } else {
+//         // Insert new invoice
+//         $this->db->insert($this->table, $data);
+//         return $this->db->insert_id();
+//     }
+// }
 
 
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pippi Stay Invoice</title>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -139,6 +139,64 @@
                 width: 100%; /* Full width buttons on mobile */
             }
         }
+
+
+        @media print {
+    /* Show everything by default */
+    * {
+        visibility: visible;
+    }
+
+    /* Hide buttons during printing */
+    .button-container {
+        display: none; /* Hide the button container */
+    }
+
+    /* Make sure the invoice container fits the page width */
+    .invoice {
+        border: none; /* Remove border when printing */
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Ensure table elements are properly displayed */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* Make sure borders are visible */
+    th, td {
+        border: 1px solid black !important; /* Ensure borders are visible */
+        padding: 8px;
+    }
+
+    /* Avoid page breaks inside table rows and other elements */
+    tr, th, td {
+        page-break-inside: avoid;
+    }
+
+    /* Adjust fonts to make sure everything fits */
+    body {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    /* Avoid page breaks within these elements */
+    .customer-details, .invoice-details, .invoice-title, table, .payment-details, .signatures {
+        page-break-inside: avoid; /* Prevent breaks within these sections */
+    }
+
+    /* Remove unnecessary margins and padding */
+    body {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+
     </style>
 
 
@@ -171,8 +229,12 @@
             No Pax: <?= $booking_details['noofguests'] ?></p>
         </div>
         <div class="invoice-details">
+
+
+        <input type="hidden" id="settlement-id" value="<?= isset($settlement_id) ? $settlement_id : '' ?>">
         <input type="hidden" id="booking-id" value="<?= $booking_details['booking_id'] ?>">
         <input type="hidden" id="room-id" value="<?= $booking_details['hotel_roomid'] ?>">
+
             <p>Invoice No.: <?= $invoice_no ?><br>
             Invoice Date: <?= $invoice_date ?><br>
             Room: <?= $booking_details['hotel_roomid'] ?><br>
@@ -275,10 +337,10 @@
         </div>
         <div class="button-container">
             <button class="new-btn">New</button>
-            <button class="save-btn">Save</button>
+            <button class="save-btn" id="save-btn">Save</button>
             <button class="settlement-btn" id="settle-btn">Settlement</button>
             <button class="print-btn">Print</button>
-            <button class="delete-btn">Delete</button>
+            <button class="delete-btn"  id="delete-btn">Delete</button>
         </div>
     </div>
 </body>
@@ -313,6 +375,8 @@
         return convert(number).trim() + " Only";
     }
 
+
+    // code to field hange values calculation
     function updateGrandTotal() {
         let grandTotalBase = 0;
         let grandTotalGst = 0;
@@ -367,47 +431,193 @@
 
 
 <script>
-    document.getElementById('settle-btn').addEventListener('click', function() {
-        const bookingId = document.getElementById('booking-id').value;
-        const customerId = document.getElementById('customer-id').value;
-        const invoiceNo = '<?= $invoice_no ?>'; // Assuming you're using PHP to set this
-        const invoiceDate = '<?= $invoice_date ?>'; // Assuming you're using PHP to set this
-        const roomId = document.getElementById('room-id').value;
-        const grandTotalBase = document.getElementById('grand-total-base').textContent.replace(/,/g, '');
-        const grandTotalGst = document.getElementById('grand-total-gst').textContent.replace(/,/g, '');
-        const grandTotalAmount = document.getElementById('grand-total-amount').textContent.replace(/,/g, '');
-        const netAmount = document.getElementById('net-amount').textContent.replace(/₹|,/g, '');
-        const advanceAmount = document.getElementById('advance-amount').textContent.replace(/,/g, '');
+document.getElementById('save-btn').addEventListener('click', function () {
+    const settlementId = document.getElementById('settlement-id').value; // Retrieve existing settlement ID
+    const bookingId = document.getElementById('booking-id').value;
+    const customerId = document.getElementById('customer-id').value;
+    const invoiceNo = '<?= $invoice_no ?>'; // Assuming you're using PHP to set this
+    const invoiceDate = '<?= $invoice_date ?>'; // Assuming you're using PHP to set this
+    const roomId = document.getElementById('room-id').value;
+    const grandTotalBase = document.getElementById('grand-total-base').textContent.replace(/,/g, '');
+    const grandTotalGst = document.getElementById('grand-total-gst').textContent.replace(/,/g, '');
+    const grandTotalAmount = document.getElementById('grand-total-amount').textContent.replace(/,/g, '');
+    const netAmount = document.getElementById('net-amount').textContent.replace(/₹|,/g, '');
+    const advanceAmount = document.getElementById('advance-amount').textContent.replace(/₹|,/g, '');
 
-        // Send data via AJAX
-        fetch('<?= site_url('Sueradmin/create'); ?>', {
+    // Collect all item details for settlement_item table
+    const items = [];
+    document.querySelectorAll('.base-amount').forEach(input => {
+        const row = input.closest('tr');
+        const description = row.querySelector('[data-label="Description"]').textContent.trim();
+        const hsnCode = row.querySelector('[data-label="HSN/SAC Code"]').textContent.trim();
+        const baseAmount = parseFloat(input.value) || 0;
+        const gstPercent = parseFloat(row.querySelector('[data-label="GST %"]').textContent.trim()) || 0;
+        const gstAmount = parseFloat(row.querySelector('[data-label="GST Amount"]').textContent.trim()) || 0;
+        const totalAmount = parseFloat(row.querySelector('[data-label="Total Amount"]').textContent.trim()) || 0;
+        items.push({
+            description: description,
+            hsn_code: hsnCode,
+            base_amount: baseAmount,
+            gst_percent: gstPercent,
+            gst_amount: gstAmount,
+            total_amount: totalAmount
+        });
+    });
+
+    // Check if bookingId exists
+    if (!bookingId) {
+        alert("Booking ID is missing.");
+        return;
+    }
+
+    // Send data via AJAX using fetch
+    fetch('<?= site_url('Superadmin/settlement_save'); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            settlement_data: {
+                settlement_id: settlementId || null, // Pass settlement_id if it exists
+                booking_id: bookingId,
+                customer_id: customerId,
+                invoice_no: invoiceNo,
+                invoice_date: invoiceDate,
+                room_id: roomId,
+                grand_total_base: parseFloat(grandTotalBase),
+                grand_total_gst: parseFloat(grandTotalGst),
+                grand_total_amount: parseFloat(grandTotalAmount),
+                net_amount: parseFloat(netAmount),
+                advance_amount: parseFloat(advanceAmount),
+                amount_payable: (parseFloat(grandTotalAmount) - parseFloat(advanceAmount)).toFixed(2) // Calculate amount payable
+            },
+            settlement_items: items  // Include all item details here
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the hidden field with the settlement ID
+            document.getElementById('settlement-id').value = data.settlement_id;
+
+            // Show success message
+            alert('Settlement saved successfully!');
+            // Optionally reload the page if necessary
+            location.reload(); // Refreshes the current page
+        } else {
+            // Show error message
+            alert('Settlement failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+</script>
+
+
+<script>
+document.getElementById('settle-btn').addEventListener('click', function () {
+    const bookingId = document.getElementById('booking-id').value; // Get the booking ID
+    if (!bookingId) {
+        alert("No booking ID found. Please save the settlement first.");
+        return;
+    }
+    fetch('<?= site_url('Superadmin/change_settlement_status'); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            booking_id: bookingId,
+            status: 'paid' // or 'settled'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response from server:', data); // Log the response for debugging
+        if (data.success) {
+            alert('Settlement status updated to paid!');
+            // Update booking status to vacant
+            return fetch('<?= site_url('Superadmin/update_booking_status'); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    booking_id: bookingId,
+                    booking_status: 'vacant' // Update to 'vacant'
+                })
+            });
+        } else {
+            alert('Failed to update settlement status: ' + (data.message || 'Please try again.'));
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Booking status updated to vacant!');
+            location.reload(); // Refreshes the current page
+        } else {
+            alert('Failed to update booking status: ' + (data.message || 'Please try again.'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+</script>
+
+
+
+<script>
+document.getElementById('delete-btn').addEventListener('click', function () {
+    const bookingId = document.getElementById('booking-id').value; // Get the booking ID
+    if (!bookingId) {
+        alert("No booking ID found. Please save the settlement first.");
+        return;
+    }
+
+    // Confirm deletion
+    if (confirm("Are you sure you want to delete this settlement? This action will change the status to inactive.")) {
+        fetch('<?= site_url('Superadmin/change_settlement_status_delete'); ?>', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 booking_id: bookingId,
-                customer_id: customerId,
-                invoice_no: invoiceNo,
-                invoice_date: invoiceDate,
-                room_id: roomId,
-                grand_total_base: grandTotalBase,
-                grand_total_gst: grandTotalGst,
-                grand_total_amount: grandTotalAmount,
-                net_amount: netAmount,
-                advance_amount: advanceAmount,
-                amount_payable: (grandTotalAmount - advanceAmount).toFixed(2) // Calculate amount payable
+                status: '0' // Set status to 0 to mark as deleted/inactive
             })
         })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '<?= site_url('settlement/success'); ?>'; // Redirect to success page
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response from server:', data); // Log the response for debugging
+            if (data.success) {
+                alert('Settlement status updated to inactive!');
+                window.location.href = '<?= site_url('dashboard'); ?>'; // Redirect to the dashboard
             } else {
-                window.location.href = '<?= site_url('settlement/error'); ?>'; // Redirect to error page
+                alert('Failed to update settlement status: ' + (data.message || 'Please try again.'));
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            alert('An error occurred. Please try again.');
         });
-    });
+    }
+});
 </script>
+
+
+
+
+<!--Print code -->
+<script>
+// Print button functionality
+document.querySelector('.print-btn').addEventListener('click', function() {
+    window.print(); // Trigger the print dialog
+});
+</script>
+

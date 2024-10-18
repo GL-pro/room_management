@@ -92,7 +92,7 @@ $route['change_booking_status'] = 'Superadmin/change_booking_status';
 $route['settlement'] = 'Superadmin/settlement';
 $route['hotel_creation'] = 'Superadmin/hotel_creation';
 $route['membhotelreg'] = 'Superadmin/membhotelreg';
-$route['create'] = 'Superadmin/create';
+$route['settlement_save'] = 'Superadmin/settlement_save';
 
 $route['add_customer'] = 'Superadmin/add_customer';
 $route['add_agent'] = 'Superadmin/add_agent';

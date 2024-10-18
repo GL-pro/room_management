@@ -1873,35 +1873,253 @@ public function hotel_creation($hotel_id = null)
 		}
 	}
 
-	public function create() {
-        // Fetch values from POST request (assuming you're sending them from your form)
-        $data = array(
-            'booking_id' => $this->input->post('booking_id'),
-            'customer_id' => $this->input->post('customer_id'),
-            'invoice_no' => $this->input->post('invoice_no'),
-            'invoice_date' => $this->input->post('invoice_date'),
-            'hotel_roomid' => $this->input->post('room_id'),
-            'base_amt_grand_tot' => $this->input->post('grand_total_base'),
-            'gst_amt_grand_tot' => $this->input->post('grand_total_gst'),
-            'tot_amt_grand_tot' => $this->input->post('grand_total_amount'),
-            'net_amount' => $this->input->post('net_amount'),
-            'by_advance' => $this->input->post('advance_amount'),
-            'amount_payable' => $this->input->post('amount_payable'),
-            'date' => date('Y-m-d H:i:s'), // Assuming you want to save the current timestamp
-            'status' => 'Settled' // or whatever status you want
-        );
 
-        // Insert data into the settlement table
-        if ($this->Settlement_model->insert_settlement($data)) {
-            // Redirect or respond with success message
-            redirect('settlement/success'); // Change to your desired success route
-        } else {
-            // Handle error
-            redirect('settlement/error'); // Change to your desired error route
-        }
+
+
+// public function settlement_create() {
+//     // Get the raw POST data (JSON format)
+//     $postData = json_decode(file_get_contents('php://input'), true);
+
+//     // Extract the settlement data and items
+//     $settlementData = $postData['settlement_data'];
+//     $settlementItems = $postData['settlement_items'];
+
+//     // Insert data into the settlement table
+//     $settlementInsertData = [
+//         'booking_id' => $settlementData['booking_id'],
+//         'customer_id' => $settlementData['customer_id'],
+//         'invoice_no' => $settlementData['invoice_no'],
+//         'invoice_date' => $settlementData['invoice_date'],
+//         'hotel_roomid' => $settlementData['room_id'],
+//         'base_amt_grand_tot' => $settlementData['grand_total_base'],
+//         'gst_amt_grand_tot' => $settlementData['grand_total_gst'],
+//         'tot_amt_grand_tot' => $settlementData['grand_total_amount'],
+//         'net_amount' => $settlementData['net_amount'],
+//         'by_advance' => $settlementData['advance_amount'],
+//         'amount_payable' => $settlementData['amount_payable'],
+//         'date' => date('Y-m-d H:i:s'), // Add current timestamp
+// 		'status' => '1',
+// 		'settlement_status' => 'unpaid',
+//        // 'updated_at' => date('Y-m-d H:i:s')  // Add current timestamp
+//     ];
+
+//     // Insert settlement details
+//     $this->db->insert('settlement', $settlementInsertData);
+//     $settlementId = $this->db->insert_id();  // Get the inserted settlement ID
+
+//     // Now insert each settlement item into settlement_item table
+//     foreach ($settlementItems as $item) {
+//         $itemData = [
+//             'settlement_id' => $settlementId, // Foreign key to settlement
+//             'item_name' => $item['description'],
+//             'hsn_code' => $item['hsn_code'],
+//             'base_amount' => $item['base_amount'],
+//             'gst_percent' => $item['gst_percent'],
+//             'gst_amount' => $item['gst_amount'],
+//             'total_amount' => $item['total_amount'],
+//             'date' => date('Y-m-d H:i:s'),
+// 			'status' => '1',
+//          //   'updated_at' => date('Y-m-d H:i:s')
+//         ];
+
+//         // Insert into settlement_item table
+//         $this->db->insert('settlement_item', $itemData);
+//     }
+
+//     // Return a JSON response to the client
+//     echo json_encode(['success' => true]);
+// }
+
+
+public function settlement_save() {
+    // Get the raw POST data (JSON format)
+    $postData = json_decode(file_get_contents('php://input'), true);
+
+    // Extract the settlement data and items
+    $settlementData = $postData['settlement_data'];
+    $settlementItems = $postData['settlement_items'];
+
+    // Check if we have an existing settlement by booking_id
+    $bookingId = $settlementData['booking_id'];
+
+    // Attempt to find an existing settlement with the provided booking ID
+    $this->db->where('booking_id', $bookingId);
+    $existingSettlement = $this->db->get('settlement')->row();
+
+    if ($existingSettlement) {
+        // Settlement found, update it
+        $settlementId = $existingSettlement->settlement_id; // Get the existing settlement ID
+
+        $this->db->where('settlement_id', $settlementId);
+        $this->db->update('settlement', [
+            'customer_id' => $settlementData['customer_id'],
+            'invoice_no' => $settlementData['invoice_no'],
+            'invoice_date' => $settlementData['invoice_date'],
+            'hotel_roomid' => $settlementData['room_id'],
+            'base_amt_grand_tot' => $settlementData['grand_total_base'],
+            'gst_amt_grand_tot' => $settlementData['grand_total_gst'],
+            'tot_amt_grand_tot' => $settlementData['grand_total_amount'],
+            'net_amount' => $settlementData['net_amount'],
+            'by_advance' => $settlementData['advance_amount'],
+            'amount_payable' => $settlementData['amount_payable'],
+          
+        ]);
+
+        // Delete old items associated with this settlement
+        $this->db->where('settlement_id', $settlementId);
+        $this->db->delete('settlement_item');
+
+    } else {
+        // No existing settlement, create a new one
+        $settlementInsertData = [
+            'booking_id' => $settlementData['booking_id'],
+            'customer_id' => $settlementData['customer_id'],
+            'invoice_no' => $settlementData['invoice_no'],
+            'invoice_date' => $settlementData['invoice_date'],
+            'hotel_roomid' => $settlementData['room_id'],
+            'base_amt_grand_tot' => $settlementData['grand_total_base'],
+            'gst_amt_grand_tot' => $settlementData['grand_total_gst'],
+            'tot_amt_grand_tot' => $settlementData['grand_total_amount'],
+            'net_amount' => $settlementData['net_amount'],
+            'by_advance' => $settlementData['advance_amount'],
+            'amount_payable' => $settlementData['amount_payable'],
+            'date' => date('Y-m-d H:i:s'), // Add current timestamp
+            'status' => '1',
+            'settlement_status' => 'unpaid'
+        ];
+
+        // Insert settlement details
+        $this->db->insert('settlement', $settlementInsertData);
+        $settlementId = $this->db->insert_id();  // Get the newly inserted settlement ID
     }
 
-	
+    // Insert each settlement item into the settlement_item table
+    foreach ($settlementItems as $item) {
+        $itemData = [
+            'settlement_id' => $settlementId, // Foreign key to settlement
+            'item_name' => $item['description'],
+            'hsn_code' => $item['hsn_code'],
+            'base_amount' => $item['base_amount'],
+            'gst_percent' => $item['gst_percent'],
+            'gst_amount' => $item['gst_amount'],
+            'total_amount' => $item['total_amount'],
+            'date' => date('Y-m-d H:i:s'),
+            'status' => '1'
+        ];
+
+        // Insert into settlement_item table
+        $this->db->insert('settlement_item', $itemData);
+    }
+
+    // Return a JSON response to the client with the settlement ID
+    echo json_encode(['success' => true, 'settlement_id' => $settlementId]);
+}
+
+
+public function change_settlement_status() {
+    // Get the raw POST data (JSON format)
+    $postData = json_decode(file_get_contents('php://input'), true);
+    // Extract the booking ID and status
+    $bookingId = $postData['booking_id'];
+    $status = $postData['status'];
+    // Check if booking_id is provided
+    if (empty($bookingId)) {
+        echo json_encode(['success' => false, 'message' => 'Booking ID is missing.']);
+        return;
+    }
+    // Find the settlement ID using the booking ID
+    $this->db->select('settlement_id'); // Ensure this matches your DB column
+    $this->db->from('settlement');
+    $this->db->where('booking_id', $bookingId);
+    $query = $this->db->get();
+    // Check if a settlement was found
+    if ($query->num_rows() > 0) {
+        // Change this line to access the correct property
+        $settlementId = $query->row()->settlement_id; 
+        // Update the settlement status in the database
+        $this->db->where('settlement_id', $settlementId);
+        $this->db->update('settlement', ['settlement_status' => $status, 'date' => date('Y-m-d H:i:s')]);
+        // Check if the update was successful
+        if ($this->db->affected_rows() > 0) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update settlement status.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No settlement found for this booking ID.']);
+    }
+}
+
+
+
+
+public function update_booking_status() {
+    // Get the raw POST data (JSON format)
+    $postData = json_decode(file_get_contents('php://input'), true);
+    
+    // Extract the booking ID and new status
+    $bookingId = $postData['booking_id'];
+    $status = $postData['booking_status']; // Expected to be 'vacant'
+
+    // Check if booking_id is provided
+    if (empty($bookingId)) {
+        echo json_encode(['success' => false, 'message' => 'Booking ID is missing.']);
+        return;
+    }
+
+    // Update the booking status in the database
+    $this->db->where('booking_id', $bookingId);
+    $this->db->update('room_booking', ['booking_status' => $status, 'date' => date('Y-m-d H:i:s')]);
+
+    // Check if the update was successful
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update booking status.']);
+    }
+}
+
+
+
+
+
+public function change_settlement_status_delete() {
+    // Get the raw POST data (JSON format)
+    $postData = json_decode(file_get_contents('php://input'), true);
+    // Extract the booking ID and status
+    $bookingId = $postData['booking_id'];
+    $status = $postData['status']; // This should be '0' for deletion
+    // Check if booking_id is provided
+    if (empty($bookingId)) {
+        echo json_encode(['success' => false, 'message' => 'Booking ID is missing.']);
+        return;
+    }
+    // Find the settlement ID using the booking ID
+    $this->db->select('settlement_id');
+    $this->db->from('settlement');
+    $this->db->where('booking_id', $bookingId);
+    $query = $this->db->get();
+    // Check if a settlement was found
+    if ($query->num_rows() > 0) {
+        $settlementId = $query->row()->settlement_id; // Use settlement_id instead of id
+        // Update the settlement status in the database
+        $this->db->where('settlement_id', $settlementId);
+        $this->db->update('settlement', ['status' => $status, 'date' => date('Y-m-d H:i:s')]);
+        // Check if the update was successful
+        if ($this->db->affected_rows() > 0) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update settlement status.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No settlement found for this booking ID.']);
+    }
+}
+
+
+
+
+
 
 
 

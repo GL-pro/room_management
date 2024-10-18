@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2024 at 08:48 AM
+-- Generation Time: Oct 18, 2024 at 01:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -27,21 +27,21 @@ SET time_zone = "+00:00";
 -- Table structure for table `adminlogin`
 --
 
--- CREATE TABLE `adminlogin` (
---   `id` bigint(20) NOT NULL,
---   `email` text NOT NULL,
---   `password` text NOT NULL,
---   `usertype` text NOT NULL,
---   `status` text NOT NULL,
---   `date` datetime(6) DEFAULT NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `adminlogin` (
+  `id` bigint(20) NOT NULL,
+  `email` text NOT NULL,
+  `password` text NOT NULL,
+  `usertype` text NOT NULL,
+  `status` text NOT NULL,
+  `date` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --
--- -- Dumping data for table `adminlogin`
--- --
+--
+-- Dumping data for table `adminlogin`
+--
 
--- INSERT INTO `adminlogin` (`id`, `email`, `password`, `usertype`, `status`, `date`) VALUES
--- (1, 'a@gmail.com', '1234', 'admin', 'active', '2024-08-15 16:14:27.000000');
+INSERT INTO `adminlogin` (`id`, `email`, `password`, `usertype`, `status`, `date`) VALUES
+(1, 'a@gmail.com', '1234', 'admin', 'active', '2024-08-15 16:14:27.000000');
 
 -- --------------------------------------------------------
 
@@ -120,7 +120,8 @@ CREATE TABLE `admin_room` (
 
 INSERT INTO `admin_room` (`roomid`, `roomtype`, `status`, `adminstatus`, `date`, `roomtype_image`, `approvestatus`) VALUES
 (14, 'SINGLE ', '1', 'admin', '2024-08-29 10:15:33.000000', '', 'Approved'),
-(15, 'DOUBLE ', '1', 'admin', '2024-08-29 10:19:32.000000', '66cffddc647be.jpeg', 'Approved');
+(15, 'DOUBLE ', '1', 'admin', '2024-08-29 10:19:32.000000', '66cffddc647be.jpeg', 'Approved'),
+(16, 'rrrr', '1', 'staff', '2024-10-01 15:01:13.000000', '', 'Approved');
 
 -- --------------------------------------------------------
 
@@ -207,32 +208,10 @@ INSERT INTO `bank` (`bank_id`, `bank_name`, `status`, `date`) VALUES
 
 CREATE TABLE `cancel_booking` (
   `cancel_id` bigint(20) NOT NULL,
-  `booking_id` bigint(20) NOT NULL,
-  `user_name` text NOT NULL,
-  `roomno` bigint(20) NOT NULL,
-  `room_name` text NOT NULL,
-  `phone` bigint(20) NOT NULL,
-  `age` bigint(20) NOT NULL,
-  `email` text NOT NULL,
-  `address` text NOT NULL,
-  `payment_method` text NOT NULL,
-  `hotel_roomid` bigint(20) NOT NULL,
-  `checkin` datetime(6) DEFAULT NULL,
-  `checkout` datetime(6) DEFAULT NULL,
-  `addonprice` bigint(20) NOT NULL,
-  `admin_status` text NOT NULL,
-  `booking_status` text NOT NULL,
-  `noofguests` bigint(20) NOT NULL,
-  `cancelled_at` datetime(6) DEFAULT NULL,
-  `status` text NOT NULL
+  `booking_id` text NOT NULL,
+  `cancel_status` text NOT NULL,
+  `cancelled_at` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cancel_booking`
---
-
-INSERT INTO `cancel_booking` (`cancel_id`, `booking_id`, `user_name`, `roomno`, `room_name`, `phone`, `age`, `email`, `address`, `payment_method`, `hotel_roomid`, `checkin`, `checkout`, `addonprice`, `admin_status`, `booking_status`, `noofguests`, `cancelled_at`, `status`) VALUES
-(4, 19, 'Travis Watkins', 102, 'room2', 1, 0, 'miby@mailinator.com', 'Quibusdam ipsum qui', 'cash', 31, '2002-05-28 07:27:00.000000', '2024-09-05 04:03:00.000000', 19523660, 'staff', 'cancelled', 0, '2024-09-04 16:57:38.000000', '1');
 
 -- --------------------------------------------------------
 
@@ -288,11 +267,11 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`customer_id`, `customer_name`, `age`, `address`, `phone`, `email`, `agency_id`, `customer_type`, `company_name`, `company_address`, `gst_number`, `date`, `status`, `admin_status`) VALUES
 (12, 'Quail Mcdaniel', 77, 'Mollitia odio quisqu', 1, 'tosaxy@mailinator.com', 7, 'company', 'Benson Shaffer Plc', 'Provident illo et o', '771', '2024-09-25 12:14:42.000000', '1', 'staff'),
-(13, 'Irene Preston', 61, 'Culpa laudantium mo', 1, 'jyseri@mailinator.com', 6, 'company', '', '', '', '2024-09-25 12:15:28.000000', '1', 'staff'),
-(14, 'Adria Hickman', 71, 'Cumque aspernatur ve', 1, 'higericibo@mailinator.com', 6, 'own', '', '', '', '2024-09-25 12:23:00.000000', '1', 'staff'),
+(13, 'Irene Preston', 61, 'Culpa laudantium mo', 1, 'jyseri@mailinator.com', 6, 'company', '', '', 'kk', '2024-09-25 12:15:28.000000', '1', 'staff'),
+(14, 'Adria Hickman', 71, 'Cumque aspernatur ve', 1, 'higericibo@mailinator.com', 6, 'own', '', '', 'wfsf', '2024-09-25 12:23:00.000000', '1', 'staff'),
 (15, 'Yael Osborne', 66, 'Vel assumenda nobis ', 1, 'wohomobiqu@mailinator.com', 6, 'company', 'er', 'ere', 'e4tedd', '2024-09-25 12:23:29.000000', '1', 'staff'),
 (16, 'Drake Wyatt', 20, 'Exercitationem et qu', 1, 'zaluciv@mailinator.com', 6, 'company', 'dh', 'dd', 'hdgd', '2024-09-25 15:21:33.000000', '1', 'staff'),
-(17, 'anu', 83, 'Dignissimos adipisci', 1, 'fewuvecyco@mailinator.com', 6, 'own', '', '', '', '2024-09-30 11:30:33.000000', '1', 'staff');
+(17, 'anu', 83, 'Dignissimos adipisci', 1, 'fewuvecyco@mailinator.com', 6, 'own', '', '', 'sdgsg fd', '2024-09-30 11:30:33.000000', '1', 'staff');
 
 -- --------------------------------------------------------
 
@@ -302,6 +281,7 @@ INSERT INTO `customer` (`customer_id`, `customer_name`, `age`, `address`, `phone
 
 CREATE TABLE `guest_details` (
   `guest_id` bigint(20) NOT NULL,
+  `guest_code` text NOT NULL,
   `booking_id` bigint(20) NOT NULL,
   `hotel_roomid` bigint(20) NOT NULL,
   `guest_name` text NOT NULL,
@@ -317,25 +297,11 @@ CREATE TABLE `guest_details` (
 -- Dumping data for table `guest_details`
 --
 
-INSERT INTO `guest_details` (`guest_id`, `booking_id`, `hotel_roomid`, `guest_name`, `phone`, `age`, `id_proof`, `status`, `admin_status`, `date`) VALUES
-(559, 287, 30, 'Mark Olsen', 1, 99, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(560, 287, 30, 'Maggy Thornton', 1, 5, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(561, 287, 30, 'Jared Solomon', 1, 40, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(562, 287, 30, 'Buckminster Morales', 1, 28, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(563, 287, 30, 'Vera Shannon', 1, 65, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(564, 287, 30, 'aaaa', 34534, 344, 'default.jpg', '1', 'staff', '2024-09-30 12:33:24.000000'),
-(565, 288, 33, 'Jermaine Morris', 1, 26, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(566, 288, 33, 'George Keith', 1, 74, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(567, 288, 33, 'Kylynn Doyle', 1, 95, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(568, 288, 33, 'Jonah Underwood', 1, 23, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(569, 288, 33, 'ddd', 453453, 44, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(570, 288, 33, 'eeeee', 435345, 3453, 'default.jpg', '1', 'staff', '2024-09-30 12:51:23.000000'),
-(571, 292, 31, 'anu', 4353453, 43, '66fa6a01c14ea_GLPOS_Ticketing_User_Manual (1).pdf', '1', 'staff', '2024-09-30 14:36:09.000000'),
-(572, 292, 31, 'ryr', 34535, 45, '66fa6a01c2edd_GLPOS_Ticketing_User_Manual (1).pdf', '1', 'staff', '2024-09-30 14:36:09.000000'),
-(573, 292, 31, 'rtre', 3454, 34, '66fa6a01c4680_GLPOS_Ticketing_User_Manual (1).pdf', '1', 'staff', '2024-09-30 14:36:09.000000'),
-(574, 292, 31, 'dr', 5, 45, '66fa6a01c6610_GLPOS_Ticketing_User_Manual (1).pdf', '1', 'staff', '2024-09-30 14:36:09.000000'),
-(575, 295, 34, 'anu', 46567567567, 33, 'default.jpg', '1', 'staff', '2024-09-30 14:45:42.000000'),
-(576, 296, 31, 'ffff', 0, 0, 'default.jpg', '1', 'staff', '2024-09-30 14:56:41.000000');
+INSERT INTO `guest_details` (`guest_id`, `guest_code`, `booking_id`, `hotel_roomid`, `guest_name`, `phone`, `age`, `id_proof`, `status`, `admin_status`, `date`) VALUES
+(161, 'guest_670f91335fc5c3.02422649', 425, 32, 'aaaaa', 345436545, 34, 'default.jpg', '1', 'staff', '2024-10-16 15:40:59.000000'),
+(162, 'guest_670f9133605943.62979001', 425, 32, 'bbbb', 456456546, 345, 'default.jpg', '1', 'staff', '2024-10-16 15:40:59.000000'),
+(163, 'guest_670f914ce104d9.13557461', 426, 31, 'ssss', 345454654, 4, 'default.jpg', '1', 'staff', '2024-10-16 15:41:24.000000'),
+(164, 'guest_670f914ce1bd77.88832969', 426, 31, 'ddddd', 567567676, 34, 'default.jpg', '1', 'staff', '2024-10-16 15:41:24.000000');
 
 -- --------------------------------------------------------
 
@@ -366,7 +332,7 @@ CREATE TABLE `hotel` (
 --
 
 INSERT INTO `hotel` (`hotel_id`, `hotelname`, `hotelowner`, `address`, `location`, `about`, `image`, `email`, `phone1`, `person1`, `whatsappno`, `rules`, `date`, `status`, `adminstatus`) VALUES
-(1, 'ttttt', 'ghtfh', 'Sit facilis qui qua', 'fff', 'dhrehe', 'upload/hotel_images/66ed12d736ebd.jpeg', 'a@gmail.com', 9875468544, 'Velit dignissimos ve', 9999999999, 'ttyyyy', '2024-09-20 11:45:09.000000', '1', 'staff');
+(1, 'Hotel Paragon', 'Raju', 'Sit facilis qui qua', 'fff', 'drg g r rrererer reree ertertergreh', 'upload/hotel_images/6710b45d960c4.jpg', 'a@gmail.com', 9875468544, 'Velit dignissimos ve', 9999999956, 'ttyyyy', '2024-10-17 12:24:23.000000', '1', 'staff');
 
 -- --------------------------------------------------------
 
@@ -402,12 +368,12 @@ CREATE TABLE `hotel_room` (
 --
 
 INSERT INTO `hotel_room` (`hotel_roomid`, `roomno`, `room_name`, `description`, `roomtypeid`, `noofguests`, `extguests`, `normalprice`, `discountprice`, `image`, `image1`, `image2`, `image3`, `image4`, `image5`, `date`, `status`, `admintype`, `room_status`, `booking_status`) VALUES
-(30, '101', 'room1', 'gffg', 14, '5', 2, 564, 67, 'Untitled10.jpeg, Untitled11.jpeg, Untitled12.jpeg, Untitled13.jpeg, Untitled14.jpeg', 'Untitled10.jpeg', 'Untitled11.jpeg', 'Untitled12.jpeg', 'Untitled13.jpeg', 'Untitled14.jpeg', '2024-09-03 10:11:28.000000', '1', 'staff', 'vaccant', ''),
-(31, '102', 'room2', 'dgrsgd', 14, '4', 1, 353, 33, 'Untitled15.jpeg, Untitled16.jpeg, Untitled17.jpeg, Untitled18.jpeg, Untitled19.jpeg', 'Untitled15.jpeg', 'Untitled16.jpeg', 'Untitled17.jpeg', 'Untitled18.jpeg', 'Untitled19.jpeg', '2024-09-03 10:12:37.000000', '1', 'staff', 'booked', ''),
-(32, '343', 'fff', 'dfgdfgdf', 15, '2', 3, 34534, 3453, 'Untitled20.jpeg, Untitled21.jpeg, Untitled22.jpeg, Untitled23.jpeg, Untitled24.jpeg', 'Untitled20.jpeg', 'Untitled21.jpeg', 'Untitled22.jpeg', 'Untitled23.jpeg', 'Untitled24.jpeg', '2024-09-06 16:44:49.000000', '1', 'staff', 'vaccant', ''),
-(33, '202', 'Nicole Hodge', 'Dolores voluptate ops', 14, '4', 2, 8, 416, 'hotel.jpg, hotel1.jpg, WhatsApp_Image_2024-09-04_at_15_00_57.jpeg, hotel2.jpg, hotel3.jpg', 'hotel.jpg', 'hotel1.jpg', 'WhatsApp_Image_2024-09-04_at_15_00_57.jpeg', 'hotel2.jpg', 'hotel3.jpg', '2024-09-24 16:11:15.000000', '1', 'staff', 'vaccant', ''),
-(34, '106', 'Jenette Talley', 'Labore veritatis ill', 15, '5', 2, 286, 836, 'hotel4.jpg, hotel5.jpg, hotel6.jpg, hotel7.jpg, hotel8.jpg', 'hotel4.jpg', 'hotel5.jpg', 'hotel6.jpg', 'hotel7.jpg', 'hotel8.jpg', '2024-09-24 16:53:43.000000', '1', 'staff', 'vaccant', ''),
-(35, '136', 'Melissa Tucker', '                                                                                                                                                                                                                                                                                                                  Consequatur proident                                                                                                                                                                                                                                                                                                                        ', 15, '4', 1, 927, 22, 'hotel14.jpg, hotel15.jpg, hotel16.jpg, hotel17.jpg, hotel18.jpg', 'hotel14.jpg', 'hotel15.jpg', 'hotel16.jpg', 'hotel17.jpg', 'hotel18.jpg', '2024-09-25 14:31:44.000000', '1', 'admin', 'booked', '');
+(30, '101', 'room1', '                                                    gffg                                                    ', 14, '5', 2, 564, 67, 'Untitled10.jpeg, Untitled11.jpeg, Untitled12.jpeg, Untitled13.jpeg, Untitled14.jpeg', 'Untitled10.jpeg', 'Untitled11.jpeg', 'Untitled12.jpeg', 'Untitled13.jpeg', 'Untitled14.jpeg', '2024-09-03 10:11:28.000000', '1', 'admin', 'available', ''),
+(31, '102', 'room2', '                                                                                                                                                            dgrsgd                                                                                                                                                            ', 14, '4', 1, 353, 33, 'Untitled15.jpeg, Untitled16.jpeg, Untitled17.jpeg, Untitled18.jpeg, Untitled19.jpeg', 'hotel.jpg', 'Untitled16.jpeg', 'Untitled17.jpeg', 'Untitled18.jpeg', 'Untitled19.jpeg', '2024-09-03 10:12:37.000000', '1', 'admin', 'available', ''),
+(32, '343', 'fff', '                                                    dfgdfgdf                                                    ', 15, '2', 3, 34534, 3453, 'Untitled20.jpeg, Untitled21.jpeg, Untitled22.jpeg, Untitled23.jpeg, Untitled24.jpeg', 'Untitled20.jpeg', 'Untitled21.jpeg', 'Untitled22.jpeg', 'Untitled23.jpeg', 'Untitled24.jpeg', '2024-09-06 16:44:49.000000', '1', 'admin', 'available', ''),
+(33, '202', 'Nicole Hodge', 'Dolores voluptate ops', 14, '4', 2, 8, 416, 'hotel.jpg, hotel1.jpg, WhatsApp_Image_2024-09-04_at_15_00_57.jpeg, hotel2.jpg, hotel3.jpg', 'hotel.jpg', 'hotel1.jpg', 'WhatsApp_Image_2024-09-04_at_15_00_57.jpeg', 'hotel2.jpg', 'hotel3.jpg', '2024-09-24 16:11:15.000000', '1', 'staff', 'available', ''),
+(34, '106', 'Jenette Talley', 'Labore veritatis ill', 15, '5', 2, 286, 836, 'hotel4.jpg, hotel5.jpg, hotel6.jpg, hotel7.jpg, hotel8.jpg', 'hotel4.jpg', 'hotel5.jpg', 'hotel6.jpg', 'hotel7.jpg', 'hotel8.jpg', '2024-09-24 16:53:43.000000', '1', 'staff', 'available', ''),
+(35, '136', 'Melissa Tucker', '                                                                                                                                                                                                                                                                                                                  Consequatur proident                                                                                                                                                                                                                                                                                                                        ', 15, '4', 1, 927, 22, 'hotel14.jpg, hotel15.jpg, hotel16.jpg, hotel17.jpg, hotel18.jpg', 'hotel14.jpg', 'hotel15.jpg', 'hotel16.jpg', 'hotel17.jpg', 'hotel18.jpg', '2024-09-25 14:31:44.000000', '1', 'admin', 'available', '');
 
 -- --------------------------------------------------------
 
@@ -455,7 +421,8 @@ INSERT INTO `hotel_room_facility` (`hotel_room_facid`, `hotel_roomid`, `hotelid`
 (206, 35, 0, 11, 24, '2024-09-25 14:31:44.000000', '1'),
 (207, 35, 0, 10, 21, '2024-09-25 14:35:58.000000', '1'),
 (208, 35, 0, 10, 22, '2024-09-25 14:35:58.000000', '1'),
-(209, 35, 0, 9, 19, '2024-09-25 14:36:05.000000', '1');
+(209, 35, 0, 9, 19, '2024-09-25 14:36:05.000000', '1'),
+(210, 31, 0, 9, 18, '2024-10-01 14:59:14.000000', '1');
 
 -- --------------------------------------------------------
 
@@ -470,6 +437,9 @@ CREATE TABLE `item` (
   `price1` bigint(20) NOT NULL,
   `price2` bigint(20) NOT NULL,
   `tax` bigint(20) NOT NULL,
+  `gst_per` text NOT NULL,
+  `gst` text NOT NULL,
+  `hsn_code` text NOT NULL,
   `description` text NOT NULL,
   `availability` text NOT NULL,
   `category_id` bigint(20) NOT NULL,
@@ -484,11 +454,31 @@ CREATE TABLE `item` (
 -- Dumping data for table `item`
 --
 
-INSERT INTO `item` (`item_id`, `item_name`, `item_image`, `price1`, `price2`, `tax`, `description`, `availability`, `category_id`, `subcategory_id`, `date`, `adminstatus`, `approvestatus`, `status`) VALUES
-(6, 'tttt', '5cbcc5ddd473ecc43e21ea30e62c3c6e.jpg', 43443, 4333, 3553, 'fgbfg', 'yes', 5, 3, '2024-09-02 11:55:40.000000', 'staff', 'Approved', '1'),
-(7, 'bus33', 'edc7dc10cbc057e192203c85cfae625b.jpg', 33, 333, 3333, 'fff', 'no', 5, 4, '2024-09-02 15:45:05.000000', 'staff', 'Approved', '1'),
-(8, 'sdfse', '3a67acee7b53c05e5c8ea75492a09189.jpg', 34, 345, 34, 'dfgd', 'yes', 6, 4, '2024-09-03 11:42:05.000000', 'staff', 'Approved', '1'),
-(9, 'hhhh', 'ca66302e59cff9d718851bcba89a65de.jpg', 933, 883, 0, 'Ullamco cillum repre', 'yes', 5, 3, '2024-09-24 15:13:47.000000', 'staff', 'Approved', '1');
+INSERT INTO `item` (`item_id`, `item_name`, `item_image`, `price1`, `price2`, `tax`, `gst_per`, `gst`, `hsn_code`, `description`, `availability`, `category_id`, `subcategory_id`, `date`, `adminstatus`, `approvestatus`, `status`) VALUES
+(6, 'tttt', '', 43443, 4333, 3553, '10', '45', 'fss34', 'gkg', 'yes', 5, 3, '2024-09-02 11:55:40.000000', 'staff', 'Approved', '1'),
+(7, 'bus33y', '', 33, 333, 3333, '2', '41', 'sfw3', 'fff', 'no', 5, 4, '2024-09-02 15:45:05.000000', 'staff', 'Approved', '1'),
+(8, 'sdfse', '3a67acee7b53c05e5c8ea75492a09189.jpg', 34, 345, 34, '5', '52', 'gr4', 'dfgd', 'yes', 6, 4, '2024-09-03 11:42:05.000000', 'staff', 'Approved', '1'),
+(9, 'hhhh', 'ca66302e59cff9d718851bcba89a65de.jpg', 933, 883, 0, '4', '23', 'dge34', 'Ullamco cillum repre', 'yes', 5, 3, '2024-09-24 15:13:47.000000', 'staff', 'Approved', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `occupy_booking`
+--
+
+CREATE TABLE `occupy_booking` (
+  `occupy_id` bigint(20) NOT NULL,
+  `booking_id` bigint(20) NOT NULL,
+  `occupy_date` datetime(6) DEFAULT NULL,
+  `occupy_status` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `occupy_booking`
+--
+
+INSERT INTO `occupy_booking` (`occupy_id`, `booking_id`, `occupy_date`, `occupy_status`) VALUES
+(3, 426, '2024-10-16 15:41:45.000000', 'occupied');
 
 -- --------------------------------------------------------
 
@@ -508,6 +498,7 @@ CREATE TABLE `room_booking` (
   `payment_method` text NOT NULL,
   `payment_status` text NOT NULL,
   `booking_date` datetime(6) DEFAULT NULL,
+  `occupy_date` datetime(6) DEFAULT NULL,
   `admin_status` text NOT NULL,
   `booking_status` text NOT NULL,
   `occupy_status` text NOT NULL,
@@ -516,24 +507,17 @@ CREATE TABLE `room_booking` (
   `status` text NOT NULL,
   `agent_id` bigint(20) NOT NULL,
   `customer_id` bigint(20) NOT NULL,
-  `advance_amount` bigint(20) NOT NULL
+  `advance_amount` bigint(20) NOT NULL,
+  `date` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room_booking`
 --
 
-INSERT INTO `room_booking` (`booking_id`, `order_id`, `hotel_roomid`, `roomno`, `room_name`, `noofguests`, `checkin`, `checkout`, `payment_method`, `payment_status`, `booking_date`, `admin_status`, `booking_status`, `occupy_status`, `cancel_status`, `vacant_status`, `status`, `agent_id`, `customer_id`, `advance_amount`) VALUES
-(287, 'order_66fa4d3c2cda6', '30', '101', 'room1', '5', '2024-10-01 15:00:00.000000', '2024-10-03 11:00:00.000000', 'card', 'payed', '2024-09-30 12:33:24.000000', 'staff', 'booked', '', '', '', '1', 8, 14, 64),
-(288, 'order_66fa51731446b', '33', '202', 'Nicole Hodge', '4', '2024-10-01 15:00:00.000000', '2024-10-04 11:00:00.000000', 'cash', 'payed', '2024-09-30 12:51:23.000000', 'staff', 'booked', '', '', '', '1', 7, 13, 96),
-(289, 'order_66fa620e66bec', '34', '106', 'Jenette Talley', '5', NULL, NULL, 'cash', 'payed', '2024-09-30 14:02:14.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(290, 'order_66fa68355e967', '35', '136', 'Melissa Tucker', '4', '2024-09-05 15:00:00.000000', '2024-09-07 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:28:29.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(291, 'order_66fa697898e14', '32', '343', 'fff', '2', '2024-09-19 15:00:00.000000', '2024-09-21 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:33:52.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(292, 'order_66fa6a01bbcf3', '31', '102', 'room2', '4', '2024-09-10 15:00:00.000000', '2024-09-12 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:36:09.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(293, 'order_66fa6af59d50e', '33', '202', 'Nicole Hodge', '4', '2024-09-18 15:00:00.000000', '2024-09-20 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:40:13.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(294, 'order_66fa6b7877547', '35', '136', 'Melissa Tucker', '4', '2024-09-11 15:00:00.000000', '2024-09-13 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:42:24.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(295, 'order_66fa6c3e0af58', '34', '106', 'Jenette Talley', '5', '2024-09-10 15:00:00.000000', '2024-09-12 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:45:42.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0),
-(296, 'order_66fa6ed111817', '31', '102', 'room2', '4', '2024-09-17 15:00:00.000000', '2024-09-19 11:00:00.000000', 'cash', 'payed', '2024-09-30 14:56:41.000000', 'staff', 'booked', '', '', '', '1', 0, 0, 0);
+INSERT INTO `room_booking` (`booking_id`, `order_id`, `hotel_roomid`, `roomno`, `room_name`, `noofguests`, `checkin`, `checkout`, `payment_method`, `payment_status`, `booking_date`, `occupy_date`, `admin_status`, `booking_status`, `occupy_status`, `cancel_status`, `vacant_status`, `status`, `agent_id`, `customer_id`, `advance_amount`, `date`) VALUES
+(425, 'order_670f91335bb52', '32', '343', 'fff', '2', '2024-10-17 12:00:00.000000', '2024-10-19 12:00:00.000000', 'cash', 'payed', '2024-10-16 15:40:59.000000', NULL, 'staff', 'booked', '', '', '', '1', 8, 14, 55, NULL),
+(426, 'order_670f9161821ce', '31', '102', 'room2', '4', '2024-10-22 12:00:00.000000', '2024-10-23 12:00:00.000000', '', 'payed', '2024-10-16 15:41:24.000000', '2024-10-16 15:41:45.000000', 'staff', 'vacant', '', '', '', '1', 7, 13, 22, '2024-10-18 13:12:57.000000');
 
 -- --------------------------------------------------------
 
@@ -554,16 +538,39 @@ CREATE TABLE `room_booking_details` (
 --
 
 INSERT INTO `room_booking_details` (`booking_detail_id`, `booking_id`, `hotel_roomid`, `date`, `extra_guest_count`) VALUES
-(176, 287, 30, '2024-09-30 12:33:24.000000', 1),
-(177, 288, 33, '2024-09-30 12:51:23.000000', 2),
-(178, 289, 34, '2024-09-30 14:02:14.000000', 0),
-(179, 290, 35, '2024-09-30 14:28:29.000000', 0),
-(180, 291, 32, '2024-09-30 14:33:52.000000', 0),
-(181, 292, 31, '2024-09-30 14:36:09.000000', 0),
-(182, 293, 33, '2024-09-30 14:40:13.000000', 0),
-(183, 294, 35, '2024-09-30 14:42:24.000000', 0),
-(184, 295, 34, '2024-09-30 14:45:42.000000', 0),
-(185, 296, 31, '2024-09-30 14:56:41.000000', 0);
+(324, 425, 32, '2024-10-16 15:40:59.000000', 0),
+(325, 426, 31, '2024-10-16 15:41:45.000000', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `room_item_details`
+--
+
+CREATE TABLE `room_item_details` (
+  `room_item_detail_id` bigint(20) NOT NULL,
+  `booking_id` text NOT NULL,
+  `order_id` text NOT NULL,
+  `item_id` text NOT NULL,
+  `item_name` text NOT NULL,
+  `quantity` text NOT NULL,
+  `item_price` text NOT NULL,
+  `new_price` text NOT NULL,
+  `item_total_price` text NOT NULL,
+  `hotel_roomid` int(11) NOT NULL,
+  `adding_date` datetime(6) DEFAULT NULL,
+  `status` text NOT NULL,
+  `admin_status` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room_item_details`
+--
+
+INSERT INTO `room_item_details` (`room_item_detail_id`, `booking_id`, `order_id`, `item_id`, `item_name`, `quantity`, `item_price`, `new_price`, `item_total_price`, `hotel_roomid`, `adding_date`, `status`, `admin_status`) VALUES
+(250, '425', '', '7', 'bus33y', '1', '33', '1', '1.00', 32, '2024-10-16 15:40:59.000000', '1', 'staff'),
+(251, '426', '', '7', 'bus33y', '1', '33', '33', '33.00', 31, '2024-10-16 15:41:24.000000', '1', 'staff'),
+(252, '426', '', '8', 'sdfse', '1', '34', '34', '34.00', 31, '2024-10-16 15:41:24.000000', '1', 'staff');
 
 -- --------------------------------------------------------
 
@@ -594,36 +601,88 @@ CREATE TABLE `room_occupy` (
   `status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `room_occupy`
+-- Table structure for table `room_status_log`
 --
 
-INSERT INTO `room_occupy` (`occupy_id`, `booking_id`, `order_id`, `hotel_roomid`, `roomno`, `room_name`, `noofguests`, `checkin`, `checkout`, `addonprice`, `user_name`, `age`, `email`, `phone`, `address`, `payment_method`, `date`, `admin_status`, `booking_status`, `status`) VALUES
-(257, 95, 'order_66f1384db4a282.42196259', '30', '101', 'room1', 3, '2024-09-21 12:00:00.000000', '2024-09-23 12:00:00.000000', '', 'Clayton Moses', 'Velit perspiciatis ', 'bokyf@mailinator.com', '9999999999', 'Quo adipisicing veli', 'Unknown', '2024-09-23 15:13:41.000000', 'staff', 'occupied', '1'),
-(258, 96, 'order_66f1384db4a282.42196259', '31', '102', 'room2', 2, '2024-09-21 12:00:00.000000', '2024-09-23 12:00:00.000000', '', 'Clayton Moses', 'Velit perspiciatis ', 'bokyf@mailinator.com', '9999999999', 'Quo adipisicing veli', 'Unknown', '2024-09-23 15:13:41.000000', 'staff', 'occupied', '1');
+CREATE TABLE `room_status_log` (
+  `log_id` bigint(20) NOT NULL,
+  `hotel_roomid` bigint(20) NOT NULL,
+  `booking_id` bigint(20) NOT NULL,
+  `status` text NOT NULL,
+  `date` datetime(6) DEFAULT NULL,
+  `customer_id` bigint(20) NOT NULL,
+  `status_change_date` datetime(6) NOT NULL,
+  `availability_date` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room_status_log`
+--
+
+INSERT INTO `room_status_log` (`log_id`, `hotel_roomid`, `booking_id`, `status`, `date`, `customer_id`, `status_change_date`, `availability_date`) VALUES
+(129, 32, 425, 'vaccant', '2024-10-16 15:40:59.000000', 14, '2024-10-16 15:40:59.000000', '2024-10-19 12:00:00.000000'),
+(130, 31, 426, 'vaccant', '2024-10-16 15:41:45.000000', 13, '2024-10-16 15:41:45.000000', '2024-10-23 12:00:00.000000');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `room_occupy_items`
+-- Table structure for table `settlement`
 --
 
-CREATE TABLE `room_occupy_items` (
-  `occupy_itemid` bigint(20) NOT NULL,
-  `occupy_id` text NOT NULL,
-  `booking_id` text NOT NULL,
-  `order_id` text NOT NULL,
-  `item_id` text NOT NULL,
-  `item_name` text NOT NULL,
-  `quantity` text NOT NULL,
-  `item_price` text NOT NULL,
-  `new_price` text NOT NULL,
-  `item_total_price` text NOT NULL,
-  `hotel_roomid` int(11) NOT NULL,
-  `adding_date` datetime(6) DEFAULT NULL,
+CREATE TABLE `settlement` (
+  `settlement_id` bigint(20) NOT NULL,
+  `booking_id` bigint(20) NOT NULL,
+  `customer_id` bigint(20) NOT NULL,
+  `invoice_no` text NOT NULL,
+  `invoice_date` datetime(6) DEFAULT NULL,
+  `hotel_roomid` bigint(20) NOT NULL,
+  `base_amt_grand_tot` decimal(15,2) DEFAULT NULL,
+  `gst_amt_grand_tot` decimal(15,2) DEFAULT NULL,
+  `tot_amt_grand_tot` decimal(15,2) DEFAULT NULL,
+  `net_amount` decimal(15,2) DEFAULT NULL,
+  `by_advance` decimal(15,2) DEFAULT NULL,
+  `amount_payable` decimal(15,2) DEFAULT NULL,
+  `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
-  `admin_status` text NOT NULL
+  `settlement_status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `settlement`
+--
+
+INSERT INTO `settlement` (`settlement_id`, `booking_id`, `customer_id`, `invoice_no`, `invoice_date`, `hotel_roomid`, `base_amt_grand_tot`, `gst_amt_grand_tot`, `tot_amt_grand_tot`, `net_amount`, `by_advance`, `amount_payable`, `date`, `status`, `settlement_status`) VALUES
+(22, 426, 13, 'INV-67123C1FDC04E', '2024-10-18 00:00:00.000000', 31, 67.00, 2.36, 69.36, 69.36, 22.00, 47.36, '2024-10-18 13:12:55.000000', '0', 'paid');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `settlement_item`
+--
+
+CREATE TABLE `settlement_item` (
+  `settlement_item_id` bigint(20) NOT NULL,
+  `settlement_id` bigint(20) NOT NULL,
+  `item_name` text NOT NULL,
+  `hsn_code` text NOT NULL,
+  `base_amount` bigint(20) NOT NULL,
+  `gst_percent` bigint(20) NOT NULL,
+  `gst_amount` bigint(20) NOT NULL,
+  `total_amount` bigint(20) NOT NULL,
+  `date` datetime(6) DEFAULT NULL,
+  `status` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `settlement_item`
+--
+
+INSERT INTO `settlement_item` (`settlement_item_id`, `settlement_id`, `item_name`, `hsn_code`, `base_amount`, `gst_percent`, `gst_amount`, `total_amount`, `date`, `status`) VALUES
+(37, 22, 'bus33y', 'sfw3', 33, 2, 1, 34, '2024-10-18 12:45:03.000000', '1'),
+(38, 22, 'sdfse', 'gr4', 34, 5, 2, 36, '2024-10-18 12:45:03.000000', '1');
 
 -- --------------------------------------------------------
 
@@ -794,6 +853,12 @@ ALTER TABLE `item`
   ADD PRIMARY KEY (`item_id`);
 
 --
+-- Indexes for table `occupy_booking`
+--
+ALTER TABLE `occupy_booking`
+  ADD PRIMARY KEY (`occupy_id`);
+
+--
 -- Indexes for table `room_booking`
 --
 ALTER TABLE `room_booking`
@@ -806,16 +871,34 @@ ALTER TABLE `room_booking_details`
   ADD PRIMARY KEY (`booking_detail_id`);
 
 --
+-- Indexes for table `room_item_details`
+--
+ALTER TABLE `room_item_details`
+  ADD PRIMARY KEY (`room_item_detail_id`);
+
+--
 -- Indexes for table `room_occupy`
 --
 ALTER TABLE `room_occupy`
   ADD PRIMARY KEY (`occupy_id`);
 
 --
--- Indexes for table `room_occupy_items`
+-- Indexes for table `room_status_log`
 --
-ALTER TABLE `room_occupy_items`
-  ADD PRIMARY KEY (`occupy_itemid`);
+ALTER TABLE `room_status_log`
+  ADD PRIMARY KEY (`log_id`);
+
+--
+-- Indexes for table `settlement`
+--
+ALTER TABLE `settlement`
+  ADD PRIMARY KEY (`settlement_id`);
+
+--
+-- Indexes for table `settlement_item`
+--
+ALTER TABLE `settlement_item`
+  ADD PRIMARY KEY (`settlement_item_id`);
 
 --
 -- Indexes for table `staff_login`
@@ -861,7 +944,7 @@ ALTER TABLE `admin_facility_type`
 -- AUTO_INCREMENT for table `admin_room`
 --
 ALTER TABLE `admin_room`
-  MODIFY `roomid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `roomid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `agent`
@@ -879,7 +962,7 @@ ALTER TABLE `bank`
 -- AUTO_INCREMENT for table `cancel_booking`
 --
 ALTER TABLE `cancel_booking`
-  MODIFY `cancel_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cancel_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=425;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -897,7 +980,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `guest_details`
 --
 ALTER TABLE `guest_details`
-  MODIFY `guest_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=577;
+  MODIFY `guest_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT for table `hotel`
@@ -915,7 +998,7 @@ ALTER TABLE `hotel_room`
 -- AUTO_INCREMENT for table `hotel_room_facility`
 --
 ALTER TABLE `hotel_room_facility`
-  MODIFY `hotel_room_facid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;
+  MODIFY `hotel_room_facid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=211;
 
 --
 -- AUTO_INCREMENT for table `item`
@@ -924,16 +1007,28 @@ ALTER TABLE `item`
   MODIFY `item_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `occupy_booking`
+--
+ALTER TABLE `occupy_booking`
+  MODIFY `occupy_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `room_booking`
 --
 ALTER TABLE `room_booking`
-  MODIFY `booking_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=297;
+  MODIFY `booking_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=427;
 
 --
 -- AUTO_INCREMENT for table `room_booking_details`
 --
 ALTER TABLE `room_booking_details`
-  MODIFY `booking_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `booking_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=326;
+
+--
+-- AUTO_INCREMENT for table `room_item_details`
+--
+ALTER TABLE `room_item_details`
+  MODIFY `room_item_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=253;
 
 --
 -- AUTO_INCREMENT for table `room_occupy`
@@ -942,10 +1037,22 @@ ALTER TABLE `room_occupy`
   MODIFY `occupy_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=259;
 
 --
--- AUTO_INCREMENT for table `room_occupy_items`
+-- AUTO_INCREMENT for table `room_status_log`
 --
-ALTER TABLE `room_occupy_items`
-  MODIFY `occupy_itemid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
+ALTER TABLE `room_status_log`
+  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
+
+--
+-- AUTO_INCREMENT for table `settlement`
+--
+ALTER TABLE `settlement`
+  MODIFY `settlement_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `settlement_item`
+--
+ALTER TABLE `settlement_item`
+  MODIFY `settlement_item_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `staff_login`
