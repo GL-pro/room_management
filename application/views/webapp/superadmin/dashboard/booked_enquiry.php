@@ -258,11 +258,12 @@
             </div>
         </div>
 
-
-
  <?php endforeach; ?>
                      
  
+
+
+
          <!-- Advance Payment Section (Rendered Only Once) -->
     <div class="mt-3">
         <div class="d-lg-flex">
@@ -275,13 +276,13 @@
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
                     <label class="form-label">Advance Amount</label>
-                    <input class="form-control" type="number" placeholder=" " 
+                    <input class="form-control" type="number" placeholder=" " name="advance_amount"
                            value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>"  />
                 </div>
             </div>
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
-                    <select class="form-control" >
+                    <select class="form-control" name="payment_method" >
                         <option value="" disabled>Select Payment Method</option>
                         <option value="cash" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'cash') ? 'selected' : '' ?>>Cash</option>
                         <option value="card" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'card') ? 'selected' : '' ?>>Card</option>
@@ -294,6 +295,9 @@
     <p>No rooms selected.</p>
 <?php endif; ?>
                  
+
+
+
 
                                     </div>
                                 </div>
@@ -312,8 +316,6 @@
 <?php else: ?>
     <p>No booking details available.</p>
 <?php endif; ?>
-
-
                         </div>
                     </div>
                 </div>
@@ -1082,10 +1084,63 @@ $(document).ready(function () {
         $('#exampleModal').modal('hide');
     });
 
-    $(document).on('click', '.remove-item', function () {
-    const $row = $(this).closest('tr');
+//     $(document).on('click', '.remove-item', function () {
+//     const $row = $(this).closest('tr');
+//     const bookingId = $('input[name="booking_id"]').val(); // Assuming booking_id is somewhere in your HTML
+//     const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input
+
+//     // Log values for debugging
+//     console.log('Booking ID:', bookingId);
+//     console.log('Item ID:', itemId);
+
+//     // Ensure both IDs are available
+//     if (!itemId || !bookingId) {
+//         console.error('Missing required data for item removal');
+//         alert('Unable to remove item due to missing data. Please try again.');
+//         return;
+//     }
+
+//     // AJAX call to remove the item
+//     $.ajax({
+//         url: '<?= base_url('Superadmin/update_item_status1') ?>',
+//         type: 'POST',
+//         data: {
+//             booking_id: bookingId,
+//             item_id: itemId,
+//             status: 0
+//         },
+//         dataType: 'json',
+//         success: function (response) {
+//             if (response.success) {
+//                 console.log('Item status updated successfully:', response);
+//                 $row.remove(); // Remove the row from the table
+//             } else {
+//                 console.error('Failed to update item status:', response.message);
+//                 alert('Failed to remove item: ' + response.message);
+//             }
+//         },
+//         error: function (xhr, status, error) {
+//             console.error('Error updating item status:', error);
+//             let errorMessage = 'An error occurred while removing the item.';
+//             try {
+//                 const response = JSON.parse(xhr.responseText);
+//                 if (response && response.message) {
+//                     errorMessage = response.message;
+//                 }
+//             } catch (e) {
+//                 console.error('Error parsing error response:', e);
+//             }
+//             alert(errorMessage);
+//         }
+//     });
+// });
+
+
+
+$(document).on('click', '.remove-item', function () {
+    const $row = $(this).closest('tr'); // Get the entire row
     const bookingId = $('input[name="booking_id"]').val(); // Assuming booking_id is somewhere in your HTML
-    const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input
+    const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input for item_id
 
     // Log values for debugging
     console.log('Booking ID:', bookingId);
@@ -1105,7 +1160,7 @@ $(document).ready(function () {
         data: {
             booking_id: bookingId,
             item_id: itemId,
-            status: 0
+            status: 0 // Assuming 0 means removed
         },
         dataType: 'json',
         success: function (response) {
@@ -1132,6 +1187,8 @@ $(document).ready(function () {
         }
     });
 });
+
+
 
 
 

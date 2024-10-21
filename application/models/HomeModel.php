@@ -825,7 +825,7 @@ public function getItemsByBookingIdAndRoomId1($booking_id, $hotel_roomid) {
 //         'guests' => $guestDetails,
 //     ];
 // }
-wwww
+
 public function getItemsByBookingIdAndRoomId($booking_id, $hotel_roomid) {
     $this->db->select('item.*, room_item_details.*');
     $this->db->from('room_item_details');

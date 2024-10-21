@@ -15,6 +15,7 @@
                     <div class="card">
                         <div class="card-body">
                         <form id="occupyform" action="<?= base_url('Superadmin/settlement') ?>" method="post" enctype="multipart/form-data">
+
                         <input type="hidden" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>"> 
                                 <div class="border-radius-xl bg-white">
 
@@ -207,7 +208,9 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($room['items'] as $item): ?>
-                                        <tr>
+                                        <tr>   
+                                            <!-- Hidden input for item_id -->
+                                        <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
                                             <td><?= $item['item_name'] ?></td>
                                             <td><?= $item['item_price'] ?></td>
                                             <td><?= $item['new_price'] ?></td>
@@ -251,13 +254,13 @@
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
                     <label class="form-label">Advance Amount</label>
-                    <input class="form-control" type="number" placeholder=" " 
-                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>"  />
+                    <input class="form-control" type="number" placeholder=" " name="advance_amount"
+                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>" disabled />
                 </div>
             </div>
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
-                    <select class="form-control" >
+                    <select class="form-control"  name="payment_method" disabled>
                         <option value="" disabled>Select Payment Method</option>
                         <option value="cash" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'cash') ? 'selected' : '' ?>>Cash</option>
                         <option value="card" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'card') ? 'selected' : '' ?>>Card</option>
@@ -469,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     // When submitting the form
-    document.getElementById('roomEnquiryForm').addEventListener('submit', function() {
+    document.getElementById('occupyform').addEventListener('submit', function() {
         // Convert removedRooms array to a JSON string and include it in the form
         const removedRoomsInput = document.createElement('input');
         removedRoomsInput.type = 'hidden';
@@ -719,7 +722,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Form submission validation
-    document.getElementById('roomEnquiryForm').addEventListener('submit', function(event) {
+    document.getElementById('occupyform').addEventListener('submit', function(event) {
         const dateRangeInput = document.getElementById('daterange').value; // Get the value of the date range
         let isValid = false; // Flag to check if at least one guest detail is filled
         const roomCards = document.querySelectorAll('.card');
@@ -851,6 +854,167 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+ <script>
+let selectedRoomId;
+let roomItemsData = {}; // Store items for multiple rooms
+
+$(document).ready(function () {
+    // When an "Add Items" button is clicked for a room
+    $('.open-modal-btn').on('click', function () {
+        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
+    });
+
+    // Handle row selection
+    $('.item-row').on('click', function () {
+        $(this).toggleClass('selected-row'); // Toggle the selected state
+        const isSelected = $(this).hasClass('selected-row');
+        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
+    });
+
+    function calculateTotal($row) {
+        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
+        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
+        if (isNaN(newPrice) || newPrice <= 0) {
+            newPrice = currentPrice; // Use current price for calculation
+        }
+        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
+        const totalPrice = newPrice * quantity; // Calculate the total price
+        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
+    }
+
+    // Event listener for changes in new price and quantity inputs in the modal
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest item row
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
+
+    // When the "Add Selected Items" button in the modal is clicked
+    $('#addItemsButton').on('click', function (event) {
+        event.preventDefault();
+        let selectedItems = [];
+        $('.item-row.selected-row').each(function () {
+            const itemName = $(this).data('item-name');
+            const itemId = $(this).find('input[name="item_id[]"]').val(); // Get item_id from hidden input
+            const itemPrice = parseFloat($(this).data('price')) || 0;
+            let newPrice = parseFloat($(this).find('.new-price').val().trim());
+            if (isNaN(newPrice) || newPrice <= 0) {
+                newPrice = itemPrice;
+            }
+            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1;
+            const totalPrice = newPrice * quantity;
+            selectedItems.push({ 
+                id: itemId, // Include item_id in the selected items
+                name: itemName,
+                currentPrice: itemPrice,
+                newPrice: newPrice,
+                quantity: quantity,
+                totalPrice: totalPrice.toFixed(2)
+            });
+        });
+
+        roomItemsData[selectedRoomId] = selectedItems; // Store items for the selected room
+        console.log('Room Items Data:', roomItemsData); // Debugging
+        selectedItems.forEach(item => {
+        const rowHtml = `
+    <tr data-price="${item.currentPrice}" data-room-id="${selectedRoomId}">
+        <td>${item.name}</td>
+        <td>₹ ${item.currentPrice.toFixed(2)}</td>  
+        <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
+        <td class="quantity">${item.quantity}</td>
+        <td class="total-price">₹ ${item.totalPrice}</td>
+        <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
+        <input type="hidden" name="item_id[]" value="${item.id}" /> 
+    </tr>
+`;
+
+            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
+        });
+
+        // Clear the modal inputs
+        $('.item-row').removeClass('selected-row').css('background-color', '');
+        $('.new-price').val('');
+        $('.quantity').val(1);
+
+        $('#exampleModal').modal('hide');
+    });
+
+$(document).on('click', '.remove-item', function () {
+    const $row = $(this).closest('tr'); // Get the entire row
+    const bookingId = $('input[name="booking_id"]').val(); // Assuming booking_id is somewhere in your HTML
+    const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input for item_id
+    // Log values for debugging
+    console.log('Booking ID:', bookingId);
+    console.log('Item ID:', itemId);
+    // Ensure both IDs are available
+    if (!itemId || !bookingId) {
+        console.error('Missing required data for item removal');
+        alert('Unable to remove item due to missing data. Please try again.');
+        return;
+    }
+    // AJAX call to remove the item
+    $.ajax({
+        url: '<?= base_url('Superadmin/update_item_status1') ?>',
+        type: 'POST',
+        data: {
+            booking_id: bookingId,
+            item_id: itemId,
+            status: 0 // Assuming 0 means removed
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                console.log('Item status updated successfully:', response);
+                $row.remove(); // Remove the row from the table
+            } else {
+                console.error('Failed to update item status:', response.message);
+                alert('Failed to remove item: ' + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error updating item status:', error);
+            let errorMessage = 'An error occurred while removing the item.';
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (response && response.message) {
+                    errorMessage = response.message;
+                }
+            } catch (e) {
+                console.error('Error parsing error response:', e);
+            }
+            alert(errorMessage);
+        }
+    });
+});
+
+
+    // Handle form submission
+    $('#occupyform').on('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        formData.append('items_data', JSON.stringify(roomItemsData));
+        const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
+        const guestCode = $('input[name="guest_code"]').val(); // Get the guest_code from the form (add this field if not present)
+        formData.append('booking_id', bookingId); // Append it to formData
+        formData.append('guest_code', guestCode); // Append guest_code to formData
+        $.ajax({
+            url: '<?= base_url('Superadmin/update_room_occupy_submit') ?>',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                console.log('Form submitted successfully:', response);
+                window.location.href = '<?= base_url('Superadmin/settlement') ?>';
+            },
+            error: function (xhr, status, error) {
+                console.error('Error submitting form:', xhr.responseText);
+            }
+        });
+    });
+});
+</script> 
 
 
 

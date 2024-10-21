@@ -1461,6 +1461,13 @@ foreach ($extra_guest_name as $extra_index => $name) {
 
 
 
+
+
+
+
+
+
+
 public function all_bookings()
 {
 	$data['menu']='all_bookings';
@@ -1928,6 +1935,47 @@ public function change_settlement_status_delete() {
 
 
 
+// public function update_item_status1() {
+//     // Ensure no output before this point
+//     ob_start();
+
+//     header('Content-Type: application/json');
+
+//     try {
+//         $booking_id = $this->input->post('booking_id');
+//         $item_id = $this->input->post('item_id'); // Get item_id from the request
+//         $status = $this->input->post('status');
+
+//         // Ensure required parameters are available
+//         if (!$booking_id || !$item_id) {
+//             throw new Exception('Missing booking ID or item ID.');
+//         }
+
+//         // Update the status for the specific item with the booking ID
+//         $this->db->where('booking_id', $booking_id);
+//         $this->db->where('item_id', $item_id); // Use item_id for unique updates
+//         $result = $this->db->update('room_item_details', ['status' => $status]);
+
+//         if ($result) {
+//             echo json_encode(['success' => true]);
+//         } else {
+//             $error = $this->db->error();
+//             throw new Exception('Database error: ' . $error['message']);
+//         }
+//     } catch (Exception $e) {
+//         log_message('error', 'Failed to update status. Error: ' . $e->getMessage());
+//         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+//     }
+
+//     // Clear the output buffer and send the response
+//     ob_end_flush();
+//     exit;
+// }
+
+
+
+
+
 public function update_item_status1() {
     // Ensure no output before this point
     ob_start();
@@ -1936,18 +1984,19 @@ public function update_item_status1() {
 
     try {
         $booking_id = $this->input->post('booking_id');
-        $item_id = $this->input->post('item_id'); // Get item_id from the request
-        $status = $this->input->post('status');
+        $item_id = $this->input->post('item_id');
+        $status = $this->input->post('status'); // Assume 0 means removed
 
-        // Ensure required parameters are available
+        // Check if booking_id and item_id are provided
         if (!$booking_id || !$item_id) {
             throw new Exception('Missing booking ID or item ID.');
         }
 
-        // Update the status for the specific item with the booking ID
+        // Use both booking_id and item_id to ensure unique update
         $this->db->where('booking_id', $booking_id);
-        $this->db->where('item_id', $item_id); // Use item_id for unique updates
-        $result = $this->db->update('room_item_details', ['status' => $status]);
+        $this->db->where('item_id', $item_id);
+      //  $result = $this->db->update('room_item_details', ['status' => $status]);
+		$result = $this->db->delete('room_item_details'); // Use delete instead of update
 
         if ($result) {
             echo json_encode(['success' => true]);
@@ -1956,7 +2005,7 @@ public function update_item_status1() {
             throw new Exception('Database error: ' . $error['message']);
         }
     } catch (Exception $e) {
-        log_message('error', 'Failed to update status. Error: ' . $e->getMessage());
+        log_message('error', 'Failed to update item status. Error: ' . $e->getMessage());
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
 
@@ -1964,6 +2013,295 @@ public function update_item_status1() {
     ob_end_flush();
     exit;
 }
+
+
+
+
+
+
+public function update_room_occupy_submit()
+{
+	date_default_timezone_set('Asia/Kolkata');
+	$adding_date=date('Y-m-d H:i:s');
+
+	$selected_rooms = json_decode($this->input->post('selected_rooms'), true);
+    $removed_rooms = json_decode($this->input->post('removed_rooms'), true) ?? []; // Get removed rooms
+	$booking_id = $this->input->post('booking_id'); // Get the booking ID
+	// Generate a unique order ID
+	$order_id = uniqid('order_');
+    // Capture booking details
+    $agent_id = $this->input->post('agent_id');
+    $customer_id = $this->input->post('customer_id');
+    $dateranges = $this->input->post('daterange'); // This is an array
+    $extra_guest_counts = $this->input->post('extra_guest_count'); // This is an array
+    $advance_amount = $this->input->post('advance_amount');
+    $payment_method = $this->input->post('payment_method');
+
+    // Capture room details
+    $room_ids = $this->input->post('room_id');
+    $roomnos = $this->input->post('roomno');
+    $room_names = $this->input->post('room_name');
+    $no_of_guests = $this->input->post('noofguests');
+
+    // Capture guest details
+    $guest_names = $this->input->post('guest_name');
+    $guest_phones = $this->input->post('guest_phone');
+	$guest_ages = $this->input->post('guest_age');
+    // Check for guest ID proofs and initialize variable
+    $guest_id_proofs = isset($_FILES['guest_id_proof']) ? $_FILES['guest_id_proof'] : []; // Initialize to an empty array if not set
+//	$booking_ids = []; // Array to store booking IDs for each room
+	$existing_booking = $this->HomeModel->get_booking_by_id($booking_id); // Assume this method exists
+
+    // Insert booking into room_booking table
+	foreach ($room_ids as $index => $hotel_roomid) {
+		if (in_array($hotel_roomid, $removed_rooms)) {
+            continue; // Skip this iteration and go to the next
+        }
+		// Initialize checkin and checkout with existing values
+		$checkin = $existing_booking['checkin']; 
+		$checkout = $existing_booking['checkout']; 
+		if (!empty($dateranges[$index])) {
+			$daterange = explode(' to ', $dateranges[$index]);
+			if (!empty($daterange[0]) && strtotime($daterange[0]) !== false) {
+				$checkin = date('Y-m-d H:i:s', strtotime($daterange[0] . ' 12:00:00')); // Update check-in
+			}
+			if (!empty($daterange[1]) && strtotime($daterange[1]) !== false) {
+				$checkout = date('Y-m-d H:i:s', strtotime($daterange[1] . ' 12:00:00')); // Update check-out
+			}
+		}
+			
+
+        $booking_data = [
+			'order_id' => $order_id, // Store the unique order ID
+            'agent_id' => $agent_id,
+            'customer_id' => $customer_id,
+            'advance_amount' => $advance_amount,
+            'payment_method' => $payment_method,
+            'occupy_date' => $adding_date,
+            'hotel_roomid' => $hotel_roomid, 
+            'roomno' => $roomnos[$index],
+            'room_name' => $room_names[$index],
+            'noofguests' => $no_of_guests[$index],
+		    'checkin' => $checkin, // Use the check-in time for this room
+            'checkout' => $checkout, // Use the check-out time for this room
+            'payment_status' => 'payed',
+            'admin_status' => 'staff',
+            'booking_status' => 'occupied',
+            'status' => '1',
+        ];
+       // $booking_id = $this->HomeModel->insert_room_booking($booking_data);
+	//	$bookingid= $booking_id;
+
+	$this->HomeModel->update_room_booking($booking_id, $hotel_roomid, $booking_data);
+	$this->HomeModel->update_room_status($hotel_roomid, 'available');
+	
+
+	$occupy_data = [
+		'booking_id' => $booking_id,
+		'occupy_date' => $adding_date, // Current timestamp
+		'occupy_status' => 'occupied', // Current timestamp
+	  //  'reason' => $this->input->post('cancel_reason'), // Capture the reason if provided
+	];
+
+	// Call the model function to insert the cancellation data
+	$this->HomeModel->insert_into_occupy_booking($occupy_data);
+    
+        $room_detail_data = [
+            'booking_id' => $booking_id,
+            'date' =>$adding_date,
+            'extra_guest_count' => $extra_guest_counts[$index],
+			'hotel_roomid' => $hotel_roomid,
+        ];
+        // $this->HomeModel->insert_room_booking_details($room_detail_data);
+		$this->HomeModel->update_room_booking_details($booking_id, $hotel_roomid, $room_detail_data);
+		$availability_date = $checkout; // Room becomes available after the checkout date
+		  // Insert room details into room_status_log table
+		  $room_status_log = [
+            'booking_id' => $booking_id,
+            'date' => $adding_date,
+			'status_change_date' =>$adding_date,
+			'availability_date' =>$availability_date,
+			'hotel_roomid' => $hotel_roomid,
+			'customer_id' => $customer_id,
+			'status' => 'vaccant',
+        ];
+        // $this->HomeModel->insert_room_status_log($room_status_log);
+		$this->HomeModel->update_room_status_log($booking_id, $hotel_roomid, $room_status_log);
+
+
+// Capture guest details
+$guest_names = $this->input->post('guest_name');
+$guest_phones = $this->input->post('guest_phone');
+$guest_ages = $this->input->post('guest_age');
+$guest_id_proofs = isset($_FILES['guest_id_proof']) ? $_FILES['guest_id_proof'] : []; // Initialize to an empty array if not set
+
+foreach ($room_ids as $hotel_roomid) {
+    if (!empty($guest_names[$hotel_roomid])) {
+        foreach ($guest_names[$hotel_roomid] as $guest_index => $guest_name) {
+            // Check if the guest name is not empty
+            if (!empty($guest_name)) {
+                $file = [
+                    'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
+                    'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
+                    'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
+                    'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
+                    'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
+                ];
+                // Check if the file upload was successful
+                if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
+                    // Proceed to upload the file
+                    $upload_path = './upload/id_proofs/';
+                    $uploaded_file = $this->_upload_file($file, $upload_path);
+                } else {
+                    // Use default if no file is provided or there's an error
+                    $uploaded_file = 'default.jpg';
+                }
+                // Prepare guest data
+                $guest_data = [
+                    'guest_name' => $guest_name,
+                    'phone' => $guest_phones[$hotel_roomid][$guest_index],
+                    'age' => !empty($guest_ages[$hotel_roomid][$guest_index]) ? $guest_ages[$hotel_roomid][$guest_index] : 'Unknown',
+                    'id_proof' => $uploaded_file,
+                    'hotel_roomid' => $hotel_roomid,
+                    'booking_id' => $booking_id,
+                ];
+                // Check if the guest already exists in the database
+                $existing_guest = $this->HomeModel->get_guest_by_booking_and_code(
+                    $booking_id,
+                    $hotel_roomid,
+                    $guest_phones[$hotel_roomid][$guest_index] // Assuming phone is unique to guest
+                );
+            //    var_dump($existing_guest); // Check if $existing_guest is correct
+           //     die();
+                $this->db->trans_start(); // Start transaction
+                if ($existing_guest) {
+                    // Guest already exists, update if there's any change
+                    if ($existing_guest['guest_name'] !== $guest_name ||
+                        $existing_guest['phone'] !== $guest_data['phone'] ||
+                        $existing_guest['age'] !== $guest_data['age'] ||
+                        $existing_guest['id_proof'] !== $uploaded_file) {
+                        // Update existing guest details
+                        $update_guest_data = [
+                            'guest_name' => $guest_name,
+                            'phone' => $guest_phones[$hotel_roomid][$guest_index],
+                            'age' => $guest_ages[$hotel_roomid][$guest_index],
+                            'id_proof' => $uploaded_file,
+                            // Keep the existing guest_code
+                            'guest_code' => $existing_guest['guest_code'], 
+                        ];
+                        
+                        $this->HomeModel->update_guest_details($existing_guest['guest_id'], $update_guest_data);
+                    }
+                } else {
+                    // Insert new guest if not found
+                    $guest_data['guest_code'] = uniqid('guest_', true); // Unique code for the guest
+                    $guest_data['date'] = $adding_date;
+                    $guest_data['admin_status'] = 'staff';
+                    $guest_data['status'] = '1'; // Set status to active
+                    $this->HomeModel->insert_guest_details($guest_data);
+                }
+
+                $this->db->trans_complete(); // Complete transaction
+
+                if ($this->db->trans_status() === FALSE) {
+                    log_message('error', 'Transaction failed for booking_id: ' . $booking_id);
+                }
+            }
+        }
+    }
+}
+
+
+// Assuming you're handling form submission and have the booking ID
+$booking_id = $this->input->post('booking_id'); // Adjust as necessary
+// Insert extra guests
+$extra_guest_name = $this->input->post('extra_guest_name_' . $hotel_roomid) ?? [];
+$extra_guest_phone = $this->input->post('extra_guest_phone_' . $hotel_roomid) ?? [];
+$extra_guest_age = $this->input->post('extra_guest_age_' . $hotel_roomid) ?? [];
+foreach ($extra_guest_name as $extra_index => $name) {
+	if (!empty($name)) {
+	 $file = [
+		'name' => $guest_id_proofs['name'][$hotel_roomid][$guest_index],
+		'type' => $guest_id_proofs['type'][$hotel_roomid][$guest_index],
+		'tmp_name' => $guest_id_proofs['tmp_name'][$hotel_roomid][$guest_index],
+		'error' => $guest_id_proofs['error'][$hotel_roomid][$guest_index],
+		'size' => $guest_id_proofs['size'][$hotel_roomid][$guest_index],
+	];
+	if ($file['error'] === UPLOAD_ERR_OK && !empty($file['name'])) {
+		$upload_path = './upload/id_proofs/';
+		$uploaded_file = $this->_upload_file($file, $upload_path);
+	} else {
+		$uploaded_file = 'default.jpg';
+	}
+	$guest_code = uniqid('guest_', true); // Generate unique guest code
+	$extra_guest_data = [
+		'booking_id' => $booking_id, // Use the booking_id from the room booking
+		'guest_name' => $name,
+		'phone' => $extra_guest_phone[$extra_index] ?? null,
+		'age' => $extra_guest_age[$extra_index] ?? 'Unknown', // Default value
+		'hotel_roomid' => $hotel_roomid,
+		'guest_code' => $guest_code,
+		'id_proof' => $uploaded_file,
+		'date' => $adding_date,
+		'admin_status' => 'staff',
+		'status' => '1',
+	];
+	$this->HomeModel->insert_guest_details($extra_guest_data);
+	}
+}
+
+
+	}
+	$items_data = json_decode($this->input->post('items_data'), true);
+	if (empty($items_data)) {
+		error_log('Received items_data: ' . $this->input->post('items_data'));
+		echo json_encode(['status' => 'error', 'message' => 'Invalid data.']);
+		return;
+	}
+	// Loop through each room and its items
+	foreach ($items_data as $room_id => $room_items) {
+		if (!is_array($room_items)) {
+			echo json_encode(['status' => 'error', 'message' => 'Invalid item data for room: ' . $room_id]);
+			return;
+		}
+		foreach ($room_items as $item) {
+			if (!is_array($item) || !isset($item['id'], $item['name'], $item['currentPrice'], $item['newPrice'], $item['quantity'], $item['totalPrice'])) {
+				echo json_encode(['status' => 'error', 'message' => 'Invalid item data.']);
+				return;
+			}
+			$data = [
+				'booking_id' => $booking_id,
+				'item_name' => $item['name'],
+				'item_id' => $item['id'],
+				'item_price' => $item['currentPrice'],
+				'new_price' => $item['newPrice'],
+				'quantity' => $item['quantity'],
+				'item_total_price' => $item['totalPrice'],
+				'hotel_roomid' => $room_id,
+				'adding_date' => $adding_date,
+				'admin_status' => 'staff',
+				'status' => ($item['quantity'] > 0) ? '1' : '0',  // Set status to 0 if quantity is 0
+			];
+			// Check if the item already exists
+			$existing_item = $this->HomeModel->get_room_item($booking_id, $room_id, $item['id']);
+			if ($existing_item) {
+				// Update existing item
+				//$this->HomeModel->update_room_item($existing_item['id'], $data);
+			} else {
+				// Insert new item
+				$this->HomeModel->insert_room_items($data);
+			}
+		}
+	}
+
+	echo json_encode(['status' => 'success', 'message' => 'All items updated successfully.']);
+	redirect('Superadmin/settlement');
+}
+
+
+
+
+
 
 
 
