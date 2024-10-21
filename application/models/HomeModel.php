@@ -340,7 +340,7 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         $query = $this->db->query("
             SELECT hr.roomtypeid, rt.roomtype, hr.hotel_roomid, hr.roomno, hr.room_name, 
                    IF(rb.booking_status IS NOT NULL, rb.booking_status, hr.room_status) AS status,
-                   rb.checkin, rb.checkout
+                   rb.checkin, rb.checkout,rb.booking_id
             FROM hotel_room hr
             LEFT JOIN room_booking rb ON hr.hotel_roomid = rb.hotel_roomid 
                 AND NOW() BETWEEN rb.checkin AND rb.checkout
@@ -735,27 +735,62 @@ public function getBookedDatesByRoomId($roomId) {
     $query = $this->db->get();
     return $query->result();
 }
-
-
 public function getBookingDetailsById($booking_id) {
-    $this->db->distinct(); // Ensure unique results
-    $this->db->select('room_booking.*,hotel_room.*,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
-     customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
-     room_booking_details.extra_guest_count,guest_details.*');
-    $this->db->from('room_booking'); 
+    $this->db->select('room_booking.*, hotel_room.*, admin_room.*, agent.*, customer.*, agent.agent_name, agent.agent_id,
+     customer.customer_name, customer.email AS customer_email, room_booking_details.*, room_booking_details.extra_guest_count');
+    $this->db->from('room_booking');
     $this->db->join('room_booking_details', 'room_booking_details.booking_id = room_booking.booking_id', 'left');
-    $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
-    $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
-    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
-    $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); 
-    $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left'); 
+    $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left');
+    $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left');
     $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
     $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
     $this->db->where('room_booking.booking_id', $booking_id);
     $query = $this->db->get();
-    return $query->result_array(); // Ensure this returns an array
-    $this->db->distinct(); // Ensure unique results for guests
+    $result = $query->result_array();
+    // Fetch guest details and items separately
+    foreach ($result as &$booking) {
+        $booking['guests'] = $this->getGuestDetailsByBookingId($booking_id, $booking['hotel_roomid']);
+        $booking['items'] = $this->getItemsByBookingIdAndRoomId1($booking_id, $booking['hotel_roomid']);
+    }
+    return $result;
 }
+public function getGuestDetailsByBookingId($booking_id, $hotel_roomid) {
+    $this->db->select('guest_details.*');
+    $this->db->from('guest_details');
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $hotel_roomid);
+    $query = $this->db->get();
+    return $query->result_array();
+}
+public function getItemsByBookingIdAndRoomId1($booking_id, $hotel_roomid) {
+    $this->db->select('room_item_details.*, item.*');
+    $this->db->from('room_item_details');
+    $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+    $this->db->where('room_item_details.booking_id', $booking_id);
+    $this->db->where('room_item_details.hotel_roomid', $hotel_roomid);
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
+// public function getBookingDetailsById($booking_id) {
+//     $this->db->distinct(); // Ensure unique results
+//     $this->db->select('room_booking.*,hotel_room.*,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
+//      customer.customer_name, customer.email AS customer_email,item.*,room_item_details.*,room_booking_details.*,
+//      room_booking_details.extra_guest_count,guest_details.*');
+//     $this->db->from('room_booking'); 
+//     $this->db->join('room_booking_details', 'room_booking_details.booking_id = room_booking.booking_id', 'left');
+//     $this->db->join('room_item_details', 'room_item_details.booking_id = room_booking.booking_id', 'left');
+//     $this->db->join('guest_details', 'guest_details.booking_id = room_booking.booking_id', 'left');
+//     $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
+//     $this->db->join('customer', 'customer.customer_id = room_booking.customer_id', 'left'); 
+//     $this->db->join('agent', 'agent.agent_id = room_booking.agent_id', 'left'); 
+//     $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
+//     $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
+//     $this->db->where('room_booking.booking_id', $booking_id);
+//     $query = $this->db->get();
+//     return $query->result_array(); // Ensure this returns an array
+//     $this->db->distinct(); // Ensure unique results for guests
+// }
 // public function getBookingDetailsById($booking_id) {
 //     // Start with the main booking query
 //     $this->db->select('room_booking.*,hotel_room.*,hotel_room.hotel_roomid,admin_room.*,agent.*,customer.*,agent.agent_name,agent.agent_id,
@@ -790,13 +825,14 @@ public function getBookingDetailsById($booking_id) {
 //         'guests' => $guestDetails,
 //     ];
 // }
-
+wwww
 public function getItemsByBookingIdAndRoomId($booking_id, $hotel_roomid) {
     $this->db->select('item.*, room_item_details.*');
     $this->db->from('room_item_details');
     $this->db->join('item', 'item.item_id = room_item_details.item_id', 'left');
     $this->db->where('room_item_details.booking_id', $booking_id);
     $this->db->where('room_item_details.hotel_roomid', $hotel_roomid);
+    $this->db->where('room_item_details.status', '1');
     $query = $this->db->get();
     return $query->result_array();
 }
@@ -855,16 +891,33 @@ public function update_guest_details($guest_id, $data)
 }
 
 
-// public function insert_guest_details($data)
+
+// public function get_guest_by_booking_and_code($booking_id, $hotel_roomid,  $guest_phone)
 // {
-//     $this->db->insert('guest_details', $data);
+//     $this->db->where('booking_id', $booking_id);
+//     $this->db->where('hotel_roomid', $hotel_roomid);
+
+//     $this->db->where('phone', $guest_phone);
+
+//     $query = $this->db->get('guest_details');
+
+//     if ($query->num_rows() > 0) {
+//         return $query->row_array(); // Return the guest details as an array
+//     } else {
+//         return null; // No matching guest found
+//     }
 // }
-public function get_guest_by_booking_and_code($booking_id, $hotel_roomid,  $guest_phone)
+
+public function get_guest_by_booking_and_code($booking_id, $hotel_roomid, $guest_phone, $guest_code = null)
 {
     $this->db->where('booking_id', $booking_id);
     $this->db->where('hotel_roomid', $hotel_roomid);
-
     $this->db->where('phone', $guest_phone);
+
+    // If a guest code is provided, include it in the query
+    if (!empty($guest_code)) {
+        $this->db->where('guest_code', $guest_code);
+    }
 
     $query = $this->db->get('guest_details');
 
@@ -874,7 +927,6 @@ public function get_guest_by_booking_and_code($booking_id, $hotel_roomid,  $gues
         return null; // No matching guest found
     }
 }
-
 
 public function get_booking_by_id($booking_id) {
     $this->db->where('booking_id', $booking_id);
@@ -1036,6 +1088,54 @@ public function inserthotel($inserthotel){
 public function insert_settlement($data) {
     return $this->db->insert('settlement', $data);
 }
+
+
+public function get_room_item($booking_id, $room_id, $item_id)
+{
+    // Query the database to find the item associated with the booking and room
+    $this->db->select('*'); // Select all fields
+    $this->db->from('room_item_details'); // Assuming the table name is room_items
+    $this->db->where('booking_id', $booking_id);
+    $this->db->where('hotel_roomid', $room_id);
+    $this->db->where('item_id', $item_id); // Add item ID for filtering
+    $query = $this->db->get();
+    // Check if the item exists
+    if ($query->num_rows() > 0) {
+        return $query->row_array(); // Return the first row as an associative array
+    } else {
+        return null; // Return null if no item found
+    }
+}
+public function update_room_item($item_id, $data)
+{
+    // Update the room item in the database
+    $this->db->where('room_item_detail_id', $item_id); // Assuming the primary key is 'id'
+    return $this->db->update('room_item_details', $data); // Assuming the table name is room_items
+}
+
+
+public function update_item_status($item_id, $room_id, $booking_id, $status) {
+    $this->db->where('item_id', $item_id);
+    $this->db->where('hotel_roomid', $room_id);
+    $this->db->where('booking_id', $booking_id);
+    $this->db->update('room_item_details', ['status' => $status]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // public function save_item($data) {
 //     // Check if an item for this invoice and with this description already exists

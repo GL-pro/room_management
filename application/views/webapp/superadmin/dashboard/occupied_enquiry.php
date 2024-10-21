@@ -15,7 +15,7 @@
                     <div class="card">
                         <div class="card-body">
                         <form id="occupyform" action="<?= base_url('Superadmin/settlement') ?>" method="post" enctype="multipart/form-data">
-                        <input type="text" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>"> 
+                        <input type="hidden" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>"> 
                                 <div class="border-radius-xl bg-white">
 
                                     <div class="d-lg-flex">
@@ -155,7 +155,7 @@
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline ">
                             <label class="form-label">Phone Number</label>
-                            <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['phone'] ?>" placeholder="Phone Number" />
+                            <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['phone'] ?>" placeholder="Phone Number" readonly/>
                         </div>
                     </div>
                     <div class="col-12 col-sm-3 mt-2">
@@ -849,165 +849,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<!-- 
-<script>
-$(document).ready(function () {
-    $('.btn-warning').on('click', function (event) {
-        event.preventDefault(); // Prevent the form from submitting
-
-        const bookingId = $('input[name="booking_id"]').val(); // Fetch booking ID
-        const roomData = {}; // Fetch necessary room details
-
-        $('.room-details-table tbody tr').each(function () {
-            const roomId = $(this).data('room-id');
-            const roomInfo = {
-                roomNumber: $(this).find('.room-number').text(),
-                price: $(this).find('.price').text(),
-                guestName: $(this).find('.guest-name').text(),
-            };
-            roomData[roomId] = roomInfo; // Store room details
-        });
-
-        console.log('Room Data:', roomData);
-        console.log('Booking ID:', bookingId);
-
-        $.ajax({
-            url: '<?= base_url('Superadmin/fetch_room_details') ?>', // Ensure this is correct
-            type: 'POST',
-            data: { 
-                roomData: roomData,
-                booking_id: bookingId
-            },
-            success: function (response) {
-                console.log('Response from server:', response);
-                if (response.status === 'success') {
-                    console.log('Redirecting to settlement page...');
-                    window.location.href = '<?= base_url('Superadmin/settlement') ?>';
-                } else {
-                    console.error('Error:', response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error fetching room details:', xhr.responseText);
-            }
-        });
-    });
-});
-
-</script> -->
 
 
 
-
-<!-- 
-
-<script>
-let selectedRoomId;
-let roomItemsData = {}; // Store items for multiple rooms
-$(document).ready(function () {
-    // When an "Add Items" button is clicked for a room
-    $('.open-modal-btn').on('click', function () {
-        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
-        // Reset selected items when opening the modal
-    });
-    // Handle row selection
-    $('.item-row').on('click', function () {
-        $(this).toggleClass('selected-row'); // Toggle the selected state
-        const isSelected = $(this).hasClass('selected-row');
-        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
-    });
-
-    function calculateTotal($row) {
-        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
-        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
-        if (isNaN(newPrice) || newPrice <= 0) {
-            newPrice = currentPrice; // Use current price for calculation
-        }
-        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
-        const totalPrice = newPrice * quantity; // Calculate the total price
-        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
-    }
-    // Event listener for changes in new price and quantity inputs in the modal
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest item row
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-    // When the "Add Selected Items" button in the modal is clicked
-    $('#addItemsButton').on('click', function (event) {
-        event.preventDefault();
-        let selectedItems = [];
-        $('.item-row.selected-row').each(function () {
-            const itemName = $(this).data('item-name');
-            const itemId = $(this).find('input[name="item_id[]"]').val(); // Get item_id from hidden input
-            const itemPrice = parseFloat($(this).data('price')) || 0;
-            let newPrice = parseFloat($(this).find('.new-price').val().trim());
-            if (isNaN(newPrice) || newPrice <= 0) {
-                newPrice = itemPrice;
-            }
-            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1;
-            const totalPrice = newPrice * quantity;
-            selectedItems.push({ 
-                id: itemId, // Include item_id in the selected items
-                name: itemName,
-                currentPrice: itemPrice,
-                newPrice: newPrice,
-                quantity: quantity,
-                totalPrice: totalPrice.toFixed(2)
-            });
-        });
-
-        roomItemsData[selectedRoomId] = selectedItems; // Store items for the selected room
-        console.log('Room Items Data:', roomItemsData); // Debugging
-        selectedItems.forEach(item => {
-            const rowHtml = `
-                <tr data-price="${item.currentPrice}" data-room-id="${selectedRoomId}">
-                    <td>${item.name}</td>
-                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
-                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
-                    <td class="quantity">${item.quantity}</td>
-                    <td class="total-price">₹ ${item.totalPrice}</td>
-                    <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
-                    <input type="hidden" name="item_id[]" value="${item.id}" /> 
-                </tr>
-            `;
-            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
-        });
-
-        // Clear the modal inputs
-        $('.item-row').removeClass('selected-row').css('background-color', '');
-        $('.new-price').val('');
-        $('.quantity').val(1);
-
-        $('#exampleModal').modal('hide');
-    });
-    // Function to remove an item from the room's table
-    $(document).on('click', '.remove-item', function () {
-        const roomId = $(this).closest('tr').data('room-id');
-        $(this).closest('tr').remove(); // Remove the row from the table
-    });
-    // Handle form submission
-    $('#roomEnquiryForm').on('submit', function (event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        formData.append('items_data', JSON.stringify(roomItemsData));
-        const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
-        formData.append('booking_id', bookingId); // Append it to formData
-        $.ajax({
-            url: '<?= base_url('Superadmin/update_room_enquiry_submit') ?>',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (response) {
-                console.log('Form submitted successfully:', response);
-                
-            },
-            error: function (xhr, status, error) {
-                console.error('Error submitting form:', xhr.responseText);
-            }
-        });
-    });
-});
-</script> -->
 
 

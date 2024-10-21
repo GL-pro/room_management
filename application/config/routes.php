@@ -93,6 +93,7 @@ $route['settlement'] = 'Superadmin/settlement';
 $route['hotel_creation'] = 'Superadmin/hotel_creation';
 $route['membhotelreg'] = 'Superadmin/membhotelreg';
 $route['settlement_save'] = 'Superadmin/settlement_save';
+$route['update_item_status1'] = 'Superadmin/update_item_status1';
 
 $route['add_customer'] = 'Superadmin/add_customer';
 $route['add_agent'] = 'Superadmin/add_agent';

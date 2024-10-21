@@ -373,10 +373,16 @@
                     </div>
                     <div class="ms-auto my-auto">
                         <!-- Use form for redirection -->
-                        <form id="room-form" method="POST" action="">
+                        <!-- <form id="room-form" method="POST" action="">
                             <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
                             <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
-                        </form>
+                        </form> -->
+                        <form id="room-form" method="POST" action="">
+    <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
+    <input type="hidden" name="booking_id" id="booking_id" value=""> <!-- Add this for booking ID -->
+    <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
+</form>
+
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
@@ -395,40 +401,7 @@
                 </div>
             </div>
 
-            <!-- <?php foreach ($room_data1 as $room_type => $rooms): ?>
-                <div class="card">
-                    <div class="card-header py-0">
-                        <div class="d-flex">
-                            <div class="col-md-8 me-auto my-auto text-left">
-                                <h5><?php echo $room_type; ?> Room</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body row py-0">
-                        <div class="">
-                            <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
-                                <?php foreach ($rooms as $room): ?>
-                                    <?php
-                        // Check the room status and assign the appropriate class for button color
-                        if ($room['status'] === 'vacant' || $room['status'] === 'available') {
-                            $status_class = 'btn-success'; // Green for available or vacant
-                        } elseif ($room['status'] === 'booked') {
-                            $status_class = 'btn-warning'; // Yellow for booked
-                        } elseif ($room['status'] === 'occupied') {
-                            $status_class = 'btn-danger'; // Red for any other status (e.g., occupied)
-                        }
-                        ?>
-                                    <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo $room['status']; ?>" data-userid="<?php echo $room['customer_id']; ?>" autocomplete="off">
-                                    <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
-                                        <?php echo $room['roomno']; ?>
-                                    </label>
-                                <?php endforeach; ?>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?> -->
+      
 
                 <?php foreach ($room_data2 as $room_type => $rooms): ?>
                     <div class="card">
@@ -453,8 +426,16 @@
                                                 $status_class = 'btn-danger';
                                             }
                                         ?>
-                                        <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo htmlspecialchars($room['status']); ?>" autocomplete="off">
-                                        <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                                        <!-- <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo htmlspecialchars($room['status']); ?>" autocomplete="off"> -->
+                                <input 
+                                    type="checkbox" 
+                                    class="btn-check1 room-checkbox" 
+                                    id="btncheck<?php echo $room['hotel_roomid']; ?>" 
+                                    data-status="<?php echo htmlspecialchars($room['status']); ?>" 
+                                    data-bookingid="<?php echo isset($room['booking_id']) ? $room['booking_id'] : ''; ?>" 
+                                    autocomplete="off">
+                                       
+                                    <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
                                             <?php echo htmlspecialchars($room['roomno']); ?>
                                         </label>
                                     <?php endforeach; ?>
@@ -515,42 +496,6 @@
             alert('Selected date: ' + info.dateStr);
         }
     });
-
-    // Fetch booking data for the specified date range
-    // fetch('Superadmin/getBookingsForDateRange') // Replace with your actual endpoint
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         // Prepare events from the data
-    //         data.forEach(booking => {
-    //             let className = '';
-    //             if (booking.booking_status === 'booked') {
-    //                 className = 'bg-gradient-warning';
-    //             } else if (booking.booking_status === 'occupied') {
-    //                 className = 'bg-gradient-danger';
-    //             } else if (booking.booking_status === 'available') {
-    //                 className = 'bg-gradient-success';
-    //             }
-                
-    //             // Add events for each booking date
-    //             calendar.addEvent({
-    //                 title: `${booking.booking_status} (${booking.count}) - Room: ${booking.room_number} - Customer: ${booking.customer_name}`,
-    //                 start: booking.booking_date, // Use booking date from the response
-    //                 end: booking.booking_date, // Single day event
-    //                 className: className,
-    //                 extendedProps: {
-    //                     booking_id: booking.booking_id,
-    //                     customer_name: booking.customer_name,
-    //                     customer_email: booking.customer_email,
-    //                     customer_phone: booking.customer_phone,
-    //                     room_number: booking.room_number,
-    //                 }
-    //             });
-    //         });
-
-    //         // Render the calendar with the new events
-    //         calendar.render();
-    //     })
-    //     .catch(error => console.error('Error fetching booking data:', error));
 
 
     fetch('Superadmin/getBookingsForDateRange')
@@ -707,90 +652,80 @@
 
 <!-- JavaScript for room selection and button behavior -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const checkboxes = document.querySelectorAll('.room-checkbox');
     const proceedBtn = document.getElementById('proceed-btn');
     const selectedRoomsInput = document.getElementById('selected_rooms');
-    
+    const bookingIdInput = document.getElementById('booking_id'); // Add this line
+
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             let selectedRooms = [];
-            let selectedStatuses = new Set(); // Track room statuses
-            let selectedUsers = new Set(); // Track user IDs
+            let selectedStatuses = new Set();
+            let selectedUsers = new Set();
+            let bookingId = null;
             let anyChecked = false;
             let status = null;
 
-            // checkboxes.forEach(cb => {
-            //     if (cb.checked) {
-            //         anyChecked = true;
-            //         selectedRooms.push(cb.id.replace('btncheck', '')); // Get room IDs
-            //         status = cb.getAttribute('data-status'); // Track the last selected room's status
-            //         selectedStatuses.add(status); // Add room status to set
-            //         selectedUsers.add(cb.getAttribute('data-userid')); // Add user ID to set
-            //     }
-            // });
             checkboxes.forEach(cb => {
                 if (cb.checked) {
                     anyChecked = true;
-                    selectedRooms.push(cb.id.replace('btncheck', '')); // Get room IDs
+                    selectedRooms.push(cb.id.replace('btncheck', ''));
                     let status = cb.getAttribute('data-status');
-                    // Normalize 'vaccant' and 'available' to the same value
                     if (status === 'vaccant' || status === 'available') {
-                        normalizedStatus = 'available'; // Treat both as 'available'
+                        normalizedStatus = 'available';
                     } else {
                         normalizedStatus = status;
                     }
-                    selectedStatuses.add(normalizedStatus); // Add normalized status to the set
-                    selectedUsers.add(cb.getAttribute('data-userid')); // Add user ID to set
+                    selectedStatuses.add(normalizedStatus);
+                    selectedUsers.add(cb.getAttribute('data-userid'));
+                    bookingId = cb.getAttribute('data-bookingid'); // Get the booking_id
                 }
             });
 
             if (selectedStatuses.size > 1) {
-                // Multiple statuses selected: disable the proceed button
                 proceedBtn.classList.remove('btn-primary');
                 proceedBtn.classList.add('btn-secondary');
                 proceedBtn.disabled = true;
                 proceedBtn.textContent = 'Select rooms with the same status';
             } else if (selectedUsers.size > 1) {
-                // Multiple users selected: disable the proceed button
                 proceedBtn.classList.remove('btn-primary');
                 proceedBtn.classList.add('btn-secondary');
                 proceedBtn.disabled = true;
                 proceedBtn.textContent = 'Cannot proceed: Users are different';
             } else if (anyChecked) {
-                // Rooms have the same status and same user, enable the proceed button
                 proceedBtn.classList.remove('btn-secondary');
                 proceedBtn.classList.add('btn-primary');
                 proceedBtn.disabled = false;
 
-               // Update button text based on room status
-               if (normalizedStatus === 'available') {
+                if (normalizedStatus === 'available') {
                     proceedBtn.textContent = 'Proceed to Enquiry';
                 } else if (normalizedStatus === 'booked') {
                     proceedBtn.textContent = 'Proceed to Occupy';
                 } else if (normalizedStatus === 'occupied') {
                     proceedBtn.textContent = 'Continue to Occupy';
                 }
-            }  else {
-                // No rooms selected, disable the button
+
+                // Set the booking ID in the hidden input
+                bookingIdInput.value = bookingId;
+            } else {
                 proceedBtn.classList.remove('btn-primary');
                 proceedBtn.classList.add('btn-secondary');
                 proceedBtn.disabled = true;
                 proceedBtn.textContent = 'Proceed';
             }
 
-            // Store selected room IDs in the hidden input field
             selectedRoomsInput.value = selectedRooms.join(',');
         });
     });
 
-   // Add click event for the proceed button
-   proceedBtn.addEventListener('click', function() {
+    proceedBtn.addEventListener('click', function() {
         const selectedRooms = Array.from(checkboxes)
             .filter(checkbox => checkbox.checked)
             .map(checkbox => ({
                 id: checkbox.id.replace('btncheck', ''),
                 status: checkbox.dataset.status,
+                bookingId: checkbox.dataset.bookingid // Get the booking_id
             }));
 
         if (selectedRooms.length > 0) {
@@ -801,7 +736,9 @@
                 firstRoomStatus = 'available';
             }
 
-            // Redirect based on normalized status
+            // Set the booking ID in the hidden input
+            bookingIdInput.value = selectedRooms[0].bookingId;
+
             if (firstRoomStatus === 'available') {
                 document.getElementById('room-form').action = '<?php echo site_url("room_enquiry1"); ?>';
                 document.getElementById('room-form').submit();

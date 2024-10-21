@@ -294,60 +294,6 @@
     };
 </script>
 
-<!-- 
-<script>
-    // flatpickr("#daterange", {
-    //     mode: "range", // Enable date range selection
-    //     dateFormat: "Y-m-d", // Format for displaying the selected dates
-    //     minDate: "today", // Set the minimum date as today
-    //     onClose: function(selectedDates, dateStr, instance) {
-    //         console.log("Selected range: ", dateStr); // Logs the selected date range (optional)
-    //     }
-    // });
-
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const datepickers = document.querySelectorAll('.daterange-picker');
-    datepickers.forEach(picker => {
-        const roomId = picker.getAttribute('data-room-id');
-        // Make an AJAX request to get booked dates for the room
-        fetchBookedDates(roomId, picker);
-    });
-
-    function fetchBookedDates(roomId, picker) {
-        fetch('<?= site_url("get_booked_dates") ?>', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ room_id: roomId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const bookedDates = data.flatMap(item => {
-                return [
-                    { from: item.checkin, to: item.checkout }
-                ];
-            });
-
-            // Initialize Flatpickr with disabled booked date ranges
-            flatpickr(picker, {
-                mode: "range",
-                dateFormat: "Y-m-d",
-                minDate: "today", // Only allow future dates
-                disable: bookedDates.map(range => {
-                    return {
-                        from: new Date(range.from), 
-                        to: new Date(range.to)
-                    };
-                }),
-                onClose: function(selectedDates, dateStr, instance) {
-                    console.log("Selected range: ", dateStr); // Optional
-                }
-            });
-        });
-    }
-});
-</script> -->
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -634,77 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <!-- Modal -->
 
-<!-- Modal -->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Items</h5>
-                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="table-responsive ">
-                        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">quantity </th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Totel Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
-                                           
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                         
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr>
-                                
-                                <tr></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn bg-gradient-primary">Add</button>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 
 
 
@@ -914,295 +789,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-<!-- <script>
-let selectedRoomId;
-$(document).ready(function () {
-    // When an "Add Items" button is clicked for a room
-    $('.open-modal-btn').on('click', function () {
-        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
-    });
 
-    // Handle row selection
-    $('.item-row').on('click', function () {
-        $(this).toggleClass('selected-row'); // Toggle the selected state by adding/removing a class
-        const isSelected = $(this).hasClass('selected-row');
-        if (isSelected) {
-            $(this).css('background-color', '#d3f4ff'); // Highlight the row when selected
-        } else {
-            $(this).css('background-color', ''); // Remove highlight when deselected
-        }
-    });
-
-    function calculateTotal($row) {
-        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
-        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
-
-        // If new price is empty or invalid, use current price
-        if (isNaN(newPrice) || newPrice <= 0) {
-            newPrice = currentPrice; // Use current price for calculation
-        }
-
-        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
-        const totalPrice = newPrice * quantity; // Calculate the total price
-
-        // Update the total price in the DOM
-        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
-    }
-
-    // Event listener for changes in new price and quantity inputs in the modal
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest item row
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-
-    // When the "Add Selected Items" button in the modal is clicked
-    $('#addItemsButton').on('click', function () {
-        const selectedItems = []; // Array to hold selected items
-
-        // Loop through each selected row in the modal
-        $('.item-row.selected-row').each(function () {
-            const itemName = $(this).data('item-name');
-            const itemPrice = parseFloat($(this).data('price')) || 0;
-            let newPrice = parseFloat($(this).find('.new-price').val().trim()); // Get new price value
-
-            // If new price is empty or invalid, use the current price
-            if (isNaN(newPrice) || newPrice <= 0) {
-                newPrice = 0; // Set new price to 0 if not valid
-            }
-
-            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1; // Get quantity value
-
-            // Calculate total price based on current price if newPrice is 0
-            const totalPrice = (newPrice > 0 ? newPrice : itemPrice) * quantity;
-
-            // Add the selected item to the array
-            selectedItems.push({
-                name: itemName,
-                currentPrice: itemPrice,
-                newPrice: newPrice, // Use the new price if available, otherwise set to 0
-                quantity: quantity,
-                totalPrice: totalPrice.toFixed(2) // Format total price to two decimal points
-            });
-        });
-
-              
-
-
-        // Append each selected item to the corresponding room's table
-        selectedItems.forEach(item => {
-            const rowHtml = `
-                <tr data-price="${item.currentPrice}">
-                    <td>${item.name}</td>
-                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
-                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
-                    <td class="quantity">${item.quantity}</td>
-                    <td class="total-price">₹ ${item.totalPrice}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
-                    </td>
-                </tr>
-            `;
-            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
-        });
-
-        // Clear the modal inputs after adding items
-        $('.item-row').removeClass('selected-row').css('background-color', ''); // Reset selected rows
-        $('.new-price').val(''); // Clear new price inputs in the modal
-        $('.quantity').val(1); // Reset quantities to 1
-
-        // Close the modal
-        $('#exampleModal').modal('hide');
-    });
-
-    // Function to remove an item from the room's table
-    $(document).on('click', '.remove-item', function () {
-        $(this).closest('tr').remove(); // Remove the row from the table
-    });
-
-    // Event listener for changes in new price and quantity inputs in the main table
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest row in the main table
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-});
-</script>
-
- -->
-
- <!-- <script>
-let selectedRoomId;
-let selectedItems = []; // Define this globally
-
-$(document).ready(function () {
-    // When an "Add Items" button is clicked for a room
-    $('.open-modal-btn').on('click', function () {
-        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
-        // Reset selected items when opening the modal
-        selectedItems = []; // Clear the selected items when opening the modal
-    });
-
-    // Handle row selection
-    $('.item-row').on('click', function () {
-        $(this).toggleClass('selected-row'); // Toggle the selected state
-        const isSelected = $(this).hasClass('selected-row');
-        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
-    });
-
-    function calculateTotal($row) {
-        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
-        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
-
-        // If new price is empty or invalid, use current price
-        if (isNaN(newPrice) || newPrice <= 0) {
-            newPrice = currentPrice; // Use current price for calculation
-        }
-
-        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
-        const totalPrice = newPrice * quantity; // Calculate the total price
-
-        // Update the total price in the DOM
-        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
-    }
-
-    // Event listener for changes in new price and quantity inputs in the modal
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest item row
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-
-    // When the "Add Selected Items" button in the modal is clicked
-    $('#addItemsButton').on('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
-
-        selectedItems = []; // Clear the selectedItems array
-
-        // Loop through each selected row in the modal
-        $('.item-row.selected-row').each(function () {
-            const itemName = $(this).data('item-name');
-            const itemPrice = parseFloat($(this).data('price')) || 0;
-            let newPrice = parseFloat($(this).find('.new-price').val().trim()); // Get new price value
-
-            // If new price is empty or invalid, use the current price
-            if (isNaN(newPrice) || newPrice <= 0) {
-                newPrice = itemPrice; // Use current price if new price is invalid
-            }
-
-            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1; // Get quantity value
-
-            // Calculate total price
-            const totalPrice = newPrice * quantity;
-
-            // Add the selected item to the array
-            selectedItems.push({
-                name: itemName,
-                currentPrice: itemPrice,
-                newPrice: newPrice,
-                quantity: quantity,
-                totalPrice: totalPrice.toFixed(2) // Format total price to two decimal points
-            });
-        });
-
-        console.log('Selected Items:', selectedItems); // Debugging line
-
-        // Append each selected item to the corresponding room's table
-        selectedItems.forEach(item => {
-            const rowHtml = `
-                <tr data-price="${item.currentPrice}">
-                    <td>${item.name}</td>
-                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
-                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
-                    <td class="quantity">${item.quantity}</td>
-                    <td class="total-price">₹ ${item.totalPrice}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm remove-item">Remove</button>
-                    </td>
-                </tr>
-            `;
-            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
-        });
-
-        // Clear the modal inputs after adding items
-        $('.item-row').removeClass('selected-row').css('background-color', ''); // Reset selected rows
-        $('.new-price').val(''); // Clear new price inputs in the modal
-        $('.quantity').val(1); // Reset quantities to 1
-
-        // Close the modal
-        $('#exampleModal').modal('hide');
-
-        // Call the function to submit the form
-        submitRoomEnquiryForm();
-    });
-
-    // Function to remove an item from the room's table
-    $(document).on('click', '.remove-item', function () {
-        $(this).closest('tr').remove(); // Remove the row from the table
-    });
-
-    // Event listener for changes in new price and quantity inputs in the main table
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest row in the main table
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-});
-</script>
-
-
-<script>
-    // Handle form submission
-$('#roomEnquiryForm').on('submit', function (event) {
-    event.preventDefault(); // Prevent default form submission
-    const formData = new FormData(this); // Create FormData object from the form
-    const itemsData = {}; // Initialize an empty object for items data
-
-    // Collect items from the room's table
-    $(`#table-room-${selectedRoomId} tbody tr`).each(function () {
-        const row = $(this);
-        const roomId = row.data('room-id'); // Get room ID from data attribute
-
-        if (!itemsData[roomId]) {
-            itemsData[roomId] = []; // Initialize if not already done
-        }
-
-        // Get item details
-        const itemDetails = {
-            item_id: row.find('input[name="item_id[]"]').val(), // Get item_id
-            name: row.find('td').eq(0).text().trim(), // Trim to remove extra spaces
-            currentPrice: parseFloat(row.find('td').eq(1).text().replace('₹ ', '').replace(',', '')),
-            newPrice: parseFloat(row.find('.new-price').text().replace('₹ ', '').replace(',', '')),
-            quantity: parseInt(row.find('.quantity').text()),
-            totalPrice: parseFloat(row.find('.total-price').text().replace('₹ ', '').replace(',', '')) // Ensure totalPrice is a float
-        };
-
-        itemsData[roomId].push(itemDetails); // Add item details to the respective room
-    });
-
-    // Log collected items data to check if it's populated
-    console.log('Collected items data:', itemsData);
-
-    // Append items data to the FormData object
-    formData.append('items_data', JSON.stringify(itemsData)); // Send as a JSON string
-
-    // Send data to the server via AJAX
-    $.ajax({
-        url: '<?= base_url('Superadmin/room_enquiry_submit') ?>', // Adjust to your endpoint
-        type: 'POST',
-        data: formData, // Send form data
-        contentType: false, // Prevent jQuery from overriding content type
-        processData: false, // Prevent jQuery from processing the data
-        success: function (response) {
-            console.log('Form submitted successfully:', response); // Log response for debugging
-            // Handle successful submission (e.g., show a success message)
-        },
-        error: function (xhr, status, error) {
-            console.error('Error submitting form:', xhr.responseText); // Log the server's response for debugging
-        }
-    });
-});
-
-
-</script>
-
- -->
 
 
 
@@ -1319,11 +906,30 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function (response) {
-                console.log('Form submitted successfully:', response);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error submitting form:', xhr.responseText);
+            console.log('Form submitted successfully:', response);
+            try {
+                const result = JSON.parse(response);
+                if (result.status === 'success') {
+                    // Show success message
+                    alert('Form submitted successfully!');
+                    // Redirect to dashboard
+                    window.location.href = '<?= base_url('dashboard') ?>';
+                } else {
+                    // Handle error
+                    console.error('Error:', result.message);
+                    alert('An error occurred: ' + result.message);
+                }
+            } catch (e) {
+                console.error('Error parsing response:', e);
+                // If the response is not JSON, assume it's a success and redirect
+                alert('Form submitted successfully!');
+                window.location.href = '<?= base_url('dashboard') ?>';
             }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error submitting form:', xhr.responseText);
+            alert('An error occurred while submitting the form. Please try again.');
+        }
         });
     });
 });

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 01:15 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Generation Time: Oct 20, 2024 at 05:33 PM
+-- Server version: 10.4.21-MariaDB
+-- PHP Version: 8.0.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,7 +34,7 @@ CREATE TABLE `adminlogin` (
   `usertype` text NOT NULL,
   `status` text NOT NULL,
   `date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `adminlogin`
@@ -57,7 +57,7 @@ CREATE TABLE `admin_facility` (
   `adding_date` datetime(6) DEFAULT NULL,
   `hotelid` bigint(20) NOT NULL,
   `usertype` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `admin_facility`
@@ -87,7 +87,7 @@ CREATE TABLE `admin_facility_type` (
   `hotelid` bigint(20) NOT NULL,
   `usertype` text NOT NULL,
   `approvestatus` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `admin_facility_type`
@@ -112,7 +112,7 @@ CREATE TABLE `admin_room` (
   `date` datetime(6) DEFAULT NULL,
   `roomtype_image` text NOT NULL,
   `approvestatus` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `admin_room`
@@ -140,7 +140,7 @@ CREATE TABLE `agent` (
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `admin_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `agent`
@@ -164,7 +164,7 @@ CREATE TABLE `bank` (
   `bank_name` varchar(50) NOT NULL,
   `status` varchar(50) NOT NULL,
   `date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `bank`
@@ -211,7 +211,7 @@ CREATE TABLE `cancel_booking` (
   `booking_id` text NOT NULL,
   `cancel_status` text NOT NULL,
   `cancelled_at` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -227,7 +227,7 @@ CREATE TABLE `category` (
   `adminstatus` text NOT NULL,
   `approvestatus` text NOT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `category`
@@ -259,7 +259,7 @@ CREATE TABLE `customer` (
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `admin_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `customer`
@@ -285,23 +285,23 @@ CREATE TABLE `guest_details` (
   `booking_id` bigint(20) NOT NULL,
   `hotel_roomid` bigint(20) NOT NULL,
   `guest_name` text NOT NULL,
-  `phone` bigint(20) NOT NULL,
+  `phone` text NOT NULL,
   `age` bigint(20) NOT NULL,
   `id_proof` text NOT NULL,
   `status` text NOT NULL,
   `admin_status` text NOT NULL,
   `date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `guest_details`
 --
 
 INSERT INTO `guest_details` (`guest_id`, `guest_code`, `booking_id`, `hotel_roomid`, `guest_name`, `phone`, `age`, `id_proof`, `status`, `admin_status`, `date`) VALUES
-(161, 'guest_670f91335fc5c3.02422649', 425, 32, 'aaaaa', 345436545, 34, 'default.jpg', '1', 'staff', '2024-10-16 15:40:59.000000'),
-(162, 'guest_670f9133605943.62979001', 425, 32, 'bbbb', 456456546, 345, 'default.jpg', '1', 'staff', '2024-10-16 15:40:59.000000'),
-(163, 'guest_670f914ce104d9.13557461', 426, 31, 'ssss', 345454654, 4, 'default.jpg', '1', 'staff', '2024-10-16 15:41:24.000000'),
-(164, 'guest_670f914ce1bd77.88832969', 426, 31, 'ddddd', 567567676, 34, 'default.jpg', '1', 'staff', '2024-10-16 15:41:24.000000');
+(239, 'guest_6714d3f0c7cb18.85569349', 444, 30, 'AAA13', '7777777777', 444, 'default.jpg', '1', 'staff', '2024-10-20 15:27:04.000000'),
+(240, 'guest_6714d3f0c83a85.56386342', 444, 30, 'BBB1', '8888888888', 666, 'default.jpg', '1', 'staff', '2024-10-20 15:27:04.000000'),
+(241, 'guest_6714d3f0ce7a63.72252932', 445, 31, 'CCCxxx', '5555555555', 54, 'default.jpg', '1', 'staff', '2024-10-20 15:27:04.000000'),
+(242, 'guest_6714d3f0cf3227.42500584', 445, 31, 'DDDxxx', '6666666666', 45, 'default.jpg', '1', 'staff', '2024-10-20 15:27:04.000000');
 
 -- --------------------------------------------------------
 
@@ -325,7 +325,7 @@ CREATE TABLE `hotel` (
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `adminstatus` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `hotel`
@@ -361,7 +361,7 @@ CREATE TABLE `hotel_room` (
   `admintype` text NOT NULL,
   `room_status` text NOT NULL,
   `booking_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `hotel_room`
@@ -389,7 +389,7 @@ CREATE TABLE `hotel_room_facility` (
   `subfacilityid` bigint(20) NOT NULL,
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `hotel_room_facility`
@@ -448,7 +448,7 @@ CREATE TABLE `item` (
   `adminstatus` text NOT NULL,
   `approvestatus` text NOT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `item`
@@ -471,14 +471,21 @@ CREATE TABLE `occupy_booking` (
   `booking_id` bigint(20) NOT NULL,
   `occupy_date` datetime(6) DEFAULT NULL,
   `occupy_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `occupy_booking`
 --
 
 INSERT INTO `occupy_booking` (`occupy_id`, `booking_id`, `occupy_date`, `occupy_status`) VALUES
-(3, 426, '2024-10-16 15:41:45.000000', 'occupied');
+(33, 444, '2024-10-20 15:28:50.000000', 'occupied'),
+(34, 444, '2024-10-20 15:30:18.000000', 'occupied'),
+(35, 444, '2024-10-20 15:31:28.000000', 'occupied'),
+(36, 444, '2024-10-20 15:34:47.000000', 'occupied'),
+(37, 444, '2024-10-20 15:36:02.000000', 'occupied'),
+(38, 444, '2024-10-20 15:40:20.000000', 'occupied'),
+(39, 444, '2024-10-20 15:42:56.000000', 'occupied'),
+(40, 445, '2024-10-20 16:07:18.000000', 'occupied');
 
 -- --------------------------------------------------------
 
@@ -509,15 +516,15 @@ CREATE TABLE `room_booking` (
   `customer_id` bigint(20) NOT NULL,
   `advance_amount` bigint(20) NOT NULL,
   `date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `room_booking`
 --
 
 INSERT INTO `room_booking` (`booking_id`, `order_id`, `hotel_roomid`, `roomno`, `room_name`, `noofguests`, `checkin`, `checkout`, `payment_method`, `payment_status`, `booking_date`, `occupy_date`, `admin_status`, `booking_status`, `occupy_status`, `cancel_status`, `vacant_status`, `status`, `agent_id`, `customer_id`, `advance_amount`, `date`) VALUES
-(425, 'order_670f91335bb52', '32', '343', 'fff', '2', '2024-10-17 12:00:00.000000', '2024-10-19 12:00:00.000000', 'cash', 'payed', '2024-10-16 15:40:59.000000', NULL, 'staff', 'booked', '', '', '', '1', 8, 14, 55, NULL),
-(426, 'order_670f9161821ce', '31', '102', 'room2', '4', '2024-10-22 12:00:00.000000', '2024-10-23 12:00:00.000000', '', 'payed', '2024-10-16 15:41:24.000000', '2024-10-16 15:41:45.000000', 'staff', 'vacant', '', '', '', '1', 7, 13, 22, '2024-10-18 13:12:57.000000');
+(444, 'order_6714d7a88fcfd', '30', '101', 'room1', '5', '2024-10-21 12:00:00.000000', '2024-10-23 12:00:00.000000', '', 'payed', '2024-10-20 15:27:04.000000', '2024-10-20 15:42:56.000000', 'staff', 'occupied', '', '', '', '1', 6, 13, 0, '2024-10-20 15:27:04.000000'),
+(445, 'order_6714dd5e2f4d6', '31', '102', 'room2', '4', '2024-10-29 12:00:00.000000', '2024-10-31 12:00:00.000000', '', 'payed', '2024-10-20 15:27:04.000000', '2024-10-20 16:07:18.000000', 'staff', 'occupied', '', '', '', '1', 6, 13, 0, '2024-10-20 15:27:04.000000');
 
 -- --------------------------------------------------------
 
@@ -531,15 +538,15 @@ CREATE TABLE `room_booking_details` (
   `hotel_roomid` bigint(20) NOT NULL,
   `date` datetime(6) DEFAULT NULL,
   `extra_guest_count` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `room_booking_details`
 --
 
 INSERT INTO `room_booking_details` (`booking_detail_id`, `booking_id`, `hotel_roomid`, `date`, `extra_guest_count`) VALUES
-(324, 425, 32, '2024-10-16 15:40:59.000000', 0),
-(325, 426, 31, '2024-10-16 15:41:45.000000', 0);
+(343, 444, 30, '2024-10-20 15:42:56.000000', 0),
+(344, 445, 31, '2024-10-20 16:07:18.000000', 0);
 
 -- --------------------------------------------------------
 
@@ -561,16 +568,17 @@ CREATE TABLE `room_item_details` (
   `adding_date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `admin_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `room_item_details`
 --
 
 INSERT INTO `room_item_details` (`room_item_detail_id`, `booking_id`, `order_id`, `item_id`, `item_name`, `quantity`, `item_price`, `new_price`, `item_total_price`, `hotel_roomid`, `adding_date`, `status`, `admin_status`) VALUES
-(250, '425', '', '7', 'bus33y', '1', '33', '1', '1.00', 32, '2024-10-16 15:40:59.000000', '1', 'staff'),
-(251, '426', '', '7', 'bus33y', '1', '33', '33', '33.00', 31, '2024-10-16 15:41:24.000000', '1', 'staff'),
-(252, '426', '', '8', 'sdfse', '1', '34', '34', '34.00', 31, '2024-10-16 15:41:24.000000', '1', 'staff');
+(271, '444', '', '6', 'tttt', '1', '43443', '5', '5.00', 30, '2024-10-20 15:27:04.000000', '1', 'staff'),
+(272, '445', '', '6', 'tttt', '1', '43443', '2', '2.00', 31, '2024-10-20 15:27:04.000000', '1', 'staff'),
+(274, '444', '', '7', 'bus33y', '1', '33', '2', '2.00', 30, '2024-10-20 15:42:56.000000', '1', 'staff'),
+(275, '445', '', '7', 'bus33y', '50', '33', '33', '1650.00', 31, '2024-10-20 16:07:18.000000', '1', 'staff');
 
 -- --------------------------------------------------------
 
@@ -599,7 +607,7 @@ CREATE TABLE `room_occupy` (
   `admin_status` text NOT NULL,
   `booking_status` text NOT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -616,15 +624,15 @@ CREATE TABLE `room_status_log` (
   `customer_id` bigint(20) NOT NULL,
   `status_change_date` datetime(6) NOT NULL,
   `availability_date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `room_status_log`
 --
 
 INSERT INTO `room_status_log` (`log_id`, `hotel_roomid`, `booking_id`, `status`, `date`, `customer_id`, `status_change_date`, `availability_date`) VALUES
-(129, 32, 425, 'vaccant', '2024-10-16 15:40:59.000000', 14, '2024-10-16 15:40:59.000000', '2024-10-19 12:00:00.000000'),
-(130, 31, 426, 'vaccant', '2024-10-16 15:41:45.000000', 13, '2024-10-16 15:41:45.000000', '2024-10-23 12:00:00.000000');
+(148, 30, 444, 'vaccant', '2024-10-20 15:42:56.000000', 13, '2024-10-20 15:42:56.000000', '2024-10-23 12:00:00.000000'),
+(149, 31, 445, 'vaccant', '2024-10-20 16:07:18.000000', 13, '2024-10-20 16:07:18.000000', '2024-10-31 12:00:00.000000');
 
 -- --------------------------------------------------------
 
@@ -648,14 +656,7 @@ CREATE TABLE `settlement` (
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `settlement_status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `settlement`
---
-
-INSERT INTO `settlement` (`settlement_id`, `booking_id`, `customer_id`, `invoice_no`, `invoice_date`, `hotel_roomid`, `base_amt_grand_tot`, `gst_amt_grand_tot`, `tot_amt_grand_tot`, `net_amount`, `by_advance`, `amount_payable`, `date`, `status`, `settlement_status`) VALUES
-(22, 426, 13, 'INV-67123C1FDC04E', '2024-10-18 00:00:00.000000', 31, 67.00, 2.36, 69.36, 69.36, 22.00, 47.36, '2024-10-18 13:12:55.000000', '0', 'paid');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -674,15 +675,7 @@ CREATE TABLE `settlement_item` (
   `total_amount` bigint(20) NOT NULL,
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `settlement_item`
---
-
-INSERT INTO `settlement_item` (`settlement_item_id`, `settlement_id`, `item_name`, `hsn_code`, `base_amount`, `gst_percent`, `gst_amount`, `total_amount`, `date`, `status`) VALUES
-(37, 22, 'bus33y', 'sfw3', 33, 2, 1, 34, '2024-10-18 12:45:03.000000', '1'),
-(38, 22, 'sdfse', 'gr4', 34, 5, 2, 36, '2024-10-18 12:45:03.000000', '1');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -697,7 +690,7 @@ CREATE TABLE `staff_login` (
   `date` datetime(6) DEFAULT NULL,
   `status` text NOT NULL,
   `usertype` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `staff_login`
@@ -721,7 +714,7 @@ CREATE TABLE `subcategory` (
   `adminstatus` text NOT NULL,
   `approvestatus` text NOT NULL,
   `status` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `subcategory`
@@ -755,7 +748,7 @@ CREATE TABLE `userlogin` (
   `status` text NOT NULL,
   `date` datetime(6) DEFAULT NULL,
   `image` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `userlogin`
@@ -980,7 +973,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `guest_details`
 --
 ALTER TABLE `guest_details`
-  MODIFY `guest_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `guest_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=247;
 
 --
 -- AUTO_INCREMENT for table `hotel`
@@ -1010,25 +1003,25 @@ ALTER TABLE `item`
 -- AUTO_INCREMENT for table `occupy_booking`
 --
 ALTER TABLE `occupy_booking`
-  MODIFY `occupy_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `occupy_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `room_booking`
 --
 ALTER TABLE `room_booking`
-  MODIFY `booking_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=427;
+  MODIFY `booking_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=446;
 
 --
 -- AUTO_INCREMENT for table `room_booking_details`
 --
 ALTER TABLE `room_booking_details`
-  MODIFY `booking_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=326;
+  MODIFY `booking_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=345;
 
 --
 -- AUTO_INCREMENT for table `room_item_details`
 --
 ALTER TABLE `room_item_details`
-  MODIFY `room_item_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=253;
+  MODIFY `room_item_detail_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=276;
 
 --
 -- AUTO_INCREMENT for table `room_occupy`
@@ -1040,7 +1033,7 @@ ALTER TABLE `room_occupy`
 -- AUTO_INCREMENT for table `room_status_log`
 --
 ALTER TABLE `room_status_log`
-  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
+  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
 
 --
 -- AUTO_INCREMENT for table `settlement`

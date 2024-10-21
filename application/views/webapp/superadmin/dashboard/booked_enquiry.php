@@ -14,8 +14,30 @@
                 <div class="col-12  m-auto ">
                     <div class="card">
                         <div class="card-body">
-                        <form id="roomEnquiryForm" action="" method="post" enctype="multipart/form-data">
-                        <input type="text" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>"> 
+                        <?php if (!empty($booking_details)): ?>
+    <form id="roomEnquiryForm" action="" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>">
+
+
+
+        <!-- for getting multiple guest_code -->
+        <!-- Loop through each booking detail (room) -->
+        <?php foreach ($booking_details as $detail): ?>
+            <?php if (!empty($detail['guests'])): ?>
+                <!-- Loop through each guest in the room -->
+                <?php foreach ($detail['guests'] as $index => $guest): ?>
+                    <input type="hidden" name="guest_code[<?= $detail['hotel_roomid']; ?>][<?= $index; ?>]" value="<?= $guest['guest_code']; ?>" />
+                    <p>Guest Name: <?= $guest['guest_name']; ?> | Guest Code: <?= $guest['guest_code']; ?></p>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No guests found for this room.</p>
+            <?php endif; ?>
+        <?php endforeach; ?>
+ 
+
+
+
+ 
                                 <div class="border-radius-xl bg-white">
 
                                     <div class="d-lg-flex">
@@ -155,7 +177,7 @@
                     <div class="col-12 col-sm-3 mt-2">
                         <div class="input-group input-group-outline ">
                             <label class="form-label">Phone Number</label>
-                            <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['phone'] ?>" placeholder="Phone Number" />
+                            <input class="form-control" type="text" name="guest_phone[<?= $room['hotel_roomid'] ?>][]" value="<?= $guest['phone'] ?>" placeholder="Phone Number" readonly/>
                         </div>
                     </div>
                     <div class="col-12 col-sm-3 mt-2">
@@ -207,7 +229,9 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($room['items'] as $item): ?>
-                                        <tr>
+                                        <tr>   
+                                            <!-- Hidden input for item_id -->
+                                        <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
                                             <td><?= $item['item_name'] ?></td>
                                             <td><?= $item['item_price'] ?></td>
                                             <td><?= $item['new_price'] ?></td>
@@ -279,7 +303,17 @@
                                     <a href=" " class="ms-auto mb-0">
                                         <button class="ms-auto mb-0 btn bg-gradient-success " type="submit" title="submit">Submit FOR Occupied</button></a>
                                 </div>
-                            </form>
+
+
+
+
+                                </form>
+                                <!-- guest code fetching code -->
+<?php else: ?>
+    <p>No booking details available.</p>
+<?php endif; ?>
+
+
                         </div>
                     </div>
                 </div>
@@ -331,141 +365,6 @@
 </div>
 <!-- Modal -->
 
-<!-- Modal -->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Add Items</h5>
-                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="table-responsive ">
-                        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder w-30">Item</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Current Price</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">New Price</th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">quantity </th>
-                                    <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Totel Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
-                             
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                 
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
-                                   
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                       
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="w-30">
-                                        <div class="d-flex px-2 py-1 w-30">
-                                            <div>
-                                                <img src="https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/team-2.jpg" class="avatar avatar-md me-3 my-auto">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center w-30">
-                                                <h6 class="mb-0 text-md w-30">Item Name</h6>
-                                                <p class="text-sm text-secondary mb-0 w-30">Category</p>
-                                                <p class="text-sm text-secondary mb-0 w-30">Sub Category</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-md font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-outline">
-                                     
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class=" input-group input-group-outline">
-                                          
-                                            <input class="form-control" type="number" name="commamt" required />
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <p class="text-lg font-weight-bold mb-0">₹ 1000/-</p>
-                                    </td>
-                                </tr>
-
-                                <tr></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn bg-gradient-primary">Add</button>
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- Modal -->
 
 
 
@@ -986,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<script>
+<!-- <script>
 let selectedRoomId;
 let roomItemsData = {}; // Store items for multiple rooms
 $(document).ready(function () {
@@ -1052,7 +951,7 @@ $(document).ready(function () {
                     <td class="quantity">${item.quantity}</td>
                     <td class="total-price">₹ ${item.totalPrice}</td>
                     <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
-                    <input type="hidden" name="item_id[]" value="${item.id}" /> <!-- Add hidden input for item_id -->
+                    <input type="hidden" name="item_id[]" value="${item.id}" /> 
                 </tr>
             `;
             $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
@@ -1076,7 +975,175 @@ $(document).ready(function () {
         const formData = new FormData(this);
         formData.append('items_data', JSON.stringify(roomItemsData));
         const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
+        const guestCode = $('input[name="guest_code"]').val(); // Get the guest_code from the form (add this field if not present)
         formData.append('booking_id', bookingId); // Append it to formData
+        formData.append('guest_code', guestCode); // Append guest_code to formData
+        $.ajax({
+        url: '<?= base_url('Superadmin/update_room_enquiry_submit') ?>',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            console.log('Form submitted successfully:', response);
+            window.location.href = '<?= base_url('dashboard') ?>';
+            // Optionally reload the page or update UI after success
+        },
+        error: function (xhr, status, error) {
+            console.error('Error submitting form:', xhr.responseText);
+        }
+    });
+
+    });
+});
+</script> -->
+
+<script>
+let selectedRoomId;
+let roomItemsData = {}; // Store items for multiple rooms
+
+$(document).ready(function () {
+    // When an "Add Items" button is clicked for a room
+    $('.open-modal-btn').on('click', function () {
+        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
+    });
+
+    // Handle row selection
+    $('.item-row').on('click', function () {
+        $(this).toggleClass('selected-row'); // Toggle the selected state
+        const isSelected = $(this).hasClass('selected-row');
+        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
+    });
+
+    function calculateTotal($row) {
+        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
+        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
+        if (isNaN(newPrice) || newPrice <= 0) {
+            newPrice = currentPrice; // Use current price for calculation
+        }
+        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
+        const totalPrice = newPrice * quantity; // Calculate the total price
+        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
+    }
+
+    // Event listener for changes in new price and quantity inputs in the modal
+    $(document).on('input', '.new-price, .quantity', function () {
+        const $row = $(this).closest('tr'); // Get the closest item row
+        calculateTotal($row); // Recalculate total price when new price or quantity changes
+    });
+
+    // When the "Add Selected Items" button in the modal is clicked
+    $('#addItemsButton').on('click', function (event) {
+        event.preventDefault();
+        let selectedItems = [];
+        $('.item-row.selected-row').each(function () {
+            const itemName = $(this).data('item-name');
+            const itemId = $(this).find('input[name="item_id[]"]').val(); // Get item_id from hidden input
+            const itemPrice = parseFloat($(this).data('price')) || 0;
+            let newPrice = parseFloat($(this).find('.new-price').val().trim());
+            if (isNaN(newPrice) || newPrice <= 0) {
+                newPrice = itemPrice;
+            }
+            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1;
+            const totalPrice = newPrice * quantity;
+            selectedItems.push({ 
+                id: itemId, // Include item_id in the selected items
+                name: itemName,
+                currentPrice: itemPrice,
+                newPrice: newPrice,
+                quantity: quantity,
+                totalPrice: totalPrice.toFixed(2)
+            });
+        });
+
+        roomItemsData[selectedRoomId] = selectedItems; // Store items for the selected room
+        console.log('Room Items Data:', roomItemsData); // Debugging
+        selectedItems.forEach(item => {
+        const rowHtml = `
+    <tr data-price="${item.currentPrice}" data-room-id="${selectedRoomId}">
+        <td>${item.name}</td>
+        <td>₹ ${item.currentPrice.toFixed(2)}</td>  
+        <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
+        <td class="quantity">${item.quantity}</td>
+        <td class="total-price">₹ ${item.totalPrice}</td>
+        <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
+        <input type="hidden" name="item_id[]" value="${item.id}" /> 
+    </tr>
+`;
+
+            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
+        });
+
+        // Clear the modal inputs
+        $('.item-row').removeClass('selected-row').css('background-color', '');
+        $('.new-price').val('');
+        $('.quantity').val(1);
+
+        $('#exampleModal').modal('hide');
+    });
+
+    $(document).on('click', '.remove-item', function () {
+    const $row = $(this).closest('tr');
+    const bookingId = $('input[name="booking_id"]').val(); // Assuming booking_id is somewhere in your HTML
+    const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input
+
+    // Log values for debugging
+    console.log('Booking ID:', bookingId);
+    console.log('Item ID:', itemId);
+
+    // Ensure both IDs are available
+    if (!itemId || !bookingId) {
+        console.error('Missing required data for item removal');
+        alert('Unable to remove item due to missing data. Please try again.');
+        return;
+    }
+
+    // AJAX call to remove the item
+    $.ajax({
+        url: '<?= base_url('Superadmin/update_item_status1') ?>',
+        type: 'POST',
+        data: {
+            booking_id: bookingId,
+            item_id: itemId,
+            status: 0
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                console.log('Item status updated successfully:', response);
+                $row.remove(); // Remove the row from the table
+            } else {
+                console.error('Failed to update item status:', response.message);
+                alert('Failed to remove item: ' + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error updating item status:', error);
+            let errorMessage = 'An error occurred while removing the item.';
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (response && response.message) {
+                    errorMessage = response.message;
+                }
+            } catch (e) {
+                console.error('Error parsing error response:', e);
+            }
+            alert(errorMessage);
+        }
+    });
+});
+
+
+
+    // Handle form submission
+    $('#roomEnquiryForm').on('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        formData.append('items_data', JSON.stringify(roomItemsData));
+        const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
+        const guestCode = $('input[name="guest_code"]').val(); // Get the guest_code from the form (add this field if not present)
+        formData.append('booking_id', bookingId); // Append it to formData
+        formData.append('guest_code', guestCode); // Append guest_code to formData
         $.ajax({
             url: '<?= base_url('Superadmin/update_room_enquiry_submit') ?>',
             type: 'POST',
@@ -1085,7 +1152,7 @@ $(document).ready(function () {
             processData: false,
             success: function (response) {
                 console.log('Form submitted successfully:', response);
-                
+                window.location.href = '<?= base_url('dashboard') ?>';
             },
             error: function (xhr, status, error) {
                 console.error('Error submitting form:', xhr.responseText);
@@ -1094,6 +1161,9 @@ $(document).ready(function () {
     });
 });
 </script>
+
+
+
 
 
 
