@@ -15,7 +15,7 @@
                     <div class="card">
                         <div class="card-body">
                         <form id="occupyform" action="<?= base_url('Superadmin/settlement') ?>" method="post" enctype="multipart/form-data">
-
+                        <!-- <form id="occupyform"  method="post" enctype="multipart/form-data"> -->
                         <input type="hidden" name="booking_id" value="<?= $booking_details[0]['booking_id']; ?>"> 
                                 <div class="border-radius-xl bg-white">
 
@@ -278,9 +278,19 @@
                                 </div>
 
 
-                                <div class="button-row d-flex mt-4"> 
-                                        <button class="ms-auto mb-0 btn bg-gradient-info " type="submit" title="submit">settlement</button>
-                                </div>
+              
+                                
+                            <!-- <div class="button-row d-flex mt-4"> 
+                            <button id="submitBtn" class="ms-auto mb-0 btn bg-gradient-info" type="submit" title="submit">Submit</button>
+                            </div>
+                            <div class="button-row d-flex mt-4"> 
+                            <button id="settlementBtn" class="ms-auto mb-0 btn bg-gradient-info" type="button" title="settlement">Settlement</button>
+                            </div> -->
+
+                    <div class="button-row d-flex mt-4"> 
+                        <button type="submit" id="submit-btn" class="ms-auto mb-0 btn bg-gradient-info">Submit</button>
+                        <button type="button" id="goto-settlement" class="ms-auto mb-0 btn bg-gradient-info" onclick="submitToSettlement()">Go to Settlement</button>
+                    </div>
 
                             </form>
                         </div>
@@ -856,6 +866,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+
+
+
+
  <script>
 let selectedRoomId;
 let roomItemsData = {}; // Store items for multiple rooms
@@ -1006,15 +1022,33 @@ $(document).on('click', '.remove-item', function () {
             processData: false,
             success: function (response) {
                 console.log('Form submitted successfully:', response);
-                window.location.href = '<?= base_url('Superadmin/settlement') ?>';
+                window.location.href = '<?= base_url('dashboard') ?>';
             },
             error: function (xhr, status, error) {
                 console.error('Error submitting form:', xhr.responseText);
             }
         });
     });
+
+
 });
 </script> 
 
 
 
+
+<script>
+function submitToSettlement() {
+    const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
+    // Get the form element
+    var form = document.getElementById('occupyform');
+    form.action = '<?= base_url('Superadmin/settlement') ?>';
+    // Submit the form
+    form.submit();
+}
+// Optional: Add client-side validation if needed
+document.getElementById('goto-settlement').addEventListener('click', function(e) {
+    e.preventDefault();
+    submitToSettlement();
+});
+</script>

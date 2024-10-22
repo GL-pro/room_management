@@ -187,6 +187,57 @@
                                          
 
 
+                                    
+                                      <!-- Tax section -->
+                                 <div class="row mt-3">
+                                      <div class="col-12 col-sm-6">
+                                            <div class="input-group input-group-static">
+                                                <label for="taxApplicable">Is Tax Applicable?</label>
+                                                <input type="checkbox" value="<?php echo !empty($rooms) ? $rooms[0]->tax_applicable : ''; ?>" id="taxApplicable" name="tax_applicable" onclick="toggleTaxInput()">
+                                            </div>
+                                        </div>
+                                
+
+                                    <div class="row mt-3" id="taxAmountRow" style="display:none;">
+                                        <div class="col-12 col-sm-6">
+                                            <div class="input-group input-group-static">
+                                                <label>Tax Amount:</label>
+                                                <input class="form-control" value="<?php echo !empty($rooms) ? $rooms[0]->tax : ''; ?>" name="tax_amount" type="number" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                                        
+                                    </div>                          
+                                              
+                                    
+                                    <!-- GST section -->
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <div class="input-group input-group-static">
+                                                        <label for="gstApplicable">Is GST Applicable?</label>
+                                                        <input type="checkbox" value="<?php echo !empty($rooms) ? $rooms[0]->gst_applicable : ''; ?>" id="gstApplicable" name="gst_applicable" onclick="toggleGstInput()">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3" id="gstAmountRow" style="display:none;">
+                                                <div class="col-12 col-sm-6">
+                                                    <div class="input-group input-group-static">
+                                                        <label>GST Percentage:</label>
+                                                        <input class="form-control" value="<?php echo !empty($rooms) ? $rooms[0]->gst_percent : ''; ?>" name="gst_percent" type="number" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-6">
+                                                    <div class="input-group input-group-static">
+                                                        <label>GST Amount:</label>
+                                                        <input class="form-control" value="<?php echo !empty($rooms) ? $rooms[0]->gst_amount : ''; ?>" name="gst_amount" type="number" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
                                 
                                     <div class="row mt-3">                             
                                         <div class="col-12">
@@ -747,3 +798,19 @@ document.getElementById('checkout').addEventListener('change', function() {
 });
 </script>
 
+<!-- script for tax field add -->
+<script>
+function toggleTaxInput() {
+    const taxAmountRow = document.getElementById('taxAmountRow');
+    const taxCheckbox = document.getElementById('taxApplicable');
+    // Show tax amount input if checkbox is checked
+    taxAmountRow.style.display = taxCheckbox.checked ? 'block' : 'none';
+}
+function toggleGstInput() {
+    const gstAmountRow = document.getElementById('gstAmountRow');
+    const gstCheckbox = document.getElementById('gstApplicable');
+
+    // Show GST fields if checkbox is checked
+    gstAmountRow.style.display = gstCheckbox.checked ? 'block' : 'none';
+}
+</script>

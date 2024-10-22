@@ -246,6 +246,8 @@ class Superadmin extends CI_Controller {
 	$this->load->view('webapp/superadmin/room/hotel_room_add_staff');
 	$this->load->view('webapp/superadmin/include/footer');
 	}   
+
+
 	public function  hotel_added_rooms_staff()
 	{
 		$data['menu']='hotel_added_rooms_staff';
@@ -453,6 +455,13 @@ class Superadmin extends CI_Controller {
 		$noOfGuests = $this->input->post('noofguests');
 		$extguests = $this->input->post('extguests');
 		$description = $this->input->post('description');
+
+		$tax_applicable = $this->input->post('tax_applicable');
+		$tax_amount = $this->input->post('tax_amount');
+		$gst_applicable = $this->input->post('gst_applicable');
+		$gst_percent = $this->input->post('gst_percent');
+		$gst_amount = $this->input->post('gst_amount');
+
 		$imageFileNames = array();
 		for ($i = 1; $i <= 5; $i++) {
 			if (!empty($_FILES['extimage' . $i]['name'])) {
@@ -483,8 +492,15 @@ class Superadmin extends CI_Controller {
 				'discountprice' => $discountPrices,
 				'noofguests' => $noOfGuests,
 				'extguests' => $extguests,
-				'description'=> $description,
+				'description' => $description,
+				'tax_applicable'=> $tax_applicable,
+				'tax'=> $tax_amount,
+				'gst_applicable'=> $gst_applicable,
+				'gst_percent'=> $gst_percent,
+				'gst_amount'=> $gst_amount,
+
 				'room_status'=> 'vaccant',
+				
 				'image' => implode(', ', $imageFileNames),
 				'image1' => isset($imageFileNames['extimage1']) ? $imageFileNames['extimage1'] : '',
 				'image2' => isset($imageFileNames['extimage2']) ? $imageFileNames['extimage2'] : '',
@@ -513,6 +529,8 @@ class Superadmin extends CI_Controller {
 			console.log("Redirecting to hotel_added_rooms page...");
 		}
 	}
+
+
 	public function hotel_room_edit_staff($hotel_roomid) {
 		$data['menu'] = 'hotel_room_edit_staff';
 		$data['pagetitle'] = 'DashBoard';
@@ -1557,29 +1575,39 @@ public function change_booking_status() {
 
 public function settlement()
 {
-	$data['menu']='settlement';
-	$data['pagetitle']='DashBoard';
-	$booking_id = $this->input->post('booking_id');
-	if ($booking_id) {
-		$this->load->model('HomeModel');
-		$data['booking_details'] = $this->HomeModel->getBookingDetailsById1($booking_id);
-		$data['agent'] = $this->HomeModel->getAgentById($data['booking_details']['agent_id']);
-		$data['customer'] = $this->HomeModel->getCustomerById($data['booking_details']['customer_id']);
-		$guest_details  = $this->HomeModel->getGuestsById($booking_id);
-		$data['items_details'] = $this->HomeModel->getItemsDetailsById($booking_id);
+    $data['menu'] = 'settlement';
+    $data['pagetitle'] = 'DashBoard';
+    $booking_id = $this->input->post('booking_id');
+//var_dump($booking_id);die;
+    // Initialize company details as null to avoid undefined variable warning
+    $data['company_details'] = null; 
 
-		//var_dump($items_details);die;
-		$guest_names = array_column($guest_details, 'guest_name'); // Extract guest names into an array
-		$data['guest_names'] = implode(', ', $guest_names); // Join names with commas
-		  // Generate Invoice Number and Date
-		$data['invoice_no'] = 'INV-' . strtoupper(uniqid()); // Unique invoice number
-		$data['invoice_date'] = date('Y-m-d'); // Current date
-		$data['company_details'] = $this->HomeModel->getCompanyDetails();
+    if ($booking_id) {
+        $this->load->model('HomeModel');
+        $data['booking_details'] = $this->HomeModel->getBookingDetailsById1($booking_id);
+        
+        // Check if booking details were retrieved
+        if ($data['booking_details']) {
+            $data['agent'] = $this->HomeModel->getAgentById($data['booking_details']['agent_id']);
+            $data['customer'] = $this->HomeModel->getCustomerById($data['booking_details']['customer_id']);
+            $guest_details = $this->HomeModel->getGuestsById($booking_id);
+            $data['items_details'] = $this->HomeModel->getItemsDetailsById($booking_id);
+
+            $guest_names = array_column($guest_details, 'guest_name'); // Extract guest names into an array
+            $data['guest_names'] = implode(', ', $guest_names); // Join names with commas
+
+            // Generate Invoice Number and Date
+            $data['invoice_no'] = 'INV-' . strtoupper(uniqid()); // Unique invoice number
+            $data['invoice_date'] = date('Y-m-d'); // Current date
+            $data['company_details'] = $this->HomeModel->getCompanyDetails(); // Fetch company details
+        }
+    }
+
+    $this->load->view('webapp/superadmin/include/header', $data);
+    $this->load->view('webapp/superadmin/dashboard/settlement', $data);
+    $this->load->view('webapp/superadmin/include/footer');
 }
-	$this->load->view('webapp/superadmin/include/header',$data);
-	$this->load->view('webapp/superadmin/dashboard/settlement', $data);
-	$this->load->view('webapp/superadmin/include/footer');
-} 
+
 
 public function fetch_room_details()
 {
@@ -2295,7 +2323,7 @@ foreach ($extra_guest_name as $extra_index => $name) {
 	}
 
 	echo json_encode(['status' => 'success', 'message' => 'All items updated successfully.']);
-	redirect('Superadmin/settlement');
+	redirect('dashboard');
 }
 
 
