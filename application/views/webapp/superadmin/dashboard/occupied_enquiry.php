@@ -182,7 +182,7 @@
 
 
                      <!-- Item Details Section -->
-                <div class="row mt-3 border py-2">
+                <!-- <div class="row mt-3 border py-2">
                     <div class="d-flex">
                         <div class="mb-2">
                             <h6 class="font-weight-bolder mb-0">Item Details</h6>
@@ -209,7 +209,7 @@
                                 <tbody>
                                     <?php foreach ($room['items'] as $item): ?>
                                         <tr>   
-                                            <!-- Hidden input for item_id -->
+                                           
                                         <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
                                             <td><?= $item['item_name'] ?></td>
                                             <td><?= $item['item_price'] ?></td>
@@ -225,7 +225,58 @@
                     <?php else: ?>
                         <p>No items found for this room.</p>
                     <?php endif; ?>
-                </div>
+                </div> -->
+
+
+
+
+
+                <!-- Item Details Section -->
+<div class="row mt-3 border py-2">
+    <div class="d-flex">
+        <div class="mb-2">
+            <h6 class="font-weight-bolder mb-0">Item Details</h6>
+        </div>
+        <div class="ms-auto my-auto mt-lg-0 mt-4">
+            <div class="ms-auto my-auto">
+                <button class="btn btn-primary btn-sm open-modal-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Always show table structure even when empty -->
+    <div class="table-responsive">
+        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe" id="table-room-<?= $room['hotel_roomid'] ?>">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Current Price</th>
+                    <th>New Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($room['items'])): ?>
+                    <?php foreach ($room['items'] as $item): ?>
+                        <tr data-price="<?= $item['item_price'] ?>" data-room-id="<?= $room['hotel_roomid'] ?>">
+                            <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
+                            <td><?= $item['item_name'] ?></td>
+                            <td>₹ <?= number_format($item['item_price'], 2) ?></td>
+                            <td class="new-price">₹ <?= number_format($item['new_price'], 2) ?></td>
+                            <td class="quantity"><?= $item['quantity'] ?></td>
+                            <td class="total-price">₹ <?= number_format($item['item_total_price'], 2) ?></td>
+                            <td><button class="btn btn-danger btn-sm remove-item" type="button">Remove</button></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 
 
 
@@ -255,12 +306,12 @@
                 <div class="input-group input-group-outline">
                     <label class="form-label">Advance Amount</label>
                     <input class="form-control" type="number" placeholder=" " name="advance_amount"
-                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>" disabled />
+                           value="<?= isset($booking_details[0]['advance_amount']) ? $booking_details[0]['advance_amount'] : '' ?>"  />
                 </div>
             </div>
             <div class="col-12 col-sm-4 mt-2">
                 <div class="input-group input-group-outline">
-                    <select class="form-control"  name="payment_method" disabled>
+                    <select class="form-control"  name="payment_method" >
                         <option value="" disabled>Select Payment Method</option>
                         <option value="cash" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'cash') ? 'selected' : '' ?>>Cash</option>
                         <option value="card" <?= (isset($booking_details[0]['payment_method']) && $booking_details[0]['payment_method'] == 'card') ? 'selected' : '' ?>>Card</option>

@@ -200,6 +200,80 @@
     </style>
 
 
+
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.payment-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-group button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#proceedPayment {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+#cancelPayment {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+</style>
+
+
+
+
 </head>
 <body>
     <div class="invoice">
@@ -243,7 +317,10 @@
             Guest Names: <?= $guest_names ?></p> <!-- Display comma-separated guest names -->
         </div>
     </div>
-        <table>
+
+
+
+        <!-- <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -257,7 +334,7 @@
             </thead>
 
 
-            <tbody>
+<tbody>
     <?php 
     $grand_total_base = 0;
     $grand_total_gst = 0;
@@ -267,16 +344,25 @@
         $gst_amount = ($item['new_price'] * $item['gst_per']) / 100;
         $total_amount = $item['new_price'] + $gst_amount;
 
-        // Accumulate totals for grand total calculation
+      
         $grand_total_base += $item['new_price'];
         $grand_total_gst += $gst_amount;
         $grand_total_amount += $total_amount;
+
     ?>
     <tr>
         <td data-label="Date"><?php echo date('d/m/Y'); // Replace with actual date if available ?></td>
-        <td data-label="Description"><?php echo $item['item_name']; ?></td>
+                 <td>
+                  
+                    <?php if ($item['item_name'] == 'Room Charge'): ?>
+                        Room Charge - Room No: <?php echo $item['room_number']; ?>
+                    <?php else: ?>
+                        <?php echo ucfirst($item['item_name']); ?>
+                    <?php endif; ?>
+                </td>
+       
         <td data-label="HSN/SAC Code"><?php echo $item['hsn_code']; ?></td>
-        <!-- Editable Base Amount field -->
+      
         <td data-label="Base Amount">
             <input type="number" class="base-amount" name="base_amounts[<?php echo $index; ?>]" value="<?php echo number_format($item['new_price'], 2); ?>" data-index="<?php echo $index; ?>" step="0.01">
         </td>
@@ -288,12 +374,141 @@
     <tr class="total-row">
         <td colspan="3" data-label="GRAND TOTAL">GRAND TOTAL</td>
         <td data-label="Base Amount" id="grand-total-base"><?php echo number_format($grand_total_base, 2); ?></td>
-        <td data-label="GST %"></td> <!-- Leave GST % column empty in the total row -->
+        <td data-label="GST %"></td> 
         <td data-label="GST Amount" id="grand-total-gst"><?php echo number_format($grand_total_gst, 2); ?></td>
         <td data-label="Total Amount" id="grand-total-amount"><?php echo number_format($grand_total_amount, 2); ?></td>
     </tr>
 </tbody>
-    </table>
+    </table> -->
+
+    <table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>HSN/SAC Code</th>
+            <th>Base Amount</th>
+            <th>GST %</th>
+            <th>GST Amount</th>
+            <th>Total Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+    $grand_total_base = 0;
+    $grand_total_gst = 0;
+    $grand_total_amount = 0;
+
+    // Function to calculate the number of days between check-in and check-out with 12 PM condition
+    function calculateDays($checkin_time, $checkout_time) {
+        // Convert times to timestamps
+        $checkin_date = strtotime($checkin_time);
+        $checkout_date = strtotime($checkout_time);
+
+        // Calculate the difference in days
+        $days_diff = ($checkout_date - $checkin_date) / (60 * 60 * 24);
+
+        // If the checkout time is exactly 12 PM, do not count it as an extra day
+        $checkin_hour = date('H', $checkin_date);
+        $checkout_hour = date('H', $checkout_date);
+
+        if ($checkin_hour == 12 && $checkout_hour == 12) {
+            return $days_diff;
+        } else {
+            return ceil($days_diff); // Round up to the nearest whole day
+        }
+    }
+
+    // Iterate through room details to calculate charges
+    foreach ($room_details as $index => $room) {
+        $days_stayed = calculateDays($room['checkin'], $room['checkout']); // Get the exact number of days
+        
+        // Loop through each day and calculate charges
+        for ($day = 0; $day < $days_stayed; $day++) {
+            $date = date('Y-m-d', strtotime("+$day day", strtotime($room['checkin'])));
+
+            // Room charge for each day
+            $base_amount = $room['discountprice']; // Assuming daily base price remains the same
+
+            // GST calculations
+            $gst_amount = ($base_amount * $room['gst_percent']) / 100;
+            $total_amount = $base_amount + $gst_amount;
+
+            // Accumulate totals
+            $grand_total_base += $base_amount;
+            $grand_total_gst += $gst_amount;
+            $grand_total_amount += $total_amount;
+    ?>
+    <tr>
+    <td data-label="Date"><?php echo date('d/m/Y H:i', strtotime($date)); ?></td>
+        <td data-label="Description">Room Charge - Room No: <?php echo $room['roomno']; ?></td>
+        <td data-label="HSN/SAC Code"></td>
+        <td data-label="Base Amount">
+            <input type="number"
+                   class="base-amount"
+                   name="room_amounts[<?php echo $index; ?>]"
+                   value="<?php echo number_format($base_amount, 2); ?>" 
+                   data-index="<?php echo $index; ?>"
+                   step="0.01">
+        </td>
+        <td data-label="GST %"><?php echo number_format($room['gst_percent'], 2); ?></td>
+        <td data-label="GST Amount"><?php echo number_format($gst_amount, 2); ?></td>
+        <td data-label="Total Amount"><?php echo number_format($total_amount, 2); ?></td>
+    </tr>
+    <?php 
+        } // End for loop for days stayed
+    }
+
+    // Then display item charges
+    foreach ($items_details as $index => $item) {
+        $gst_amount = ($item['new_price'] * $item['gst_per']) / 100;
+        $total_amount = $item['new_price'] + $gst_amount;
+        
+        // Accumulate totals
+        $grand_total_base += $item['new_price'];
+        $grand_total_gst += $gst_amount;
+        $grand_total_amount += $total_amount;
+    ?>
+        <tr>
+            <td data-label="Date">
+                <?php echo date('d/m/Y', strtotime($item['adding_date'])); ?>
+            </td>
+            <td data-label="Description">
+            Item Charge - <?php echo ucfirst($item['item_name']); ?>
+            </td>
+            <td data-label="HSN/SAC Code"><?php echo $item['hsn_code']; ?></td>
+            <td data-label="Base Amount">
+                <input type="number" 
+                       class="base-amount" 
+                       name="item_amounts[<?php echo $index; ?>]" 
+                       value="<?php echo $item['new_price']; ?>" 
+                       data-index="<?php echo $index; ?>" 
+                       step="0.01">
+            </td>
+            <td data-label="GST %"><?php echo number_format($item['gst_per'], 2); ?></td>
+            <td data-label="GST Amount"><?php echo number_format($gst_amount, 2); ?></td>
+            <td data-label="Total Amount"><?php echo number_format($total_amount, 2); ?></td>
+        </tr>
+    <?php 
+    }
+    ?>
+        <!-- Grand Total Row -->
+        <tr class="total-row">
+            <td colspan="3" data-label="GRAND TOTAL">GRAND TOTAL</td>
+            <td data-label="Base Amount" id="grand-total-base">
+                <?php echo number_format($grand_total_base, 2); ?>
+            </td>
+            <td data-label="GST %"></td>
+            <td data-label="GST Amount" id="grand-total-gst">
+                <?php echo number_format($grand_total_gst, 2); ?>
+            </td>
+            <td data-label="Total Amount" id="grand-total-amount">
+                <?php echo number_format($grand_total_amount, 2); ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
     <div class="amount-in-words">
     <!-- Will be dynamically filled with the grand total amount in words -->
     </div>
@@ -336,18 +551,51 @@
             </div>
         </div>
         <div class="button-container">
-            <button class="new-btn" id="new-btn">New</button>
+            <button class="new-btn" id="new-btn">Clear</button>
             <button class="save-btn" id="save-btn">Save</button>
-            <button class="settlement-btn" id="settle-btn">Settlement</button>
+            <button class="settlement-btn" id="settle-btn">Vaccat</button>
             <button class="print-btn">Print</button>
-            <button class="delete-btn"  id="delete-btn">Delete</button>
+            <button class="delete-btn"  id="delete-btn">Cancel</button>
         </div>
     </div>
 </body>
 </html>
 
 
+
+<!-- Modal HTML Structure -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Settlement Payment</h2>
+        
+        <form id="paymentForm">
+            <label for="paymentMethod">Select Payment Method:</label><br>
+            <input type="radio" id="cash" name="payment_method" value="cash">
+            <label for="cash">Cash</label><br>
+            <input type="radio" id="card" name="payment_method" value="card">
+            <label for="card">Card</label><br>
+            <input type="radio" id="upi" name="payment_method" value="card">
+            <label for="card">Upi</label><br>
+
+            <!-- Amount field -->
+            <label for="paymentAmount">Enter Amount:</label>
+            <input type="number" id="paymentAmount" name="payment_amount" step="0.01" required><br><br>
+            
+            <button type="button" id="proceedPayment">Vaccat</button>
+            <button type="button" id="cancelPayment">Cancel</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
 
 <script>
     function numberToWords(number) {
@@ -517,7 +765,7 @@ document.getElementById('save-btn').addEventListener('click', function () {
 </script>
 
 
-<script>
+<!-- <script>
 document.getElementById('settle-btn').addEventListener('click', function () {
     const bookingId = document.getElementById('booking-id').value; // Get the booking ID
     if (!bookingId) {
@@ -568,6 +816,105 @@ document.getElementById('settle-btn').addEventListener('click', function () {
         alert('An error occurred. Please try again.');
     });
 });
+</script> -->
+
+
+
+
+<script>
+const modal = document.getElementById('paymentModal');
+const closeBtn = document.getElementsByClassName('close')[0];
+const cancelBtn = document.getElementById('cancelPayment');
+const proceedBtn = document.getElementById('proceedPayment');
+
+// Open modal when settlement button is clicked
+document.getElementById('settle-btn').addEventListener('click', function() {
+    const bookingId = document.getElementById('booking-id').value;
+    if (!bookingId) {
+        alert("No booking ID found. Please save the settlement first.");
+        return;
+    }
+    modal.style.display = "block";
+});
+
+// Close modal functions
+function closeModal() {
+    modal.style.display = "none";
+    document.getElementById('paymentForm').reset();
+}
+
+closeBtn.onclick = closeModal;
+cancelBtn.onclick = closeModal;
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+// Handle payment submission
+proceedBtn.addEventListener('click', function() {
+    const bookingId = document.getElementById('booking-id').value;
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    const paymentAmount = document.getElementById('paymentAmount').value;
+    
+    if (!paymentMethod) {
+        alert("Please select a payment method.");
+        return;
+    }
+    
+    if (!paymentAmount || paymentAmount <= 0) {
+        alert("Please enter a valid payment amount.");
+        return;
+    }
+
+    // First API call to change settlement status
+    fetch('<?= site_url('Superadmin/change_settlement_status'); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            booking_id: bookingId,
+            status: 'paid',
+            payment_method: paymentMethod.value,
+            amount: paymentAmount  // Include amount in the request body
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Second API call to update booking status
+            return fetch('<?= site_url('Superadmin/update_booking_status'); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    booking_id: bookingId,
+                    booking_status: 'vacant'
+                })
+            });
+        } else {
+            throw new Error(data.message || 'Failed to update settlement status');
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Payment processed successfully!');
+            closeModal();
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Failed to update booking status');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred: ' + error.message);
+    });
+});
+
 </script>
 
 

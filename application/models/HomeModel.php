@@ -336,17 +336,45 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
     // }
     
 
+    // public function getRoomTypesWithRoomsGroupedByType11() {
+    //     $query = $this->db->query("
+    //         SELECT hr.roomtypeid, rt.roomtype, hr.hotel_roomid, hr.roomno, hr.room_name, 
+    //                IF(rb.booking_status IS NOT NULL, rb.booking_status, hr.room_status) AS status,
+    //                rb.checkin, rb.checkout,rb.booking_id
+    //         FROM hotel_room hr
+    //         LEFT JOIN room_booking rb ON hr.hotel_roomid = rb.hotel_roomid 
+    //             AND NOW() BETWEEN rb.checkin AND rb.checkout
+    //         LEFT JOIN admin_room rt ON hr.roomtypeid = rt.roomid
+    //     ");
+    //     $rooms = $query->result_array();
+    //     // Group rooms by type
+    //     $grouped_rooms = [];
+    //     foreach ($rooms as $room) {
+    //         $room_type = $room['roomtype']; // Assuming you have room_type_name from room_type table
+    //         $grouped_rooms[$room_type][] = $room;
+    //     }
+    //     return $grouped_rooms; // Return the grouped rooms
+    // }
+    
+
     public function getRoomTypesWithRoomsGroupedByType11() {
         $query = $this->db->query("
             SELECT hr.roomtypeid, rt.roomtype, hr.hotel_roomid, hr.roomno, hr.room_name, 
                    IF(rb.booking_status IS NOT NULL, rb.booking_status, hr.room_status) AS status,
-                   rb.checkin, rb.checkout,rb.booking_id
+                   rb.checkin, rb.checkout, rb.booking_id
             FROM hotel_room hr
             LEFT JOIN room_booking rb ON hr.hotel_roomid = rb.hotel_roomid 
-                AND NOW() BETWEEN rb.checkin AND rb.checkout
+                AND rb.checkin = (
+                    SELECT MAX(rb_inner.checkin)
+                    FROM room_booking rb_inner
+                    WHERE rb_inner.hotel_roomid = hr.hotel_roomid
+                    AND NOW() BETWEEN rb_inner.checkin AND rb_inner.checkout
+                )
             LEFT JOIN admin_room rt ON hr.roomtypeid = rt.roomid
+            GROUP BY hr.hotel_roomid
         ");
         $rooms = $query->result_array();
+        
         // Group rooms by type
         $grouped_rooms = [];
         foreach ($rooms as $room) {
@@ -355,9 +383,10 @@ public function get_subfacility_status($hotelRoomId, $subfacilityId) {
         }
         return $grouped_rooms; // Return the grouped rooms
     }
+
     
 
-
+    
     public function updateRoomStatus() {
         $this->db->query("
             UPDATE hotel_room hr
@@ -1008,8 +1037,19 @@ public function getBookingDetailsById1($booking_id) {
     $this->db->join('admin_room', 'hotel_room.roomtypeid = admin_room.roomid', 'inner');
     $this->db->where('room_booking.booking_id', $booking_id);
     $query = $this->db->get();
-    
+
     return $query->row_array(); // Fetch a single row as an associative array
+}
+
+
+public function getRoomDetailsById($booking_id) {
+    $this->db->distinct();
+    $this->db->select('room_booking.*,hotel_room.*');
+    $this->db->from('room_booking'); 
+    $this->db->join('hotel_room', 'hotel_room.hotel_roomid = room_booking.hotel_roomid');
+    $this->db->where('room_booking.booking_id', $booking_id);
+    $query = $this->db->get();
+    return $query->result_array(); // Return as an array of rows (for multiple guests)
 }
 
 

@@ -401,7 +401,6 @@
                 </div>
             </div>
 
-      
 
                 <?php foreach ($room_data2 as $room_type => $rooms): ?>
                     <div class="card">
@@ -415,9 +414,11 @@
                         <div class="card-body row py-0">
                             <div class="">
                                 <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
-                                    <?php foreach ($rooms as $room): ?>
+                                <?php foreach ($rooms as $room): ?>
                                         <?php
                                             // Assign class based on status
+                                            $status_class = 'btn-secondary'; // Default class, in case no condition is met
+
                                             if ($room['status'] === 'available' || $room['status'] === 'vaccant') {
                                                 $status_class = 'btn-success';
                                             } elseif ($room['status'] === 'booked') {
@@ -426,19 +427,19 @@
                                                 $status_class = 'btn-danger';
                                             }
                                         ?>
-                                        <!-- <input type="checkbox" class="btn-check1 room-checkbox" id="btncheck<?php echo $room['hotel_roomid']; ?>" data-status="<?php echo htmlspecialchars($room['status']); ?>" autocomplete="off"> -->
-                                <input 
-                                    type="checkbox" 
-                                    class="btn-check1 room-checkbox" 
-                                    id="btncheck<?php echo $room['hotel_roomid']; ?>" 
-                                    data-status="<?php echo htmlspecialchars($room['status']); ?>" 
-                                    data-bookingid="<?php echo isset($room['booking_id']) ? $room['booking_id'] : ''; ?>" 
-                                    autocomplete="off">
-                                       
-                                    <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                                        <input 
+                                            type="checkbox" 
+                                            class="btn-check1 room-checkbox" 
+                                            id="btncheck<?php echo $room['hotel_roomid']; ?>" 
+                                            data-status="<?php echo htmlspecialchars($room['status']); ?>" 
+                                            data-bookingid="<?php echo isset($room['booking_id']) ? $room['booking_id'] : ''; ?>" 
+                                            autocomplete="off">
+                                                                        
+                                        <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
                                             <?php echo htmlspecialchars($room['roomno']); ?>
                                         </label>
                                     <?php endforeach; ?>
+
                                 </div>
                             </div>
                         </div>

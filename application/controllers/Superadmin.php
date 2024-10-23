@@ -1592,7 +1592,8 @@ public function settlement()
             $data['customer'] = $this->HomeModel->getCustomerById($data['booking_details']['customer_id']);
             $guest_details = $this->HomeModel->getGuestsById($booking_id);
             $data['items_details'] = $this->HomeModel->getItemsDetailsById($booking_id);
-
+			$data['room_details'] = $this->HomeModel->getRoomDetailsById($booking_id);
+			
             $guest_names = array_column($guest_details, 'guest_name'); // Extract guest names into an array
             $data['guest_names'] = implode(', ', $guest_names); // Join names with commas
 
@@ -2007,9 +2008,7 @@ public function change_settlement_status_delete() {
 public function update_item_status1() {
     // Ensure no output before this point
     ob_start();
-
     header('Content-Type: application/json');
-
     try {
         $booking_id = $this->input->post('booking_id');
         $item_id = $this->input->post('item_id');
@@ -2019,13 +2018,11 @@ public function update_item_status1() {
         if (!$booking_id || !$item_id) {
             throw new Exception('Missing booking ID or item ID.');
         }
-
         // Use both booking_id and item_id to ensure unique update
         $this->db->where('booking_id', $booking_id);
         $this->db->where('item_id', $item_id);
       //  $result = $this->db->update('room_item_details', ['status' => $status]);
 		$result = $this->db->delete('room_item_details'); // Use delete instead of update
-
         if ($result) {
             echo json_encode(['success' => true]);
         } else {
@@ -2036,7 +2033,6 @@ public function update_item_status1() {
         log_message('error', 'Failed to update item status. Error: ' . $e->getMessage());
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
-
     // Clear the output buffer and send the response
     ob_end_flush();
     exit;
@@ -2051,7 +2047,6 @@ public function update_room_occupy_submit()
 {
 	date_default_timezone_set('Asia/Kolkata');
 	$adding_date=date('Y-m-d H:i:s');
-
 	$selected_rooms = json_decode($this->input->post('selected_rooms'), true);
     $removed_rooms = json_decode($this->input->post('removed_rooms'), true) ?? []; // Get removed rooms
 	$booking_id = $this->input->post('booking_id'); // Get the booking ID

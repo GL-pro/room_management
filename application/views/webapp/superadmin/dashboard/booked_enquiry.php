@@ -203,7 +203,7 @@
 
 
                      <!-- Item Details Section -->
-                <div class="row mt-3 border py-2">
+                <!-- <div class="row mt-3 border py-2">
                     <div class="d-flex">
                         <div class="mb-2">
                             <h6 class="font-weight-bolder mb-0">Item Details</h6>
@@ -230,7 +230,7 @@
                                 <tbody>
                                     <?php foreach ($room['items'] as $item): ?>
                                         <tr>   
-                                            <!-- Hidden input for item_id -->
+                                           
                                         <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
                                             <td><?= $item['item_name'] ?></td>
                                             <td><?= $item['item_price'] ?></td>
@@ -247,6 +247,52 @@
                         <p>No items found for this room.</p>
                     <?php endif; ?>
                 </div>
+ -->
+
+<!-- Item Details Section -->
+<div class="row mt-3 border py-2">
+    <div class="d-flex">
+        <div class="mb-2">
+            <h6 class="font-weight-bolder mb-0">Item Details</h6>
+        </div>
+        <div class="ms-auto my-auto mt-lg-0 mt-4">
+            <div class="ms-auto my-auto">
+                <button class="btn btn-primary btn-sm open-modal-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-room-id="<?= $room['hotel_roomid'] ?>">Add Items</button>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Always show table structure even when empty -->
+    <div class="table-responsive">
+        <table class="table align-items-center mb-0 table-flush table-bordered rounded-3 table-stripe" id="table-room-<?= $room['hotel_roomid'] ?>">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Current Price</th>
+                    <th>New Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($room['items'])): ?>
+                    <?php foreach ($room['items'] as $item): ?>
+                        <tr data-price="<?= $item['item_price'] ?>" data-room-id="<?= $room['hotel_roomid'] ?>">
+                            <input type="hidden" name="item_id[]" value="<?= $item['item_id']; ?>" />
+                            <td><?= $item['item_name'] ?></td>
+                            <td>₹ <?= number_format($item['item_price'], 2) ?></td>
+                            <td class="new-price">₹ <?= number_format($item['new_price'], 2) ?></td>
+                            <td class="quantity"><?= $item['quantity'] ?></td>
+                            <td class="total-price">₹ <?= number_format($item['item_total_price'], 2) ?></td>
+                            <td><button class="btn btn-danger btn-sm remove-item" type="button">Remove</button></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
 
@@ -887,118 +933,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<!-- <script>
-let selectedRoomId;
-let roomItemsData = {}; // Store items for multiple rooms
-$(document).ready(function () {
-    // When an "Add Items" button is clicked for a room
-    $('.open-modal-btn').on('click', function () {
-        selectedRoomId = $(this).data('room-id'); // Set the selected room ID dynamically
-        // Reset selected items when opening the modal
-    });
-    // Handle row selection
-    $('.item-row').on('click', function () {
-        $(this).toggleClass('selected-row'); // Toggle the selected state
-        const isSelected = $(this).hasClass('selected-row');
-        $(this).css('background-color', isSelected ? '#d3f4ff' : ''); // Highlight the row when selected
-    });
-
-    function calculateTotal($row) {
-        const currentPrice = parseFloat($row.data('price')) || 0; // Get the current price from the data attribute
-        let newPrice = parseFloat($row.find('.new-price').val().trim()); // Get the new price
-        if (isNaN(newPrice) || newPrice <= 0) {
-            newPrice = currentPrice; // Use current price for calculation
-        }
-        const quantity = parseInt($row.find('.quantity').val()) || 1; // Get the quantity or default to 1
-        const totalPrice = newPrice * quantity; // Calculate the total price
-        $row.find('.total-price').text(`₹ ${totalPrice.toFixed(2)}`);
-    }
-    // Event listener for changes in new price and quantity inputs in the modal
-    $(document).on('input', '.new-price, .quantity', function () {
-        const $row = $(this).closest('tr'); // Get the closest item row
-        calculateTotal($row); // Recalculate total price when new price or quantity changes
-    });
-    // When the "Add Selected Items" button in the modal is clicked
-    $('#addItemsButton').on('click', function (event) {
-        event.preventDefault();
-        let selectedItems = [];
-        $('.item-row.selected-row').each(function () {
-            const itemName = $(this).data('item-name');
-            const itemId = $(this).find('input[name="item_id[]"]').val(); // Get item_id from hidden input
-            const itemPrice = parseFloat($(this).data('price')) || 0;
-            let newPrice = parseFloat($(this).find('.new-price').val().trim());
-            if (isNaN(newPrice) || newPrice <= 0) {
-                newPrice = itemPrice;
-            }
-            const quantity = parseInt($(this).find('.quantity').val().trim()) || 1;
-            const totalPrice = newPrice * quantity;
-            selectedItems.push({ 
-                id: itemId, // Include item_id in the selected items
-                name: itemName,
-                currentPrice: itemPrice,
-                newPrice: newPrice,
-                quantity: quantity,
-                totalPrice: totalPrice.toFixed(2)
-            });
-        });
-
-        roomItemsData[selectedRoomId] = selectedItems; // Store items for the selected room
-        console.log('Room Items Data:', roomItemsData); // Debugging
-        selectedItems.forEach(item => {
-            const rowHtml = `
-                <tr data-price="${item.currentPrice}" data-room-id="${selectedRoomId}">
-                    <td>${item.name}</td>
-                    <td>₹ ${item.currentPrice.toFixed(2)}</td>  
-                    <td class="new-price">₹ ${item.newPrice.toFixed(2)}</td>
-                    <td class="quantity">${item.quantity}</td>
-                    <td class="total-price">₹ ${item.totalPrice}</td>
-                    <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
-                    <input type="hidden" name="item_id[]" value="${item.id}" /> 
-                </tr>
-            `;
-            $(`#table-room-${selectedRoomId} tbody`).append(rowHtml);
-        });
-
-        // Clear the modal inputs
-        $('.item-row').removeClass('selected-row').css('background-color', '');
-        $('.new-price').val('');
-        $('.quantity').val(1);
-
-        $('#exampleModal').modal('hide');
-    });
-    // Function to remove an item from the room's table
-    $(document).on('click', '.remove-item', function () {
-        const roomId = $(this).closest('tr').data('room-id');
-        $(this).closest('tr').remove(); // Remove the row from the table
-    });
-    // Handle form submission
-    $('#roomEnquiryForm').on('submit', function (event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        formData.append('items_data', JSON.stringify(roomItemsData));
-        const bookingId = $('input[name="booking_id"]').val(); // Get the booking_id
-        const guestCode = $('input[name="guest_code"]').val(); // Get the guest_code from the form (add this field if not present)
-        formData.append('booking_id', bookingId); // Append it to formData
-        formData.append('guest_code', guestCode); // Append guest_code to formData
-        $.ajax({
-        url: '<?= base_url('Superadmin/update_room_enquiry_submit') ?>',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            console.log('Form submitted successfully:', response);
-            window.location.href = '<?= base_url('dashboard') ?>';
-            // Optionally reload the page or update UI after success
-        },
-        error: function (xhr, status, error) {
-            console.error('Error submitting form:', xhr.responseText);
-        }
-    });
-
-    });
-});
-</script> -->
 
 <script>
 let selectedRoomId;
@@ -1083,58 +1017,6 @@ $(document).ready(function () {
 
         $('#exampleModal').modal('hide');
     });
-
-//     $(document).on('click', '.remove-item', function () {
-//     const $row = $(this).closest('tr');
-//     const bookingId = $('input[name="booking_id"]').val(); // Assuming booking_id is somewhere in your HTML
-//     const itemId = $row.find('input[name="item_id[]"]').val(); // Access the hidden input
-
-//     // Log values for debugging
-//     console.log('Booking ID:', bookingId);
-//     console.log('Item ID:', itemId);
-
-//     // Ensure both IDs are available
-//     if (!itemId || !bookingId) {
-//         console.error('Missing required data for item removal');
-//         alert('Unable to remove item due to missing data. Please try again.');
-//         return;
-//     }
-
-//     // AJAX call to remove the item
-//     $.ajax({
-//         url: '<?= base_url('Superadmin/update_item_status1') ?>',
-//         type: 'POST',
-//         data: {
-//             booking_id: bookingId,
-//             item_id: itemId,
-//             status: 0
-//         },
-//         dataType: 'json',
-//         success: function (response) {
-//             if (response.success) {
-//                 console.log('Item status updated successfully:', response);
-//                 $row.remove(); // Remove the row from the table
-//             } else {
-//                 console.error('Failed to update item status:', response.message);
-//                 alert('Failed to remove item: ' + response.message);
-//             }
-//         },
-//         error: function (xhr, status, error) {
-//             console.error('Error updating item status:', error);
-//             let errorMessage = 'An error occurred while removing the item.';
-//             try {
-//                 const response = JSON.parse(xhr.responseText);
-//                 if (response && response.message) {
-//                     errorMessage = response.message;
-//                 }
-//             } catch (e) {
-//                 console.error('Error parsing error response:', e);
-//             }
-//             alert(errorMessage);
-//         }
-//     });
-// });
-
 
 
 $(document).on('click', '.remove-item', function () {
