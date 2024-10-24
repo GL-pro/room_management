@@ -378,10 +378,10 @@
                             <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
                         </form> -->
                         <form id="room-form" method="POST" action="">
-    <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
-    <input type="hidden" name="booking_id" id="booking_id" value=""> <!-- Add this for booking ID -->
-    <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
-</form>
+                            <input type="hidden" name="selected_rooms" id="selected_rooms" value="">
+                            <input type="hidden" name="booking_id" id="booking_id" value=""> <!-- Add this for booking ID -->
+                            <button id="proceed-btn" class="btn btn-secondary mb-0" type="button" disabled>Proceed</button>
+                        </form>
 
                     </div>
                 </div>
@@ -402,7 +402,9 @@
             </div>
 
 
-                <?php foreach ($room_data2 as $room_type => $rooms): ?>
+
+            <!-- color change status applied code (apply only for available,occupied,vaccant,booked rooms)-->
+                <!-- <?php foreach ($room_data2 as $room_type => $rooms): ?>
                     <div class="card">
                         <div class="card-header py-0">
                             <div class="d-flex">
@@ -444,7 +446,51 @@
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach; ?> -->
+
+
+
+    <!-- color change status removed code (apply only for available rooms)-->
+    <?php foreach ($room_data2 as $room_type => $rooms): ?>
+    <div class="card">
+        <div class="card-header py-0">
+            <div class="d-flex">
+                <div class="col-md-8 me-auto my-auto text-left">
+                    <h5><?php echo htmlspecialchars($room_type); ?> Room</h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-body row py-0">
+            <div class="">
+                <div class="btn-group1" role="group" aria-label="Basic checkbox toggle group">
+                    <?php foreach ($rooms as $room): ?>
+                        <?php
+                            // Correct status check: 'vacant' instead of 'vaccant'
+                            $status_class = ($room['status'] === 'available' 
+                            || $room['status'] === 'vacant'
+                            || $room['status'] === 'occupied'
+                            || $room['status'] === 'booked') ? 'btn-success' : 'btn-secondary';
+                        ?>
+                        <input 
+                            type="checkbox" 
+                            class="btn-check1 room-checkbox" 
+                            id="btncheck<?php echo $room['hotel_roomid']; ?>" 
+                            data-status="<?php echo htmlspecialchars($room['status']); ?>" 
+                            data-bookingid="<?php echo isset($room['booking_id']) ? $room['booking_id'] : ''; ?>" 
+                            autocomplete="off">
+
+                        <label class="btn <?php echo $status_class; ?>" for="btncheck<?php echo $room['hotel_roomid']; ?>">
+                            <?php echo htmlspecialchars($room['roomno']); ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+
+
 
 
 

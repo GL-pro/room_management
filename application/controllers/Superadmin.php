@@ -1925,61 +1925,76 @@ public function settlement_save() {
 // }
 
 public function change_settlement_status() {
+    // Get POST data
     $settlementId = $this->input->post('settlement_id');
-    $paidAmount = floatval($this->input->post('amount'));
+    $amount = $this->input->post('amount');
     $paymentMethod = $this->input->post('payment_method');
-	$bookingId = $this->input->post('booking_id');
-    
-    if (!$settlementId || !$paidAmount || !$paymentMethod) {
-        echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    $bookingId = $this->input->post('booking_id');
+
+    if (!$settlementId || !$amount || !$paymentMethod || !$bookingId) {
+        echo json_encode(['success' => false, 'message' => 'Invalid data.']);
         return;
     }
 
-    // Get the current settlement details
-    $this->db->where('settlement_id', $settlementId);
-    $settlement = $this->db->get('settlement')->row_array();
-
-    if (!$settlement) {
-        echo json_encode(['success' => false, 'message' => 'Settlement not found']);
-        return;
-    }
-
-    $amountPayable = floatval($settlement['amount_payable']);
-    $newStatus = ($paidAmount >= $amountPayable) ? 'paid' : 'partially_paid';
-    // Start transaction
-    $this->db->trans_start();
-
-    // Update settlement status
+    // Update the specific settlement record to reflect the payment
     $this->db->where('settlement_id', $settlementId);
     $this->db->update('settlement', [
-        'settlement_status' => $newStatus,
-        'paid_amount' => $paidAmount,
+        'paid_amount' => $amount, 
+        'settlement_status' => 'paid', 
         'payment_method' => $paymentMethod,
-        'payment_date' => date('Y-m-d H:i:s'),
+        'payment_date' => date('Y-m-d H:i:s')
     ]);
 
-    // Insert payment record
-    $this->db->insert('payment_history', [
-        'settlement_id' => $settlementId,
-        'amount' => $paidAmount,
-        'payment_method' => $paymentMethod,
-        'payment_date' => date('Y-m-d H:i:s'),
-		'booking_id' => $bookingId
-    ]);
+    if ($this->db->affected_rows() > 0) {
+        // After the payment, check if all settlements for this booking are fully paid
+        $this->db->select('*');
+        $this->db->from('settlement');
+        $this->db->where('booking_id', $bookingId);
+        $this->db->where_in('settlement_status', ['unpaid', 'partially_paid']);
+        $remainingSettlements = $this->db->get()->result_array();
 
-    $this->db->trans_complete();
+        // If no unpaid or partially paid settlements remain, update booking status to 'vacant'
+        if (empty($remainingSettlements)) {
+            $this->db->where('booking_id', $bookingId);
+            $this->db->update('room_booking', ['booking_status' => 'vacant', 'date' => date('Y-m-d H:i:s')]);
 
-    if ($this->db->trans_status() === FALSE) {
-        echo json_encode(['success' => false, 'message' => 'Failed to process payment']);
-        return;
+            if ($this->db->affected_rows() > 0) {
+                echo json_encode(['success' => true, 'status' => 'paid', 'message' => 'Payment processed and booking status updated to vacant.']);
+            } else {
+                echo json_encode(['success' => true, 'status' => 'paid', 'message' => 'Payment processed, but failed to update booking status.']);
+            }
+        } else {
+            // Not all settlements are fully paid
+            echo json_encode(['success' => true, 'status' => 'partially_paid', 'message' => 'Payment processed but some settlements remain unpaid.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to process payment.']);
     }
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Payment processed successfully',
-        'status' => $newStatus
-    ]);
 }
+
+
+
+// public function update_booking_status() {
+//     // Get the raw POST data (JSON format)
+//     $postData = json_decode(file_get_contents('php://input'), true);
+//     // Extract the booking ID and new status
+//     $bookingId = $postData['booking_id'];
+//     $status = $postData['booking_status']; // Expected to be 'vacant'
+//     // Check if booking_id is provided
+//     if (empty($bookingId)) {
+//         echo json_encode(['success' => false, 'message' => 'Booking ID is missing.']);
+//         return;
+//     }
+//     // Update the booking status in the database
+//     $this->db->where('booking_id', $bookingId);
+//     $this->db->update('room_booking', ['booking_status' => $status, 'date' => date('Y-m-d H:i:s')]);
+//     // Check if the update was successful
+//     if ($this->db->affected_rows() > 0) {
+//         echo json_encode(['success' => true]);
+//     } else {
+//         echo json_encode(['success' => false, 'message' => 'Failed to update booking status.']);
+//     }
+// }
 
 
 
@@ -1987,28 +2002,39 @@ public function update_booking_status() {
     // Get the raw POST data (JSON format)
     $postData = json_decode(file_get_contents('php://input'), true);
     
-    // Extract the booking ID and new status
+    // Extract the booking ID and new status (vacant)
     $bookingId = $postData['booking_id'];
-    $status = $postData['booking_status']; // Expected to be 'vacant'
-
+    
     // Check if booking_id is provided
     if (empty($bookingId)) {
         echo json_encode(['success' => false, 'message' => 'Booking ID is missing.']);
         return;
     }
 
-    // Update the booking status in the database
+    // Check if there are any settlements for the given booking that are unpaid or partially paid
+    $this->db->select('*');
+    $this->db->from('settlement');
     $this->db->where('booking_id', $bookingId);
-    $this->db->update('room_booking', ['booking_status' => $status, 'date' => date('Y-m-d H:i:s')]);
+    $this->db->where_in('settlement_status', ['unpaid', 'partially_paid']); // Unpaid or partially paid settlements
+    $remainingSettlements = $this->db->get()->result_array();
+
+    // If there are still unpaid or partially paid settlements, do not update the booking status
+    if (!empty($remainingSettlements)) {
+        echo json_encode(['success' => false, 'message' => 'Cannot mark booking as vacant. There are unpaid or partially paid settlements remaining.']);
+        return;
+    }
+
+    // If all settlements are fully paid, update the booking status to 'vacant'
+    $this->db->where('booking_id', $bookingId);
+    $this->db->update('room_booking', ['booking_status' => 'vacant', 'date' => date('Y-m-d H:i:s')]);
 
     // Check if the update was successful
     if ($this->db->affected_rows() > 0) {
-        echo json_encode(['success' => true]);
+        echo json_encode(['success' => true, 'message' => 'Booking status updated to vacant.']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Failed to update booking status.']);
     }
 }
-
 
 
 

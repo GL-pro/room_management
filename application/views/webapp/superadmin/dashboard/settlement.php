@@ -1113,50 +1113,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     proceedBtn.addEventListener('click', function() {
-        const settlementId = document.getElementById('current-settlement-id').value;
-        const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
-        const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    const settlementId = document.getElementById('current-settlement-id').value;
+    const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
 
-        if (!paymentAmount || paymentAmount <= 0) {
-            alert("Please enter a valid payment amount.");
-            return;
-        }
+    if (!paymentAmount || paymentAmount <= 0) {
+        alert("Please enter a valid payment amount.");
+        return;
+    }
 
-        if (!paymentMethod) {
-            alert("Please select a payment method.");
-            return;
-        }
-        const bookingId = document.getElementById('booking-id').value;
-        const formData = new FormData();
-        formData.append('settlement_id', settlementId);
-        formData.append('amount', paymentAmount);
-        formData.append('payment_method', paymentMethod.value);
-        formData.append('booking_id', bookingId); 
+    if (!paymentMethod) {
+        alert("Please select a payment method.");
+        return;
+    }
+    const bookingId = document.getElementById('booking-id').value;
+    const formData = new FormData();
+    formData.append('settlement_id', settlementId);
+    formData.append('amount', paymentAmount);
+    formData.append('payment_method', paymentMethod.value);
+    formData.append('booking_id', bookingId); 
 
-        fetch('<?= site_url('Superadmin/change_settlement_status') ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Payment processed successfully!');
-                paymentForm.style.display = 'none';
-                loadSettlements(document.getElementById('booking-id').value);
-                
-                // If fully paid, update booking status
-                if (data.status === 'paid') {
-                    return updateBookingStatus(settlementId);
-                }
-            } else {
-                throw new Error(data.message || 'Failed to process payment');
+    fetch('<?= site_url('Superadmin/change_settlement_status') ?>', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message based on the response status
+            if (data.status === 'paid') {
+                alert('Payment processed successfully, and the booking status is now vacant.');
+                // Optionally call updateBookingStatus here if needed
+            } else if (data.status === 'partially_paid') {
+                alert('Payment processed successfully, but some settlements are still unpaid.');
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while processing payment. Please try again.');
-        });
+            paymentForm.style.display = 'none';
+            loadSettlements(document.getElementById('booking-id').value); // Reload the settlements
+        } else {
+            // Show error if the response indicates failure
+            alert('Failed to process payment: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing payment. Please try again.');
     });
+});
+
 
     // Function to update booking status
     function updateBookingStatus(settlementId) {
