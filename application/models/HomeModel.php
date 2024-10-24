@@ -1162,6 +1162,12 @@ public function update_item_status($item_id, $room_id, $booking_id, $status) {
 }
 
 
+public function getSettlementByBookingId($booking_id)
+{
+    $this->db->where('booking_id', $booking_id);
+    $query = $this->db->get('settlement'); // Assume the table name is 'settlement'
+    return $query->row_array(); // Return the settlement data if it exists
+}
 
 
 

@@ -320,66 +320,6 @@
 
 
 
-        <!-- <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>HSN/SAC Code</th>
-                    <th>Base Amount</th>
-                    <th>GST %</th>
-                    <th>GST Amount</th>
-                    <th>Total Amount</th>
-                </tr>
-            </thead>
-
-
-<tbody>
-    <?php 
-    $grand_total_base = 0;
-    $grand_total_gst = 0;
-    $grand_total_amount = 0;
-
-    foreach ($items_details as $index => $item) {  // Add $index => $item
-        $gst_amount = ($item['new_price'] * $item['gst_per']) / 100;
-        $total_amount = $item['new_price'] + $gst_amount;
-
-      
-        $grand_total_base += $item['new_price'];
-        $grand_total_gst += $gst_amount;
-        $grand_total_amount += $total_amount;
-
-    ?>
-    <tr>
-        <td data-label="Date"><?php echo date('d/m/Y'); // Replace with actual date if available ?></td>
-                 <td>
-                  
-                    <?php if ($item['item_name'] == 'Room Charge'): ?>
-                        Room Charge - Room No: <?php echo $item['room_number']; ?>
-                    <?php else: ?>
-                        <?php echo ucfirst($item['item_name']); ?>
-                    <?php endif; ?>
-                </td>
-       
-        <td data-label="HSN/SAC Code"><?php echo $item['hsn_code']; ?></td>
-      
-        <td data-label="Base Amount">
-            <input type="number" class="base-amount" name="base_amounts[<?php echo $index; ?>]" value="<?php echo number_format($item['new_price'], 2); ?>" data-index="<?php echo $index; ?>" step="0.01">
-        </td>
-        <td data-label="GST %"><?php echo number_format($item['gst_per'], 2); ?></td>
-        <td data-label="GST Amount"><?php echo number_format($gst_amount, 2); ?></td>
-        <td data-label="Total Amount"><?php echo number_format($total_amount, 2); ?></td>
-    </tr>
-    <?php } ?>
-    <tr class="total-row">
-        <td colspan="3" data-label="GRAND TOTAL">GRAND TOTAL</td>
-        <td data-label="Base Amount" id="grand-total-base"><?php echo number_format($grand_total_base, 2); ?></td>
-        <td data-label="GST %"></td> 
-        <td data-label="GST Amount" id="grand-total-gst"><?php echo number_format($grand_total_gst, 2); ?></td>
-        <td data-label="Total Amount" id="grand-total-amount"><?php echo number_format($grand_total_amount, 2); ?></td>
-    </tr>
-</tbody>
-    </table> -->
 
     <table>
     <thead>
@@ -564,7 +504,7 @@
 
 
 <!-- Modal HTML Structure -->
-<div id="paymentModal" class="modal">
+<!-- <div id="paymentModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Settlement Payment</h2>
@@ -578,7 +518,6 @@
             <input type="radio" id="upi" name="payment_method" value="card">
             <label for="card">Upi</label><br>
 
-            <!-- Amount field -->
             <label for="paymentAmount">Enter Amount:</label>
             <input type="number" id="paymentAmount" name="payment_amount" step="0.01" required><br><br>
             
@@ -587,7 +526,172 @@
         </form>
     </div>
 </div>
+ -->
 
+
+
+ <!-- Settlement Modal -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Settlements</h2>
+        
+        <!-- Tabs for Paid/Unpaid -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="showTab('unpaid')">Unpaid Settlements</button>
+            <button class="tab-btn" onclick="showTab('paid')">Paid Settlements</button>
+        </div>
+
+        <!-- Unpaid Settlements Table -->
+        <div id="unpaid-settlements" class="tab-content active">
+            <table class="settlements-table">
+                <thead>
+                    <tr>
+                        <th>Settlement ID</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="unpaid-settlements-body">
+                    <!-- Will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paid Settlements Table -->
+        <div id="paid-settlements" class="tab-content">
+            <table class="settlements-table">
+                <thead>
+                    <tr>
+                        <th>Settlement ID</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Payment Method</th>
+                    </tr>
+                </thead>
+                <tbody id="paid-settlements-body">
+                    <!-- Will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Payment Form (shows when "Pay" button is clicked) -->
+        <div id="paymentForm" class="payment-form" style="display: none;">
+            <h3>Process Payment</h3>
+            <input type="hidden" id="current-settlement-id">
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <div class="radio-group">
+                    <input type="radio" name="payment_method" value="cash" id="cash">
+                    <label for="cash">Cash</label>
+                    <input type="radio" name="payment_method" value="card" id="card">
+                    <label for="card">Card</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="paymentAmount">Amount:</label>
+                <input type="number" id="paymentAmount" step="0.01">
+            </div>
+            <div class="button-group">
+                <button id="cancelPayment">Cancel</button>
+                <button id="proceedPayment">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+}
+
+.tab-container {
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.settlements-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.settlements-table th,
+.settlements-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.payment-form {
+    margin-top: 20px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+}
+</style>
+<style>
+.partial-payment {
+    color: #ff6b6b;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.payment-info {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.payment-date {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 3px;
+}
+
+.pay-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pay-btn:hover {
+    background: #45a049;
+}
+</style>
 
 
 
@@ -766,62 +870,6 @@ document.getElementById('save-btn').addEventListener('click', function () {
 
 
 <!-- <script>
-document.getElementById('settle-btn').addEventListener('click', function () {
-    const bookingId = document.getElementById('booking-id').value; // Get the booking ID
-    if (!bookingId) {
-        alert("No booking ID found. Please save the settlement first.");
-        return;
-    }
-    fetch('<?= site_url('Superadmin/change_settlement_status'); ?>', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            booking_id: bookingId,
-            status: 'paid' // or 'settled'
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Response from server:', data); // Log the response for debugging
-        if (data.success) {
-            alert('Settlement status updated to paid!');
-            // Update booking status to vacant
-            return fetch('<?= site_url('Superadmin/update_booking_status'); ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    booking_id: bookingId,
-                    booking_status: 'vacant' // Update to 'vacant'
-                })
-            });
-        } else {
-            alert('Failed to update settlement status: ' + (data.message || 'Please try again.'));
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Booking status updated to vacant!');
-            location.reload(); // Refreshes the current page
-        } else {
-            alert('Failed to update booking status: ' + (data.message || 'Please try again.'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-});
-</script> -->
-
-
-
-
-<script>
 const modal = document.getElementById('paymentModal');
 const closeBtn = document.getElementsByClassName('close')[0];
 const cancelBtn = document.getElementById('cancelPayment');
@@ -857,17 +905,14 @@ proceedBtn.addEventListener('click', function() {
     const bookingId = document.getElementById('booking-id').value;
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
     const paymentAmount = document.getElementById('paymentAmount').value;
-    
     if (!paymentMethod) {
         alert("Please select a payment method.");
         return;
     }
-    
     if (!paymentAmount || paymentAmount <= 0) {
         alert("Please enter a valid payment amount.");
         return;
     }
-
     // First API call to change settlement status
     fetch('<?= site_url('Superadmin/change_settlement_status'); ?>', {
         method: 'POST',
@@ -914,8 +959,260 @@ proceedBtn.addEventListener('click', function() {
         alert('An error occurred: ' + error.message);
     });
 });
+</script>  -->
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('paymentModal');
+    const closeBtn = document.getElementsByClassName('close')[0];
+    const cancelBtn = document.getElementById('cancelPayment');
+    const proceedBtn = document.getElementById('proceedPayment');
+    const paymentForm = document.getElementById('paymentForm');
+
+    // Load settlements when settlement button is clicked
+    document.getElementById('settle-btn').addEventListener('click', function() {
+        const bookingId = document.getElementById('booking-id').value;
+        if (!bookingId) {
+            alert("Please select a booking first.");
+            return;
+        }
+        loadSettlements(bookingId);
+        modal.style.display = "block";
+    });
+
+    // Function to load settlements
+    function loadSettlements(bookingId) {
+        // Create form data for POST request
+        const formData = new FormData();
+        formData.append('booking_id', bookingId);
+
+        fetch('<?= site_url('Superadmin/get_settlements_by_booking') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                populateSettlementTables(data.settlements);
+            } else {
+                alert(data.message || "Failed to load settlements");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load settlements. Please try again.');
+        });
+    }
+
+
+
+
+    function populateSettlementTables(settlements) {
+        const unpaidBody = document.getElementById('unpaid-settlements-body');
+        const paidBody = document.getElementById('paid-settlements-body');
+        
+        unpaidBody.innerHTML = '';
+        paidBody.innerHTML = '';
+
+        settlements.forEach(settlement => {
+            const amountPayable = parseFloat(settlement.amount_payable);
+            const paidAmount = parseFloat(settlement.paid_amount) || 0;
+            const remainingAmount = amountPayable - paidAmount;
+            
+            const row = `
+                <tr>
+                    <td>${settlement.settlement_id}</td>
+                    <td>${amountPayable.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'INR'
+                    })}</td>
+                    <td>${new Date(settlement.date).toLocaleDateString()}</td>
+                    ${settlement.settlement_status === 'unpaid' || settlement.settlement_status === 'partially_paid' ? 
+                        `<td>
+                            ${settlement.settlement_status === 'partially_paid' ? 
+                                `<div class="partial-payment">
+                                    Paid: ${paidAmount.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'INR'
+                                    })}
+                                </div>` : ''
+                            }
+                            <button class="pay-btn" onclick="showPaymentForm('${settlement.settlement_id}', ${remainingAmount}, ${amountPayable}, ${paidAmount})">
+                                ${settlement.settlement_status === 'partially_paid' ? 'Pay Remaining' : 'Pay'}
+                            </button>
+                        </td>` : 
+                        `<td>
+                            Paid (${settlement.payment_method})
+                            <div class="payment-date">
+                                ${new Date(settlement.payment_date).toLocaleDateString()}
+                            </div>
+                        </td>`
+                    }
+                </tr>
+            `;
+
+            if (settlement.settlement_status === 'unpaid' || settlement.settlement_status === 'partially_paid') {
+                unpaidBody.insertAdjacentHTML('beforeend', row);
+            } else {
+                paidBody.insertAdjacentHTML('beforeend', row);
+            }
+        });
+
+        if (unpaidBody.innerHTML === '') {
+            unpaidBody.innerHTML = '<tr><td colspan="4">No unpaid settlements</td></tr>';
+        }
+        if (paidBody.innerHTML === '') {
+            paidBody.innerHTML = '<tr><td colspan="4">No paid settlements</td></tr>';
+        }
+    }
+
+    // Modified showPaymentForm function
+    window.showPaymentForm = function(settlementId, remainingAmount, totalAmount, paidAmount) {
+        document.getElementById('current-settlement-id').value = settlementId;
+        const paymentAmountInput = document.getElementById('paymentAmount');
+        paymentAmountInput.value = remainingAmount;
+        paymentAmountInput.max = remainingAmount;
+        
+        // Show payment details if partially paid
+        const paymentDetails = document.getElementById('payment-details');
+        if (paidAmount > 0) {
+            paymentDetails.innerHTML = `
+                <div class="payment-info">
+                    <p>Total Amount: ${totalAmount.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</p>
+                    <p>Paid Amount: ${paidAmount.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</p>
+                    <p>Remaining: ${remainingAmount.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</p>
+                </div>
+            `;
+            paymentDetails.style.display = 'block';
+        } else {
+            paymentDetails.style.display = 'none';
+        }
+        
+        document.getElementById('paymentForm').style.display = 'block';
+    }
+
+
+
+
+
+    // Show payment form
+    window.showPaymentForm = function(settlementId, amount) {
+        document.getElementById('current-settlement-id').value = settlementId;
+        document.getElementById('paymentAmount').value = amount;
+        document.getElementById('paymentForm').style.display = 'block';
+    }
+
+
+
+    proceedBtn.addEventListener('click', function() {
+        const settlementId = document.getElementById('current-settlement-id').value;
+        const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+
+        if (!paymentAmount || paymentAmount <= 0) {
+            alert("Please enter a valid payment amount.");
+            return;
+        }
+
+        if (!paymentMethod) {
+            alert("Please select a payment method.");
+            return;
+        }
+        const bookingId = document.getElementById('booking-id').value;
+        const formData = new FormData();
+        formData.append('settlement_id', settlementId);
+        formData.append('amount', paymentAmount);
+        formData.append('payment_method', paymentMethod.value);
+        formData.append('booking_id', bookingId); 
+
+        fetch('<?= site_url('Superadmin/change_settlement_status') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Payment processed successfully!');
+                paymentForm.style.display = 'none';
+                loadSettlements(document.getElementById('booking-id').value);
+                
+                // If fully paid, update booking status
+                if (data.status === 'paid') {
+                    return updateBookingStatus(settlementId);
+                }
+            } else {
+                throw new Error(data.message || 'Failed to process payment');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while processing payment. Please try again.');
+        });
+    });
+
+    // Function to update booking status
+    function updateBookingStatus(settlementId) {
+        const formData = new FormData();
+        formData.append('settlement_id', settlementId);
+        formData.append('booking_status', 'vacant');
+        
+        return fetch('<?= site_url('Superadmin/update_booking_status') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error('Failed to update booking status');
+            }
+        });
+    }
+
+
+    // Tab switching
+    window.showTab = function(tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        
+        tabContents.forEach(content => content.classList.remove('active'));
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(`${tabName}-settlements`).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // Modal close handlers
+    function closeModal() {
+        modal.style.display = "none";
+        paymentForm.style.display = "none";
+        paymentForm.reset();
+    }
+
+    closeBtn.onclick = closeModal;
+    cancelBtn.onclick = closeModal;
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+});
 
 </script>
+
+
+
+
+
+
+
 
 
 
@@ -956,6 +1253,7 @@ document.getElementById('delete-btn').addEventListener('click', function () {
     }
 });
 </script>
+
 
 
 
